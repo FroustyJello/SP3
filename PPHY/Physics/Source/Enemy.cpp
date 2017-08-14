@@ -1,119 +1,129 @@
 #include "Enemy.h"
-#include <iostream>
 
-/********************************************************************************
- Constructor
- ********************************************************************************/
-CEnemy::CEnemy(void)
-	: theStrategy(NULL)
+Enemy::Enemy()
 {
+
 }
 
-/********************************************************************************
- Destructor
- ********************************************************************************/
-CEnemy::~CEnemy(void)
+Enemy::Enemy(Vector3 pos, std::vector<Enemy> EnemyListRef, EnemyType Type)
 {
-	if (theStrategy != NULL)
+	this->pos = pos;
+	this->EnemyListRef = EnemyListRef;
+	this->Type = Type;
+}
+
+Enemy::~Enemy()
+{
+
+}
+
+void Enemy::Update(double dt, Vector3 PlayerRef)
+{
+	this->PlayerRef = PlayerRef;
+
+	if (!HasAllies())
 	{
-		delete theStrategy;
-		theStrategy = NULL;
+		LookForAllies(dt);
+	}
+	else
+	{
+		MoveAndAttack();
 	}
 }
 
-/********************************************************************************
- Initialise this class instance
- ********************************************************************************/
-void CEnemy::Init()
+void Enemy::MoveAndAttack()
 {
-	pos.x=0;
-	pos.y=0;
-}
-
-/********************************************************************************
- Set the destination of this enemy
- ********************************************************************************/
-void CEnemy::SetDestination(Vector3 pos)
-{
-	theDestination = pos;
-	if (theStrategy != NULL)
+	if (this->Type == RANGED)
 	{
-		theStrategy->SetDestination(theDestination.x, theDestination.y);
-	}
-}
-
-/********************************************************************************
- Get position x of the player
- ********************************************************************************/
-int CEnemy::GetPos_x(void) const
-{
-	return pos.x;
-}
-
-/********************************************************************************
- Get position y of the player
- ********************************************************************************/
-int CEnemy::GetPos_y(void) const
-{
-	return pos.y;
-}
-
-/********************************************************************************
- Get position of the player in Vector3 form
- ********************************************************************************/
-Vector3 CEnemy::GetPos(void) const
-{
-	return pos;
-}
-
-/********************************************************************************
- Set the destination of this enemy
- ********************************************************************************/
-int CEnemy::GetDestination_x(void) const
-{
-	return theDestination.x;
-}
-
-/********************************************************************************
- Set the destination of this enemy
- ********************************************************************************/
-int CEnemy::GetDestination_y(void) const
-{
-	return theDestination.y;
-}
-
-/********************************************************************************
- Get the destination of this enemy as a Vector3
- ********************************************************************************/
-Vector3 CEnemy::GetDestination(void) const
-{
-	return theDestination;
-}
-
-/********************************************************************************
- Update
- ********************************************************************************/
-void CEnemy::Update(void)
-{
-	if (theStrategy != NULL)
-	{
-		theStrategy->Update(theDestination, pos);
-	}
-}
-
-/********************************************************************************
- Strategy
- ********************************************************************************/
-void CEnemy::ChangeStrategy(CStrategy* theNewStrategy, bool bDelete)
-{
-	if (bDelete == true)
-	{
-		if (theStrategy != NULL)
+		if ((this->pos - PlayerRef).Length() >= 5)
 		{
-			delete theStrategy;
-			theStrategy = NULL;
+			// Move Towards Player
+			// Problem, Verticality(?)
+		}
+		else
+		{
+			// Attack Player
+		}
+	}
+	else
+	{
+		if ((this->pos - PlayerRef).Length() >= 2)
+		{
+			// Move Towards Player
+			// Problem, Verticality(?)
+		}
+		else
+		{
+			// Attack Player
+		}
+	}
+}
+
+void Enemy::LookForAllies(double dt)
+{
+	for (int i = 0; i < EnemyListRef.size(); i++)
+	{
+		if (this->pos != EnemyListRef[i].pos)
+		{
+			// Depending On Enemy Type, Enemy's range to search for Allies increases
+			if (this->type == RANGED)
+			{
+				// If there is an enemy within the range of 15 meters
+				if ((this->pos - EnemyListRef[i].pos).Length() <= 15)
+				{
+					if (this->pos.x > EnemyListRef[i].pos.x)
+					{
+						this->pos.x -= 10.f * dt;
+					}
+					if (this->pos.x < EnemyListRef[i].pos.x)
+					{
+						this->pos.x += 10.f * dt;
+					}
+				}
+				//If no Allies are found, Attack Alone
+				else if (i == EnemyListRef.size() - 1)
+				{
+					MoveAndAttack();
+				}
+			}
+			else
+			{
+				// If there is an enemy within the range of 10 meters
+				if ((this->pos - EnemyListRef[i].pos).Length() <= 10)
+				{
+					if (this->pos.x > EnemyListRef[i].pos.x)
+					{
+						this->pos.x -= 10.f * dt;
+					}
+					if (this->pos.x < EnemyListRef[i].pos.x)
+					{
+						this->pos.x += 10.f * dt;
+					}
+				}
+				//If no Allies are found, Attack Alone
+				else if (i == EnemyListRef.size() - 1)
+				{
+					MoveAndAttack();
+				}
+			}
+		}
+	}
+}
+
+bool Enemy::HasAllies()
+{
+	for (int i = 0; i < EnemyListRef.size(); i++)
+	{
+		// Check to see if it's not registering itself
+		if (this->pos != EnemyListRef[i].pos)
+		{
+			// Checks for a length of 5 regardless of Enemy Type
+			if ((this->pos - EnemyListRef[i].pos).Length() <= 5)
+			{
+				return true;
+			}
 		}
 	}
 
-	theStrategy = theNewStrategy;
+	return false;
 }

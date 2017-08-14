@@ -370,6 +370,18 @@ void SceneCollision::Update(double dt)
 		m_paddle->pos.y -= 25 * dt * m_speed;
 	}
 
+	if (Application::IsKeyPressed(VK_UP))
+	{
+		camera.position.x += 20.f * dt;
+		camera.target.x += 20.f * dt;
+	}
+
+	if (Application::IsKeyPressed(VK_DOWN))
+	{
+		camera.position.x -= 20.f * dt;
+		camera.target.x -= 20.f * dt;
+	}
+
 	bounce++;
 
 	if (Application::IsKeyPressed('O') && bounce > 20 && num_balls != 0)

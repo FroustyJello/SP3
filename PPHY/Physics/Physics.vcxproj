@@ -155,6 +155,7 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\csv.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />
@@ -174,12 +175,16 @@
     <ClCompile Include="Source\SceneMenu.cpp" />
     <ClCompile Include="Source\SceneWin.cpp" />
     <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\Strategy.cpp" />
+    <ClCompile Include="Source\Strategy_Coward.cpp" />
+    <ClCompile Include="Source\Strategy_Kill.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\csv.h" />
+    <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LoadOBJ.h" />
@@ -201,8 +206,14 @@
     <ClInclude Include="Source\SceneMenu.h" />
     <ClInclude Include="Source\SceneWin.h" />
     <ClInclude Include="Source\shader.hpp" />
+    <ClInclude Include="Source\Strategy.h" />
+    <ClInclude Include="Source\Strategy_Coward.h" />
+    <ClInclude Include="Source\Strategy_Kill.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Book1.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
