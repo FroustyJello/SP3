@@ -1,0 +1,22 @@
+﻿  SceneWin.cpp
+f:\desktop\phy ass\pphy\physics\source\scenewin.cpp(108): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenewin.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenewin.cpp(115): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenewin.cpp(117): warning C4305: 'argument': truncation from 'double' to 'float'
+  SceneLose.cpp
+f:\desktop\phy ass\pphy\physics\source\scenelose.cpp(108): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenelose.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenelose.cpp(115): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\scenelose.cpp(117): warning C4305: 'argument': truncation from 'double' to 'float'
+  P2win.cpp
+f:\desktop\phy ass\pphy\physics\source\p2win.cpp(108): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p2win.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p2win.cpp(115): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p2win.cpp(117): warning C4305: 'argument': truncation from 'double' to 'float'
+  P1win.cpp
+f:\desktop\phy ass\pphy\physics\source\p1win.cpp(108): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p1win.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p1win.cpp(115): warning C4305: 'argument': truncation from 'double' to 'float'
+f:\desktop\phy ass\pphy\physics\source\p1win.cpp(117): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
+  Physics.vcxproj -> F:\Desktop\PHY ASS\PPHY\Debug\Physics.exe
