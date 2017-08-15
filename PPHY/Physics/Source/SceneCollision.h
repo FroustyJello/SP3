@@ -65,7 +65,7 @@ protected:
 
 	int m_plives;
 	int m_elives;
-	
+
 	float ScreenLimit;
 };
 

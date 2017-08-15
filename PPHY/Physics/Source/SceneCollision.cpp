@@ -41,7 +41,7 @@ void SceneCollision::Init()
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
 	m_timeEstimated1 = m_timeTaken1 = 0.f;
-	bool timeStarted = false; 
+	bool timeStarted = false;
 
 	data = reader.Load("Book1.csv", data);
 
@@ -49,7 +49,7 @@ void SceneCollision::Init()
 
 
 
-	
+
 
 	m_paddle = FetchGO();
 	m_paddle->type = GameObject::GO_BALL;
@@ -99,7 +99,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return relativeVelocity.Dot(relativePosition) < 0 && relativePosition.LengthSquared() < (r1 + r2) * (r1 + r2);
 	}
 	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_WALL)
-	{	
+	{
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
 		float r = go1->scale.x;
@@ -143,7 +143,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		Vector3 u1 = go1->vel;
 
 
-		return (p2-p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
+		return (p2 - p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
 	}
 
 
@@ -190,7 +190,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		//Vector3 u = go->vel;
 		//Vector3 N = go2->dir;
 		//go->vel = u - (2 * u.Dot(N) * N);
-		
+
 		if (go2->type == GameObject::GO_PADDLE)
 		{
 			go->vel *= 1.4;
@@ -343,7 +343,7 @@ void SceneCollision::Update(double dt)
 		go->type = GameObject::GO_BALL;
 
 		go->pos.Set(m_paddle->pos.x + 5, m_paddle->pos.y, m_paddle->pos.z);
-		go->vel.Set(50,Math::RandFloatMinMax(-10,10),0);
+		go->vel.Set(50, Math::RandFloatMinMax(-10, 10), 0);
 		float sc = 2;
 		go->scale.Set(sc, sc, sc);
 		go->mass = sc * sc * sc;
@@ -499,13 +499,13 @@ void SceneCollision::Update(double dt)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
 			//Exercise 2a: Rebound game object at screen edges
-/*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
+			/*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
 			{
-				go->vel.x *= -1;
+			go->vel.x *= -1;
 			}
 			if (go->pos.y > m_worldHeight - go->scale.y || go->pos.y < 0 + go->scale.y)
 			{
-				go->vel.y *= -1;
+			go->vel.y *= -1;
 			}*/
 			//Exercise 2b: Unspawn if it really leave the screen
 
