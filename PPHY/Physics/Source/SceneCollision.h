@@ -59,10 +59,14 @@ protected:
 
 	vector<string>ObjData;
 
+	Vector3 gravity;
+
 	void LoadObjects(vector<string> data);
 
 	int m_plives;
 	int m_elives;
+	
+	float ScreenLimit;
 };
 
 #endif
