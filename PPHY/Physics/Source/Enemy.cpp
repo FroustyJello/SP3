@@ -27,11 +27,11 @@ void Enemy::Update(double dt, Vector3 PlayerRef)
 	}
 	else
 	{
-		MoveAndAttack();
+		MoveAndAttack(dt);
 	}
 }
 
-void Enemy::MoveAndAttack()
+void Enemy::MoveAndAttack(double dt)
 {
 	if (this->Type == RANGED)
 	{
@@ -39,10 +39,19 @@ void Enemy::MoveAndAttack()
 		{
 			// Move Towards Player
 			// Problem, Verticality(?)
+			if (this->pos.x > PlayerRef.x)
+			{
+				this->pos.x -= 10.f * dt;
+			}
+			if (this->pos.x < PlayerRef.x)
+			{
+				this->pos.x += 10.f * dt;
+			}
 		}
 		else
 		{
 			// Attack Player
+			printf("Enemy Attack(Ranged)");
 		}
 	}
 	else
@@ -51,10 +60,19 @@ void Enemy::MoveAndAttack()
 		{
 			// Move Towards Player
 			// Problem, Verticality(?)
+			if (this->pos.x > PlayerRef.x)
+			{
+				this->pos.x -= 10.f * dt;
+			}
+			if (this->pos.x < PlayerRef.x)
+			{
+				this->pos.x += 10.f * dt;
+			}
 		}
 		else
 		{
 			// Attack Player
+			printf("Enemy Attack(Melee)");
 		}
 	}
 }
@@ -83,7 +101,7 @@ void Enemy::LookForAllies(double dt)
 				//If no Allies are found, Attack Alone
 				else if (i == EnemyListRef.size() - 1)
 				{
-					MoveAndAttack();
+					MoveAndAttack(dt);
 				}
 			}
 			else
@@ -103,7 +121,7 @@ void Enemy::LookForAllies(double dt)
 				//If no Allies are found, Attack Alone
 				else if (i == EnemyListRef.size() - 1)
 				{
-					MoveAndAttack();
+					MoveAndAttack(dt);
 				}
 			}
 		}

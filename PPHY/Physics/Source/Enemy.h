@@ -18,7 +18,7 @@ public:
 	~Enemy();
 	
 	void Update(double dt, Vector3 PlayerRef);
-	void MoveAndAttack();
+	void MoveAndAttack(double dt);
 	void LookForAllies(double dt);
 	bool HasAllies();
 
