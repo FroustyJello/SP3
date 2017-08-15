@@ -13,11 +13,14 @@ SceneCollision::~SceneCollision()
 
 void SceneCollision::Init()
 {
+	ScreenLimit = 60.f;
 	SceneBase::Init();
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	bounce = 0;
+
+	gravity.Set(0, -50.0f, 0);
 
 	CSV reader;
 
@@ -46,94 +49,19 @@ void SceneCollision::Init()
 
 
 
-	//GameObject *go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(125,80.f, 0);
-	//go->scale.Set(2.f, 20.f, 1.f);
-	//go->dir.Set(1.f, 1.f, 0.f);
-	//go->dir.Normalize();
-
-	////top
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(70, 87.f, 0);
-	//go->scale.Set(2.f, 100, 1.f);
-	//go->dir.Set(0.f, 1.f, 0.f);
-	//go->dir.Normalize();
-	////^^top
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(20, 80.f, 0);
-	//go->scale.Set(2.f, 20.f, 1.f);
-	//go->dir.Set(-1.f, 1.f, 0.f);
-	//go->dir.Normalize();
-
-
-	////bottom
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(70, 20, 0);
-	//go->scale.Set(2.f, 100, 1.f);
-	//go->dir.Set(0.f, -1.f, 0.f);
-	//go->dir.Normalize();
-	////^^Bottom
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(125, 26, 0);
-	//go->scale.Set(2.f, 20.f, 1.f);
-	//go->dir.Set(1.f, -1.f, 0.f);
-	//go->dir.Normalize();
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(20, 26, 0);
-	//go->scale.Set(2.f, 20.f, 1.f);
-	//go->dir.Set(-1.f, -1.f, 0.f);
-	//go->dir.Normalize();
+	
 
 	m_paddle = FetchGO();
-	m_paddle->type = GameObject::GO_PADDLE;
+	m_paddle->type = GameObject::GO_BALL;
 	m_paddle->pos.Set(10, 50, 0);
 	m_paddle->dir.Set(1, 0, 0);
-	m_paddle->scale.Set(2, 10, 1.f);
+	m_paddle->scale.Set(5, 5, 1.f);
 
 	m_enemy = FetchGO();
 	m_enemy->type = GameObject::GO_WALL;
 	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(2, 10, 1.f);
-
-
-	//Obstacles
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(50, 80, 0);
-	//go->scale.Set(5, 5, 5);
-	//go->dir.Set(-1.f, -1.f, 0.f);
-	//go->dir.Normalize();
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(50, 80, 0);
-	//go->scale.Set(5, 5, 5);
-	//go->dir.Set(1.f, 1.f, 0.f);
-	//go->dir.Normalize();
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_WALL;
-	//go->pos.Set(100, 30, 0);
-	//go->scale.Set(5, 5, 5);
-	//go->dir.Set(-1.f, -1.f, 0.f);
-	//go->dir.Normalize();
-
-	//go = FetchGO();
-	//go->type = GameObject::GO_PILLAR;
-	//go->pos.Set(70, 50, 0);
-	//go->scale.Set(5, 5,5 );
-	//go->dir.Set(1, 0, 0.f);
-	//go->dir.Normalize();
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -259,14 +187,19 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 	}
 	else if (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_PADDLE)
 	{
-		Vector3 u = go->vel;
-		Vector3 N = go2->dir;
-
-		go->vel = u - (2 * u.Dot(N) * N);
-
+		//Vector3 u = go->vel;
+		//Vector3 N = go2->dir;
+		//go->vel = u - (2 * u.Dot(N) * N);
+		
 		if (go2->type == GameObject::GO_PADDLE)
 		{
 			go->vel *= 1.4;
+		}
+		float limit = 0;
+		limit = go->vel.LengthSquared();
+		if (go->vel.LengthSquared() <= limit)
+		{
+			go->vel = 0.f;
 		}
 	}
 	else if (go2->type == GameObject::GO_PILLAR)
@@ -350,6 +283,16 @@ void SceneCollision::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
+	//if (m_paddle->pos.x > ScreenLimit)
+	//{
+	//	ScreenLimit = m_paddle->pos.x + 1;
+	//	camera.position.x += 25 * dt * m_speed;
+	//	camera.target.x += 25 * dt * m_speed;
+	//
+	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
+	//}
+
+
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -360,26 +303,35 @@ void SceneCollision::Update(double dt)
 		m_speed += 0.1f;
 	}
 
-	if (Application::IsKeyPressed('W') && m_paddle->pos.y < 66)
+	if (Application::IsKeyPressed('W'))
 	{
 		m_paddle->pos.y += 25 * dt * m_speed;
 	}
 
-	if (Application::IsKeyPressed('S') && m_paddle->pos.y > 35)
+	if (Application::IsKeyPressed('S'))
 	{
 		m_paddle->pos.y -= 25 * dt * m_speed;
 	}
 
-	if (Application::IsKeyPressed(VK_UP))
+	if (Application::IsKeyPressed('D'))
 	{
-		camera.position.x += 20.f * dt;
-		camera.target.x += 20.f * dt;
+		m_paddle->pos.x += 25 * dt * m_speed;
+		if (m_paddle->pos.x > ScreenLimit)
+		{
+			camera.position.x += 25 * dt * m_speed;
+			camera.target.x += 25 * dt * m_speed;
+			ScreenLimit += 25 * dt * m_speed;
+		}
 	}
 
-	if (Application::IsKeyPressed(VK_DOWN))
+	if (Application::IsKeyPressed('A'))
 	{
-		camera.position.x -= 20.f * dt;
-		camera.target.x -= 20.f * dt;
+		m_paddle->pos.x -= 25 * dt * m_speed;
+		if (m_paddle->pos.x < 50)
+		{
+			camera.position.x -= 25 * dt * m_speed;
+			camera.target.x -= 25 * dt * m_speed;
+		}
 	}
 
 	bounce++;
@@ -398,6 +350,30 @@ void SceneCollision::Update(double dt)
 		v_balls.push_back(go);
 		bounce = 0;
 		num_balls--;
+	}
+
+	if (Application::IsKeyPressed(VK_RIGHT))
+	{
+		camera.position.x += 10 * dt;
+		camera.target.x += 10 * dt;
+	}
+
+	if (Application::IsKeyPressed(VK_LEFT))
+	{
+		camera.position.x -= 10 * dt;
+		camera.target.x -= 10 * dt;
+	}
+
+	if (Application::IsKeyPressed(VK_UP))
+	{
+		camera.position.y += 10 * dt;
+		camera.target.y += 10 * dt;
+	}
+
+	if (Application::IsKeyPressed(VK_DOWN))
+	{
+		camera.position.y -= 10 * dt;
+		camera.target.y -= 10 * dt;
 	}
 
 	static bool bSpaceState = false;
@@ -522,7 +498,6 @@ void SceneCollision::Update(double dt)
 		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
-
 			//Exercise 2a: Rebound game object at screen edges
 /*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
 			{
@@ -533,32 +508,6 @@ void SceneCollision::Update(double dt)
 				go->vel.y *= -1;
 			}*/
 			//Exercise 2b: Unspawn if it really leave the screen
-			if (go->pos.x > m_worldWidth + go->scale.x || go->pos.x < 0 - go->scale.x || go->pos.y > m_worldHeight + go->scale.y || go->pos.y < 0 - go->scale.y)
-			{
-				go->active = false;
-				--m_objectCount;
-			}
-
-			//SCORING SYSTEM
-			if (go->pos.x < m_paddle->pos.x - 3)
-			{
-				go->active = false;
-				num_balls++;
-				m_plives--;
-			}
-
-			if (go->pos.x > m_enemy->pos.x + 3)
-			{
-				go->active = false;
-				num_balls++;
-				m_elives--;
-			}
-
-			if (go->vel.Length() <= 20)
-			{
-				go->active = false;
-				num_balls++;
-			}
 
 			//PADDLE AI WORKING
 
@@ -587,6 +536,9 @@ void SceneCollision::Update(double dt)
 					}
 				}
 			}
+
+			m_paddle->vel += gravity * dt;
+			//m_paddle->vel.Set(0, -100, 0);
 
 			//PADDLE AI 66 HIGH 35 LOW
 			//if (m_enemy->pos.x - go->pos.x > 20)
@@ -741,6 +693,7 @@ void SceneCollision::Render()
 	modelStack.LoadIdentity();
 
 	RenderMesh(meshList[GEO_AXES], false);
+
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
