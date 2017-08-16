@@ -10,19 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SceneKinematics.h"
-#include "SceneAsteroid.h"
+
 #include "SceneCollision.h"
 
 //my files
 #include "SceneMenu.h"
-#include "SceneHelp.h"
 #include "SceneLose.h"
 #include "SceneMenu.h"
 #include "SceneWin.h"
-#include "Scene2P.h"
-#include "P1win.h"
-#include "P2win.h"
 #include "MapEditor.h"
 
 #include <iostream>
@@ -144,9 +139,6 @@ void Application::Run()
 	Scene *scene2 = new SceneCollision();
 	Scene *scene3 = new SceneLose();
 	Scene *scene4 = new SceneWin();
-	Scene *scene5 = new Scene2P();
-	Scene *scene6 = new SceneP1();
-	Scene *scene7 = new SceneP2();
 	Scene *scene8 = new MapEditor();
 
 	Scene *scene = scene1;
@@ -182,27 +174,6 @@ void Application::Run()
 		{
 			scene->Exit();
 			scene = scene4;
-			scene->Init();
-		}
-
-		 if (SceneID == 5 && scene != scene5)
-		{
-			scene->Exit();
-			scene = scene5;
-			scene->Init();
-		}
-
-		else if (SceneID == 6 && scene != scene6)
-		{
-			scene->Exit();
-			scene = scene6;
-			scene->Init();
-		}
-
-		 if (SceneID == 7 && scene != scene7)
-		{
-			scene->Exit();
-			scene = scene7;
 			scene->Init();
 		}
 

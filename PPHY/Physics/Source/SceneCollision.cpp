@@ -326,7 +326,7 @@ void SceneCollision::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 	{
 		m_paddle->pos.x += 25 * dt * m_speed;
-		if (m_paddle->pos.x > m_worldWidth * 0.75f)
+		if (m_paddle->pos.x > Application::GetWindowWidth() * 0.75f)
 		{
 			camera.position.x += 25 * dt * m_speed;
 			camera.target.x += 25 * dt * m_speed;
@@ -337,7 +337,7 @@ void SceneCollision::Update(double dt)
 	if (Application::IsKeyPressed('A'))
 	{
 		m_paddle->pos.x -= 25 * dt * m_speed;
-		if (m_paddle->pos.x < m_worldWidth * 0.25f)
+		if (m_paddle->pos.x < Application::GetWindowWidth() * 0.25f)
 		{
 			camera.position.x -= 25 * dt * m_speed;
 			camera.target.x -= 25 * dt * m_speed;
