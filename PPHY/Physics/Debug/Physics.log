@@ -1,2 +1,65 @@
-﻿  Physics.vcxproj -> C:\Users\530\Desktop\SP3\PPHY\Debug\Physics.exe
+﻿  SceneCollision.cpp
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(237): warning C4018: '<': signed/unsigned mismatch
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(327): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(332): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(337): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(341): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(342): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(343): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(349): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(353): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(354): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(355): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(379): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(380): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(385): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(386): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(391): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(392): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(397): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(398): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(536): warning C4018: '<': signed/unsigned mismatch
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(562): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(621): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\530\desktop\sp3\pphy\physics\source\scenecollision.cpp(622): warning C4305: 'argument': truncation from 'double' to 'float'
+  Player.cpp
+c:\users\530\desktop\sp3\pphy\physics\source\player.cpp(340): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\player.cpp(345): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\player.cpp(350): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\player.cpp(355): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  Compiling...
+  Projectile.cpp
+  MapEditor.cpp
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(92): warning C4018: '<': signed/unsigned mismatch
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(184): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(220): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(221): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(226): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(227): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(233): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(234): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(239): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(240): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\mapeditor.cpp(365): warning C4018: '<': signed/unsigned mismatch
+  GameObject.cpp
+  Enemy.cpp
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(44): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(48): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(65): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(69): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(82): warning C4018: '<': signed/unsigned mismatch
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(94): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(98): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(114): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(118): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\530\desktop\sp3\pphy\physics\source\enemy.cpp(133): warning C4018: '<': signed/unsigned mismatch
+  Application.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  SceneWin.cpp
+  SceneMenu.cpp
+  SceneLose.cpp
+  SceneBase.cpp
+  Physics.vcxproj -> C:\Users\530\Desktop\SP3\PPHY\Debug\Physics.exe
   Physics.vcxproj -> C:\Users\530\Desktop\SP3\PPHY\Debug\Physics.pdb (Full PDB)
