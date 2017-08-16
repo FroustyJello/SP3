@@ -8,3 +8,8 @@ PPHY/DM2212_Physics.VC.VC.opendb
 PPHY/DM2212_Physics.VC.db
 PPHY/Common/Release/
 PPHY/Physics/Release/
+PPHY/Debug/Physics.pdb
+PPHY/Debug/Physics.ilk
+PPHY/Debug/Physics.exe
+PPHY/Debug/Common.pdb
+PPHY/Debug/Common.lib
