@@ -23,6 +23,7 @@
 #include "Scene2P.h"
 #include "P1win.h"
 #include "P2win.h"
+#include "MapEditor.h"
 
 #include <iostream>
 
@@ -146,6 +147,7 @@ void Application::Run()
 	Scene *scene5 = new Scene2P();
 	Scene *scene6 = new SceneP1();
 	Scene *scene7 = new SceneP2();
+	Scene *scene8 = new MapEditor();
 
 	Scene *scene = scene1;
 
@@ -169,21 +171,21 @@ void Application::Run()
 			scene->Init();
 		}
 
-		else if (SceneID == 3 && scene != scene3)
+		 if (SceneID == 3 && scene != scene3)
 		{
 			scene->Exit();
 			scene = scene3;
 			scene->Init();
 		}
 
-		else if (SceneID == 4 && scene != scene4)
+		 else if (SceneID == 4 && scene != scene4)
 		{
 			scene->Exit();
 			scene = scene4;
 			scene->Init();
 		}
 
-		else if (SceneID == 5 && scene != scene5)
+		 if (SceneID == 5 && scene != scene5)
 		{
 			scene->Exit();
 			scene = scene5;
@@ -197,14 +199,21 @@ void Application::Run()
 			scene->Init();
 		}
 
-		else if (SceneID == 7 && scene != scene7)
+		 if (SceneID == 7 && scene != scene7)
 		{
 			scene->Exit();
 			scene = scene7;
 			scene->Init();
 		}
 
-		else if (SceneID == 0)
+		else if (SceneID == 8 && scene != scene8)
+		{
+			scene->Exit();
+			scene = scene8;
+			scene->Init();
+		}
+
+		 if (SceneID == 0)
 		{
 			break;
 		}
