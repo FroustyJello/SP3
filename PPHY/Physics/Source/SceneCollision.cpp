@@ -67,6 +67,22 @@ void SceneCollision::Init()
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
 	//go->dir.Normalize();
+//<<<<<<< HEAD
+//=======
+
+
+	m_paddle = FetchGO();
+	m_paddle->type = GameObject::GO_BALL;
+	m_paddle->pos.Set(10, 50, 0);
+	m_paddle->dir.Set(1, 0, 0);
+	m_paddle->scale.Set(5, 5, 1.f);
+
+	m_enemy = FetchGO();
+	m_enemy->type = GameObject::GO_ENEMY_MELEE;
+	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
+	m_enemy->dir.Set(1, 0, 0);
+	m_enemy->scale.Set(5, 5, 1.f);
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -503,26 +519,22 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 			continue;
+//<<<<<<< HEAD
 		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
+//=======
+		go->Update(dt, thePlayerInfo->pos, m_goList);
+		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 		{
 			go->pos += go->vel * static_cast<float>(dt);
-			//Exercise 2a: Rebound game object at screen edges
-			/*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
-			{
-			go->vel.x *= -1;
-			}
-			if (go->pos.y > m_worldHeight - go->scale.y || go->pos.y < 0 + go->scale.y)
-			{
-			go->vel.y *= -1;
-			}*/
-			//Exercise 2b: Unspawn if it really leave the screen
-
-			//PADDLE AI WORKING
 
 
+//<<<<<<< HEAD
 			
 			go->vel += gravity * dt;
 
+//=======
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
@@ -626,6 +638,20 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_MELEE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
