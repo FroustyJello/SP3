@@ -30,10 +30,19 @@ void SceneCollision::Init()
 	m_plives = 5;
 	m_elives = 5;
 
+	
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
-	thePlayerInfo->SetPos(Vector3(10, 50, 0));
-
+	/*thePlayerInfo->SetPos(Vector3(10, 50, 0));*/
+	m_player = thePlayerInfo;
+	m_player = FetchGO();
+	thePlayerInfo->type = GameObject::GO_PLAYER;
+	thePlayerInfo->scale.Set(4, 4, 4);
+	thePlayerInfo->active = true;
+	thePlayerInfo->pos.Set(10, 50, 0);
+	thePlayerInfo->dir.Set(1, 0, 0);
+	/*thePlayerInfo = thePlayerInfo;*/
+	m_goList.push_back(thePlayerInfo);
 
 	//Physics code here
 	m_speed = 1.f;
@@ -98,7 +107,7 @@ GameObject* SceneCollision::FetchGO()
 
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 {
-	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_BALLDYING)
+	if (go2->type == GameObject::GO_PLAYER || go2->type == GameObject::GO_BALLDYING)
 	{
 		Vector3 relativePosition = go1->pos - go2->pos;
 		Vector3 relativeVelocity = go1->vel - go2->vel;
@@ -107,7 +116,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 
 		return relativeVelocity.Dot(relativePosition) < 0 && relativePosition.LengthSquared() < (r1 + r2) * (r1 + r2);
 	}
-	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_WALL)
+	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_WALL)
 	{
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
@@ -125,7 +134,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
 	}
 
-	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_PADDLE)
+	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_PADDLE)
 	{
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
@@ -143,7 +152,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
 	}
 
-	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_PILLAR)
+	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_PILLAR)
 	{
 		Vector3 p1 = go1->pos;
 		Vector3 p2 = go2->pos;
@@ -183,7 +192,7 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
-	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_BALLDYING)
+	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_BALLDYING || go2->type == GameObject::GO_PLAYER)
 	{
 		Vector3 u1 = go->vel;
 		Vector3 u2 = go2->vel;
@@ -299,10 +308,10 @@ void SceneCollision::Update(double dt)
 	//
 	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
 	//}
+	thePlayerInfo->Update(dt);
 
-
-	thePlayerInfo->position = m_paddle->pos;
-	thePlayerInfo->position.y = m_paddle->pos.y + 5;
+	m_paddle->pos = thePlayerInfo->position;
+	m_paddle->pos.y = thePlayerInfo->position.y + 5;
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -315,18 +324,19 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('W'))
 	{
-		m_paddle->pos.y += 25 * dt * m_speed;
+		thePlayerInfo->position.y += 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		m_paddle->pos.y -= 25 * dt * m_speed;
+		thePlayerInfo->position.y -= 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
 	{
-		m_paddle->pos.x += 25 * dt * m_speed;
-		if (m_paddle->pos.x > Application::GetWindowWidth() * 0.75f)
+		thePlayerInfo->position.x += 25 * dt * m_speed;
+		//Application::GetWindowWidth() * 0.75f
+		if (thePlayerInfo->position.x > ScreenLimit)
 		{
 			camera.position.x += 25 * dt * m_speed;
 			camera.target.x += 25 * dt * m_speed;
@@ -336,11 +346,13 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('A'))
 	{
-		m_paddle->pos.x -= 25 * dt * m_speed;
-		if (m_paddle->pos.x < Application::GetWindowWidth() * 0.25f)
+		thePlayerInfo->position.x -= 25 * dt * m_speed;
+		//Application::GetWindowWidth() * 0.25f
+		if (thePlayerInfo->position.x < ScreenLimit)
 		{
 			camera.position.x -= 25 * dt * m_speed;
 			camera.target.x -= 25 * dt * m_speed;
+			ScreenLimit -= 25 * dt * m_speed;
 		}
 	}
 
@@ -505,7 +517,7 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 			continue;
-		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING)
+		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
 			//Exercise 2a: Rebound game object at screen edges
@@ -547,7 +559,7 @@ void SceneCollision::Update(double dt)
 				}
 			}
 
-			m_paddle->vel += gravity * dt;
+			thePlayerInfo->vel += gravity * dt;
 			//m_paddle->vel.Set(0, gravity.y*dt, 0);
 			//std::cout << m_paddle->vel.LengthSquared() << std::endl;
 			//m_paddle->vel.Set(0, -100, 0);
@@ -587,9 +599,9 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_BALL)
+			if (go->type != GameObject::GO_PLAYER)
 			{
-				if (go2->type != GameObject::GO_BALL)
+				if (go2->type != GameObject::GO_PLAYER)
 					continue;
 				goA = go2;
 				goB = go;
@@ -639,6 +651,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BALL], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_PLAYER:
+		modelStack.PushMatrix();
+		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y, thePlayerInfo->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[PLAYER], false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BALLDYING:
@@ -706,12 +725,12 @@ void SceneCollision::Render()
 
 	RenderMesh(meshList[GEO_AXES], false);
 
-	modelStack.PushMatrix();
+	/*modelStack.PushMatrix();
 	modelStack.Translate(thePlayerInfo->position.x, thePlayerInfo->position.y, thePlayerInfo->position.z);
 	modelStack.Scale(4, 4, 1);
 	RenderMesh(meshList[PLAYER], false);
 	modelStack.PopMatrix();
-
+*/
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;

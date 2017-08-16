@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Mtx44.h"
+#include "GameObject.h"
 #include <string>
 #include <iostream>
+#include "SingletonTemplate.h"
 
 using std::string;
 
 
-class CPlayer
+class CPlayer:public GameObject
 {
 protected:
 	static CPlayer *s_instance;

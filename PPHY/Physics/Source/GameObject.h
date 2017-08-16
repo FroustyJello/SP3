@@ -28,6 +28,7 @@ struct GameObject
 		GO_ARROW,
 		GO_ENEMY_BULLET,
 
+		GO_PLAYER,
 		GO_WALL,
 		GO_PADDLE,
 		GO_PILLAR,

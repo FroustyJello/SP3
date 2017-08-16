@@ -337,22 +337,22 @@ void CPlayer::Update(double dt)
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
-		position.y += 25 * dt * m_speed;
+		pos.y += 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		position.y -= 25 * dt * m_speed;
+		pos.y -= 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
 	{
-		position.x += 25 * dt * m_speed;
+		pos.x += 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('A'))
 	{
-		position.x -= 25 * dt * m_speed;
+		pos.x -= 25 * dt * m_speed;
 	}
 
 	// If the user presses SPACEBAR, then make him jump
