@@ -13,3 +13,8 @@ PPHY/Debug/Physics.ilk
 PPHY/Debug/Physics.exe
 PPHY/Debug/Common.pdb
 PPHY/Debug/Common.lib
+PPHY/Release/Physics.pdb
+PPHY/Release/Physics.ipdb
+PPHY/Release/Physics.iobj
+PPHY/Release/Physics.exe
+PPHY/.vs/
