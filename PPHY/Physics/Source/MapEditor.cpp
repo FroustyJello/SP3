@@ -21,18 +21,12 @@ void MapEditor::Init()
 	start = false;
 	saveTime = 0;
 	fileName = "";
-	//CSV reader;
-	//vector<string> data;
+	choice = 0;
 
 	Math::InitRNG();
 
 	m_objectCount = 0;
 
-	m_ghost = new GameObject(GameObject::GO_BALL);
-
-	//data = reader.Load("test.csv", data);
-
-	//LoadObjects(data);
 }
 
 GameObject* MapEditor::FetchGO()
@@ -49,7 +43,7 @@ GameObject* MapEditor::FetchGO()
 	}
 	for (unsigned i = 0; i < 10; ++i)
 	{
-		GameObject *go = new GameObject(GameObject::GO_BALL);
+		GameObject *go = new GameObject();
 		m_goList.push_back(go);
 	}
 	GameObject *go = m_goList.back();
@@ -84,6 +78,31 @@ void MapEditor::chooselevel(int choice)
 	return;
 }
 
+GameObject * MapEditor::type(int i)
+{
+	GameObject *go = FetchGO();
+	switch (i)
+	{
+	case 0:
+		go->type = GameObject::GO_WALL;
+		go->scale.Set(8,8,8);
+		go->dir.Set(0, 1, 0);
+		break;
+	case 1:
+		go->type = GameObject::GO_PILLAR;
+		go->scale.Set(8, 8, 8);
+		go->dir.Set(0, 1, 0);
+		break;
+	case 2:
+		go->type = GameObject::GO_PLAYER;
+		go->scale.Set(4, 4, 4);
+		go->dir.Set(0, 1, 0);
+		break;
+	}
+
+	return go;
+}
+
 void MapEditor::LoadObjects(vector<string> data)
 {
 	string temp;
@@ -105,17 +124,21 @@ void MapEditor::LoadObjects(vector<string> data)
 				if (temp == "wall")
 				{
 					go->type = GameObject::GO_WALL;
+					break;
 				}
 
 				if (temp == "pillar")
 				{
 					go->type = GameObject::GO_PILLAR;
+					break;
 				}
-				if (temp == "ball")
+
+				if (temp == "player")
 				{
-					go->type = GameObject::GO_BALL;
+					go->type = GameObject::GO_PLAYER;
+					break;
 				}
-				break;
+				
 			case 1:
 				go->pos.x = stof(temp);
 				break;
@@ -158,14 +181,23 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
-		if(go->active)
-		switch (go->type)
+		if (go->active)
 		{
-		case GameObject::GO_WALL:
-			temp = "wall";
-			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x<<","<<go->dir.y<< std::endl;
-			break;
+			switch (go->type)
+			{
+			case GameObject::GO_WALL:
+				temp = "wall";
+				break;
+			case GameObject::GO_PILLAR:
+				temp = "pillar";
+				break;
+			case GameObject::GO_PLAYER:
+				temp = "player";
+				break;
+			}
+		file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
 		}
+		std::cout << temp << std::endl;
 	}
 	saveSuccesfull = true;
 	//std::cout << "Save Successful" << std::endl;
@@ -226,8 +258,6 @@ void MapEditor::Update(double dt)
 			camera.position.y -= 100 * dt;
 			camera.target.y -= 100 * dt;
 		}
-
-
 		if (Application::IsKeyPressed('A'))
 		{
 			camera.position.x -= 100 * dt;
@@ -257,7 +287,7 @@ void MapEditor::Update(double dt)
 			bLButtonState = true;
 			std::cout << "LBUTTON DOWN" << std::endl;
 
-			int gridCubeWidth = 5, gridCubeHeight = 5;
+			int gridCubeWidth = 8, gridCubeHeight = 8;
 
 			double x, y;
 			Application::GetCursorPos(&x, &y);
@@ -270,11 +300,9 @@ void MapEditor::Update(double dt)
 			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
 			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
 
-			GameObject*go = FetchGO();
-			go->type = GameObject::GO_WALL;
+
+			GameObject*go = type(choice);
 			go->pos.Set(cx, cy, 0);
-			go->dir.Set(0, 1, 0);
-			go->scale.Set(5, 5, 0);
 		}
 		else if (bLButtonState && !Application::IsMousePressed(0))
 		{
@@ -296,7 +324,7 @@ void MapEditor::Update(double dt)
 			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
-				if ((go->pos - mousepos).Length() < 3)
+				if ((go->pos - mousepos).Length() < 5)
 					go->active = false;
 			}
 		}
@@ -327,6 +355,28 @@ void MapEditor::Update(double dt)
 			}
 		}
 
+
+		static bool isQPressed = false;
+		static bool isEPressed = false;
+		if (Application::IsKeyPressed('Q') && !isQPressed)
+		{
+			isQPressed = true;
+			choice--;
+		}
+
+		else if (Application::IsKeyPressed('E') && !isEPressed)
+		{
+			isEPressed = true;
+			choice++;
+		}
+		 if (isQPressed && !Application::IsKeyPressed('Q'))
+		{
+			isQPressed = false;
+		}
+		else if (isEPressed && !Application::IsKeyPressed('E'))
+		{
+			isEPressed = false;
+		}
 
 		/*if (!bRButtonState && !bLButtonState && !preview)
 		{
@@ -365,7 +415,7 @@ void MapEditor::Update(double dt)
 			for (int i = 0; i < m_goList.size() - 1; ++i)
 			{
 				if (m_goList[i]->pos == m_goList[i + 1]->pos)
-					m_goList[i + 1]->active = false;
+					m_goList[i]->active = false;
 			}
 		}
 	}
@@ -402,6 +452,13 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_PLAYER:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[PLAYER], false);
 		modelStack.PopMatrix();
 		break;
 
@@ -448,8 +505,6 @@ void MapEditor::Render()
 			RenderGO(go);
 		}
 	}
-	if (m_ghost->active)
-		RenderGO(m_ghost);
 
 	//On screen text
 	std::ostringstream ss;
@@ -492,9 +547,8 @@ void MapEditor::Render()
 
 		ss.str(std::string());
 		ss.precision(5);
-		ss << "FPS: " << fps;
+		ss << "Current Object: ";
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
-
 	}
 }
 
@@ -507,10 +561,5 @@ void MapEditor::Exit()
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
-	}
-	if (m_ghost)
-	{
-		delete m_ghost;
-		m_ghost = NULL;
 	}
 }

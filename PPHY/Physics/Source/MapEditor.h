@@ -38,9 +38,11 @@ protected:
 	float saveTime;
 
 	int m_objectCount;
+	int choice;
 	bool saveSuccesfull;
 	bool start;
 	void chooselevel(int choice);
+	GameObject* type(int i);
 	bool preview;
 	string fileName;
 
