@@ -54,7 +54,7 @@ struct GameObject
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
 
-	void Update(double dt, Vector3 PlayerRef);
+	void Update(double dt, Vector3 PlayerRef, std::vector<GameObject *> m_goList);
 };
 
 #endif

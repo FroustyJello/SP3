@@ -76,10 +76,10 @@ void SceneCollision::Init()
 	m_paddle->scale.Set(5, 5, 1.f);
 
 	m_enemy = FetchGO();
-	m_enemy->type = GameObject::GO_WALL;
-	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y, m_paddle->pos.z);
+	m_enemy->type = GameObject::GO_ENEMY_MELEE;
+	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(2, 10, 1.f);
+	m_enemy->scale.Set(5, 5, 1.f);
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -517,21 +517,10 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 			continue;
+		go->Update(dt, thePlayerInfo->pos, m_goList);
 		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
-			//Exercise 2a: Rebound game object at screen edges
-			/*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
-			{
-			go->vel.x *= -1;
-			}
-			if (go->pos.y > m_worldHeight - go->scale.y || go->pos.y < 0 + go->scale.y)
-			{
-			go->vel.y *= -1;
-			}*/
-			//Exercise 2b: Unspawn if it really leave the screen
-
-			//PADDLE AI WORKING
 
 			for (int i = 0; i < v_balls.size(); i++)
 			{
@@ -560,34 +549,6 @@ void SceneCollision::Update(double dt)
 			}
 
 			thePlayerInfo->vel += gravity * dt;
-			//m_paddle->vel.Set(0, gravity.y*dt, 0);
-			//std::cout << m_paddle->vel.LengthSquared() << std::endl;
-			//m_paddle->vel.Set(0, -100, 0);
-
-			//PADDLE AI 66 HIGH 35 LOW
-			//if (m_enemy->pos.x - go->pos.x > 20)
-			//{
-			//	if (m_enemy->pos.y > go->pos.y)
-			//	{
-			//		m_enemy->pos.y--;
-
-			//		if (m_enemy->pos.y <= 35)
-			//		{
-			//			m_enemy->pos.y = 35;
-			//		}
-			//	}
-
-			//	if (m_enemy->pos.y < go->pos.y)
-			//	{
-			//		m_enemy->pos.y++;
-
-			//		if (m_enemy->pos.y >= 66)
-			//		{
-			//			m_enemy->pos.y = 66;
-			//		}
-			//	}
-			//}
-
 		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
@@ -691,6 +652,20 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_MELEE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
