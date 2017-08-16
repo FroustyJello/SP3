@@ -169,7 +169,6 @@
     <ClCompile Include="Source\P2win.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
-    <ClCompile Include="Source\RenderHelper.cpp" />
     <ClCompile Include="Source\Scene2P.cpp" />
     <ClCompile Include="Source\SceneAsteroid.cpp" />
     <ClCompile Include="Source\SceneBase.cpp" />
@@ -206,7 +205,6 @@
     <ClInclude Include="Source\P2win.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Projectile.h" />
-    <ClInclude Include="Source\RenderHelper.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Scene2P.h" />
     <ClInclude Include="Source\SceneAsteroid.h" />
