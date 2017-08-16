@@ -26,7 +26,7 @@ void SceneCollision::Init()
 
 	vector<string> data;
 
-	num_balls = 5;
+	num_balls = 5000;
 	m_plives = 5;
 	m_elives = 5;
 
@@ -67,6 +67,8 @@ void SceneCollision::Init()
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
 	//go->dir.Normalize();
+//<<<<<<< HEAD
+//=======
 
 
 	m_paddle = FetchGO();
@@ -76,10 +78,11 @@ void SceneCollision::Init()
 	m_paddle->scale.Set(5, 5, 1.f);
 
 	m_enemy = FetchGO();
-	m_enemy->type = GameObject::GO_WALL;
-	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y, m_paddle->pos.z);
+	m_enemy->type = GameObject::GO_ENEMY_MELEE;
+	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(2, 10, 1.f);
+	m_enemy->scale.Set(5, 5, 1.f);
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -107,7 +110,7 @@ GameObject* SceneCollision::FetchGO()
 
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 {
-	if (go2->type == GameObject::GO_PLAYER || go2->type == GameObject::GO_BALLDYING)
+	if (go2->type == GameObject::GO_PLAYER || go2->type == GameObject::GO_BALL)
 	{
 		Vector3 relativePosition = go1->pos - go2->pos;
 		Vector3 relativeVelocity = go1->vel - go2->vel;
@@ -205,7 +208,6 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 	}
 	else if (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_PADDLE)
 	{
-		std::cout << " HELLO " << std::endl;
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
 		go->vel = u - (2 * u.Dot(N) * N);
@@ -216,7 +218,9 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		if (go->vel.LengthSquared() <= limit)
 		{
-			go->vel = 0.f;
+			
+			go->vel = 0;
+			std::cout << "COLLIDED SPEED: " << go->vel << std::endl;
 		}
 	}
 	else if (go2->type == GameObject::GO_PILLAR)
@@ -295,6 +299,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 void SceneCollision::Update(double dt)
 {
+	std::cout << "CURRENT SPEED: " << thePlayerInfo->vel << std::endl;
 	SceneBase::Update(dt);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -309,9 +314,6 @@ void SceneCollision::Update(double dt)
 	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
 	//}
 	thePlayerInfo->Update(dt);
-
-	m_paddle->pos = thePlayerInfo->position;
-	m_paddle->pos.y = thePlayerInfo->position.y + 5;
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -364,8 +366,8 @@ void SceneCollision::Update(double dt)
 		go->active = true;
 		go->type = GameObject::GO_BALL;
 
-		go->pos.Set(m_paddle->pos.x + 5, m_paddle->pos.y, m_paddle->pos.z);
-		go->vel.Set(50, Math::RandFloatMinMax(-10, 10), 0);
+		go->pos.Set(thePlayerInfo->pos.x + 5, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
+		go->vel.Set(200, Math::RandFloatMinMax(-10, 10), 0);
 		float sc = 2;
 		go->scale.Set(sc, sc, sc);
 		go->mass = sc * sc * sc;
@@ -517,77 +519,22 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 			continue;
+//<<<<<<< HEAD
+		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
+//=======
+		go->Update(dt, thePlayerInfo->pos, m_goList);
 		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 		{
 			go->pos += go->vel * static_cast<float>(dt);
-			//Exercise 2a: Rebound game object at screen edges
-			/*			if (go->pos.x > m_worldWidth - go->scale.x || go->pos.x < 0 + go->scale.x)
-			{
-			go->vel.x *= -1;
-			}
-			if (go->pos.y > m_worldHeight - go->scale.y || go->pos.y < 0 + go->scale.y)
-			{
-			go->vel.y *= -1;
-			}*/
-			//Exercise 2b: Unspawn if it really leave the screen
 
-			//PADDLE AI WORKING
 
-			for (int i = 0; i < v_balls.size(); i++)
-			{
-				if (m_enemy->pos.x - v_balls[i]->pos.x > 20)
-				{
-					if (m_enemy->pos.y > go->pos.y)
-					{
-						m_enemy->pos.y--;
+//<<<<<<< HEAD
+			
+			go->vel += gravity * dt;
 
-						if (m_enemy->pos.y <= 35)
-						{
-							m_enemy->pos.y = 35;
-						}
-					}
-
-					if (m_enemy->pos.y < go->pos.y)
-					{
-						m_enemy->pos.y++;
-
-						if (m_enemy->pos.y >= 66)
-						{
-							m_enemy->pos.y = 66;
-						}
-					}
-				}
-			}
-
-			thePlayerInfo->vel += gravity * dt;
-			//m_paddle->vel.Set(0, gravity.y*dt, 0);
-			//std::cout << m_paddle->vel.LengthSquared() << std::endl;
-			//m_paddle->vel.Set(0, -100, 0);
-
-			//PADDLE AI 66 HIGH 35 LOW
-			//if (m_enemy->pos.x - go->pos.x > 20)
-			//{
-			//	if (m_enemy->pos.y > go->pos.y)
-			//	{
-			//		m_enemy->pos.y--;
-
-			//		if (m_enemy->pos.y <= 35)
-			//		{
-			//			m_enemy->pos.y = 35;
-			//		}
-			//	}
-
-			//	if (m_enemy->pos.y < go->pos.y)
-			//	{
-			//		m_enemy->pos.y++;
-
-			//		if (m_enemy->pos.y >= 66)
-			//		{
-			//			m_enemy->pos.y = 66;
-			//		}
-			//	}
-			//}
-
+//=======
+//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
@@ -599,9 +546,9 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_PLAYER)
+			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_BALL)
 			{
-				if (go2->type != GameObject::GO_PLAYER)
+				if (go2->type != GameObject::GO_PLAYER && go->type != GameObject::GO_BALL)
 					continue;
 				goA = go2;
 				goB = go;
@@ -615,7 +562,7 @@ void SceneCollision::Update(double dt)
 				u2 = go2->vel;
 
 				CollisionResponse(goA, goB);
-
+				
 				v1 = go->vel;
 				v2 = go2->vel;
 				go->vel = 0.95 * go->vel;
@@ -655,7 +602,7 @@ void SceneCollision::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_PLAYER:
 		modelStack.PushMatrix();
-		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y, thePlayerInfo->pos.z);
+		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[PLAYER], false);
 		modelStack.PopMatrix();
@@ -691,6 +638,20 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_MELEE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);

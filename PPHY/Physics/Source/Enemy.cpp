@@ -5,8 +5,9 @@ Enemy::Enemy()
 
 }
 
-Enemy::Enemy(std::vector<Enemy> EnemyListRef, EnemyType Type)
+Enemy::Enemy(Vector3 pos, std::vector<Enemy> EnemyListRef, EnemyType Type)
 {
+	this->pos = pos;
 	this->EnemyListRef = EnemyListRef;
 	this->Type = Type;
 }

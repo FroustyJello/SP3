@@ -14,7 +14,7 @@ class Enemy : public GameObject
 {
 public:
 	Enemy();
-	Enemy(std::vector<Enemy> EnemyListRef, EnemyType Type);
+	Enemy(Vector3 pos, std::vector<Enemy> EnemyListRef, EnemyType Type);
 	~Enemy();
 	
 	void Update(double dt, Vector3 PlayerRef);

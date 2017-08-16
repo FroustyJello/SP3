@@ -2,7 +2,6 @@
 #define GAME_OBJECT_H
 
 #include "Vector3.h"
-#include <vector>
 
 struct GameObject
 {
@@ -21,13 +20,6 @@ struct GameObject
 		GO_ENEMY,		 //enemy ship
 		GO_MISSILE,		 //player missile
 		GO_POWERUP_HEALTH,		 //powerup item
-
-		GO_ENEMY_MELEE,
-		GO_ENEMY_RANGED,
-
-		GO_ARROW,
-		GO_ENEMY_BULLET,
-
 		GO_PLAYER,
 		GO_WALL,
 		GO_PADDLE,
@@ -48,13 +40,8 @@ struct GameObject
 	float momentOfInertia;
 	float angularVelocity; //in radians
 
-	std::vector<GameObject*> *EnemyHolder;
-	Vector3 PlayerRef;
-
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
-
-	void Update(double dt, Vector3 PlayerRef);
 };
 
 #endif
