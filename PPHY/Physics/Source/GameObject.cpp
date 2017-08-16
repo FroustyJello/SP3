@@ -14,3 +14,24 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 GameObject::~GameObject()
 {
 }
+
+void GameObject::Update(double dt, Vector3 PlayerRef)
+{
+	// Behaviour
+	switch (this->type)
+	{
+	case(GO_ENEMY_MELEE):
+		this->PlayerRef = PlayerRef;
+		std::cout << PlayerRef << std::endl;
+		break;
+	case(GO_ENEMY_RANGED):
+
+		break;
+	case(GO_ARROW):
+
+		break;
+	case(GO_ENEMY_BULLET):
+
+		break;
+	}
+}
