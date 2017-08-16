@@ -18,9 +18,11 @@ void MapEditor::Init()
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	saveSuccesfull = false;
+	start = false;
 	saveTime = 0;
-	CSV reader;
-	vector<string> data;
+	fileName = "";
+	//CSV reader;
+	//vector<string> data;
 
 	Math::InitRNG();
 
@@ -28,9 +30,9 @@ void MapEditor::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
-	data = reader.Load("test.csv", data);
+	//data = reader.Load("test.csv", data);
 
-	LoadObjects(data);
+	//LoadObjects(data);
 }
 
 GameObject* MapEditor::FetchGO()
@@ -56,6 +58,31 @@ GameObject* MapEditor::FetchGO()
 	return go;
 }
 
+
+void MapEditor::chooselevel(int choice)
+{
+	CSV reader;
+	vector<string> data;
+	switch (choice)
+	{
+	case 1: 
+		fileName = "level1.csv";
+		break;
+	case 2:
+		fileName = "level2.csv";
+		break;
+	case 3:
+		fileName = "level3.csv";
+		break;
+	case 4:
+		fileName = "level4.csv";
+		break;
+	}
+	data = reader.Load(fileName, data);
+	LoadObjects(data);
+	start = true;
+	return;
+}
 
 void MapEditor::LoadObjects(vector<string> data)
 {
@@ -122,7 +149,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 {
 	std::ofstream file;
 	string temp;
-	file.open("test.csv");
+	file.open(fileName);
 	
 	if (file.fail())
 		std::cout << "File failed to open" << std::endl;
@@ -162,144 +189,186 @@ void MapEditor::Update(double dt)
 		}
 	}
 
-	if (Application::IsKeyPressed('0'))
+	if (!start)
 	{
-		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		if (Application::IsKeyPressed('1'))
+			chooselevel(1);
+		if (Application::IsKeyPressed('2'))
+			chooselevel(2);
+		if (Application::IsKeyPressed('3'))
+			chooselevel(3);
+		if (Application::IsKeyPressed('4'))
+			chooselevel(4);
+	}
+
+	if (start)
+	{
+		if (Application::IsKeyPressed('0'))
 		{
-			GameObject *go = (GameObject *)*it;
-
-			if (go->active)
-				go->active = false;
-		}
-		m_objectCount = 0;
-	}
-
-	if (Application::IsKeyPressed('W'))
-	{
-		camera.position.y += 100 * dt;
-		camera.target.y += 100 * dt;
-	}
-
-	if (Application::IsKeyPressed('S'))
-	{
-		camera.position.y -= 100 * dt;
-		camera.target.y -= 100 * dt;
-	}
-
-
-	if (Application::IsKeyPressed('A'))
-	{
-		camera.position.x -= 100 * dt;
-		camera.target.x -= 100 * dt;
-	}
-
-	if (Application::IsKeyPressed('D'))
-	{
-		camera.position.x += 100 * dt;
-		camera.target.x += 100 * dt;
-	}
-
-	static bool bSpaceState = false;
-	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
-	{
-		bSpaceState = true;
-		SaveFile(m_goList);
-	}
-	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
-	{
-		bSpaceState = false;
-	}
-	//Mouse Section
-	static bool bLButtonState = false;
-	if (!bLButtonState && Application::IsMousePressed(0))
-	{
-		bLButtonState = true;
-		std::cout << "LBUTTON DOWN" << std::endl;
-
-		int gridCubeWidth = 5, gridCubeHeight = 5;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-
-		float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-		
-		float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-		float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
-
-		GameObject*go = FetchGO();
-		go->type = GameObject::GO_WALL;
-		go->pos.Set(cx, cy, 0);
-		go->dir.Set(0, 1, 0);
-		go->scale.Set(5, 5, 0);
-	}
-	else if (bLButtonState && !Application::IsMousePressed(0))
-	{
-		bLButtonState = false;
-		std::cout << "LBUTTON UP" << std::endl;
-	}
-
-	static bool bRButtonState = false;
-	if (!bRButtonState && Application::IsMousePressed(1))
-	{
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-		Vector3 mousepos = Vector3(posX, posY, 0);
-		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-		{
-			GameObject *go = (GameObject *)*it;
-			if ((go->pos - mousepos).Length() < 3)
-				go->active = false;
-		}
-	}
-	else if (bRButtonState && !Application::IsMousePressed(1))
-	{
-		bRButtonState = false;
-		std::cout << "RBUTTON UP" << std::endl;
-
-		//spawn large GO_BALL
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-		Vector3 mousepos = Vector3(posX, posY, 0);
-
-
-		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-		{
-			GameObject *go = (GameObject *)*it;
-			if ((go->pos - mousepos).Length() < 3)
+			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
-				go->active = false;
-				m_objectCount--;
+				GameObject *go = (GameObject *)*it;
+
+				if (go->active)
+					go->active = false;
+			}
+			m_objectCount = 0;
+		}
+
+		if (Application::IsKeyPressed('W'))
+		{
+			camera.position.y += 100 * dt;
+			camera.target.y += 100 * dt;
+		}
+
+		if (Application::IsKeyPressed('S'))
+		{
+			camera.position.y -= 100 * dt;
+			camera.target.y -= 100 * dt;
+		}
+
+
+		if (Application::IsKeyPressed('A'))
+		{
+			camera.position.x -= 100 * dt;
+			camera.target.x -= 100 * dt;
+		}
+
+		if (Application::IsKeyPressed('D'))
+		{
+			camera.position.x += 100 * dt;
+			camera.target.x += 100 * dt;
+		}
+
+		static bool bSpaceState = false;
+		if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
+		{
+			bSpaceState = true;
+			SaveFile(m_goList);
+		}
+		else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
+		{
+			bSpaceState = false;
+		}
+		//Mouse Section
+		static bool bLButtonState = false;
+		if (!bLButtonState && Application::IsMousePressed(0))
+		{
+			bLButtonState = true;
+			std::cout << "LBUTTON DOWN" << std::endl;
+
+			int gridCubeWidth = 5, gridCubeHeight = 5;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+
+			GameObject*go = FetchGO();
+			go->type = GameObject::GO_WALL;
+			go->pos.Set(cx, cy, 0);
+			go->dir.Set(0, 1, 0);
+			go->scale.Set(5, 5, 0);
+		}
+		else if (bLButtonState && !Application::IsMousePressed(0))
+		{
+			bLButtonState = false;
+			std::cout << "LBUTTON UP" << std::endl;
+		}
+
+		static bool bRButtonState = false;
+		if (!bRButtonState && Application::IsMousePressed(1))
+		{
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+			Vector3 mousepos = Vector3(posX, posY, 0);
+			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			{
+				GameObject *go = (GameObject *)*it;
+				if ((go->pos - mousepos).Length() < 3)
+					go->active = false;
+			}
+		}
+		else if (bRButtonState && !Application::IsMousePressed(1))
+		{
+			bRButtonState = false;
+			std::cout << "RBUTTON UP" << std::endl;
+
+			//spawn large GO_BALL
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+			Vector3 mousepos = Vector3(posX, posY, 0);
+
+
+			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+			{
+				GameObject *go = (GameObject *)*it;
+				if ((go->pos - mousepos).Length() < 3)
+				{
+					go->active = false;
+					m_objectCount--;
+				}
+			}
+		}
+
+
+		/*if (!bRButtonState && !bLButtonState && !preview)
+		{
+			int gridCubeWidth = 5, gridCubeHeight = 5;
+
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+
+			float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+
+			GameObject*go = FetchGO();
+			go->type = GameObject::GO_WALL;
+			go->pos.Set(cx, cy, 0);
+			go->dir.Set(0, 1, 0);
+			go->scale.Set(5, 5, 0);
+			preview = true;
+
+		}*/
+
+		//Physics Simulation Section
+		//dt *= m_speed;
+
+		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+		}*/
+
+		if (!m_goList.empty())
+		{
+			for (int i = 0; i < m_goList.size() - 1; ++i)
+			{
+				if (m_goList[i]->pos == m_goList[i + 1]->pos)
+					m_goList[i + 1]->active = false;
 			}
 		}
 	}
-
-	//Physics Simulation Section
-	//dt *= m_speed;
-
-	/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-	}*/
-
-	//for (int i = 0; i < m_goList.size() - 1; ++i)
-	//{
-	//	if (m_goList[i]->pos == m_goList[i + 1]->pos)
-	//		m_goList[i + 1]->active = false;
-	//}
-	
 }
 
 void MapEditor::RenderGO(GameObject *go)
@@ -335,6 +404,14 @@ void MapEditor::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BLUE], false);
 		modelStack.PopMatrix();
 		break;
+
+	/*case GameObject::GO_PLA:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BLUE], false);
+		modelStack.PopMatrix();
+		break;*/
 	}
 }
 
@@ -376,21 +453,49 @@ void MapEditor::Render()
 
 	//On screen text
 	std::ostringstream ss;
-	if (saveSuccesfull)
+
+
+	if (!start)
 	{
-		ss << "Saved Succesfully";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
+		ss << "Choose a level to edit" << std::endl;
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
+
+		std::ostringstream ss1;
+		ss1 << "Level1";
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss1.str(), Color(0, 1, 0), 3, 25, 40);
+
+		std::ostringstream ss2;
+		ss2 << "Level2";
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss2.str(), Color(0, 1, 0), 3, 25, 30);
+
+		std::ostringstream ss3;
+		ss3 << "Level3";
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss3.str(), Color(0, 1, 0), 3, 25, 20);
+
+		std::ostringstream ss4;
+		ss4 << "Level4";
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss4.str(), Color(0, 1, 0), 3, 25, 10);
 	}
-	ss.str(std::string());
-	ss.precision(3);
-	ss << "Number of Objects: " << m_objectCount;
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 9);
+
+	if (start)
+	{
+		if (saveSuccesfull)
+		{
+			ss << "Saved Succesfully";
+			RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
+		}
+		ss.str(std::string());
+		ss.precision(3);
+		ss << "Number of Objects: " << m_objectCount;
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 9);
 
 
-	ss.str(std::string());
-	ss.precision(5);
-	ss << "FPS: " << fps;
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
+		ss.str(std::string());
+		ss.precision(5);
+		ss << "FPS: " << fps;
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
+
+	}
 }
 
 void MapEditor::Exit()

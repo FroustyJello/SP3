@@ -26,7 +26,6 @@ public:
 	void RenderGO(GameObject *go);
 
 	GameObject* FetchGO();
-	string fileName;
 
 protected:
 
@@ -40,14 +39,15 @@ protected:
 
 	int m_objectCount;
 	bool saveSuccesfull;
-
-
+	bool start;
+	void chooselevel(int choice);
+	bool preview;
+	string fileName;
 
 	vector<string>ObjData;
 
 	void LoadObjects(vector<string> data);
 	void SaveFile(vector<GameObject*> List);
-
 };
 
 #endif
