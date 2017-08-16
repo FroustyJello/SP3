@@ -15,8 +15,8 @@ public:
 		DRAW_MODE_LAST,
 	};
 	Mesh(const std::string &meshName);
-	~Mesh();
-	void Render();
+	virtual ~Mesh();
+	virtual void Render();
 	void Render(unsigned offset, unsigned count);
 
 	const std::string name;
@@ -27,6 +27,8 @@ public:
 
 	Material material;
 	unsigned textureID;
+
+	//unsigned textureArray[MAX_TEXTURES];
 };
 
 #endif

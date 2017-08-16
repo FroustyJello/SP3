@@ -171,6 +171,7 @@
     <ClCompile Include="Source\SceneCollision.cpp" />
     <ClCompile Include="Source\SceneLose.cpp" />
     <ClCompile Include="Source\SceneMenu.cpp" />
+    <ClCompile Include="Source\SceneTemp.cpp" />
     <ClCompile Include="Source\SceneWin.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\ShaderProgram.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Source\SceneCollision.h" />
     <ClInclude Include="Source\SceneLose.h" />
     <ClInclude Include="Source\SceneMenu.h" />
+    <ClInclude Include="Source\SceneTemp.h" />
     <ClInclude Include="Source\SceneWin.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\ShaderProgram.h" />

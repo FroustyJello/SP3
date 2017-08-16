@@ -2,6 +2,7 @@
 
 #include "Mtx44.h"
 #include "GameObject.h"
+#include "SceneBase.h"
 #include <string>
 #include <iostream>
 #include "SingletonTemplate.h"

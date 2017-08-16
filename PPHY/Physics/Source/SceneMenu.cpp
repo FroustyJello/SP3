@@ -48,8 +48,8 @@ void SceneMenu::Update(double dt)
 	//Lock
 	if (clickpos <= 0)
 		clickpos = 0;
-	if (clickpos >= 3)
-		clickpos = 3;
+	if (clickpos >= 4)
+		clickpos = 4;
 
 	//Selection
 	if (Application::IsKeyPressed(VK_RETURN) && c_bounceTime >= 10)
@@ -61,6 +61,8 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 2)
 			Application::SetScene(8);
 		if (clickpos == 3)
+			Application::SetScene(5);
+		if (clickpos == 4)
 			Application::SetScene(0);
 	}
 
@@ -129,11 +131,18 @@ void SceneMenu::Render()
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 12);
 
 	ss.str("");
-	ss << "Exit";
+	ss << "4 SceneTemp";
 	if (clickpos == 3)
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 6);
 	else
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 6);
+
+	ss.str("");
+	ss << "Exit";
+	if (clickpos == 4)
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 0);
+	else
+		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 0);
 }
 
 void SceneMenu::Exit()
