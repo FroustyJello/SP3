@@ -301,8 +301,8 @@ void SceneCollision::Update(double dt)
 	//}
 
 
-	thePlayerInfo->position = m_paddle->pos;
-	thePlayerInfo->position.y = m_paddle->pos.y + 5;
+	m_paddle->pos = thePlayerInfo->position;
+	m_paddle->pos.y = thePlayerInfo->position.y + 5;
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -315,18 +315,19 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('W'))
 	{
-		m_paddle->pos.y += 25 * dt * m_speed;
+		thePlayerInfo->position.y += 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		m_paddle->pos.y -= 25 * dt * m_speed;
+		thePlayerInfo->position.y -= 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
 	{
-		m_paddle->pos.x += 25 * dt * m_speed;
-		if (m_paddle->pos.x > Application::GetWindowWidth() * 0.75f)
+		thePlayerInfo->position.x += 25 * dt * m_speed;
+		//Application::GetWindowWidth() * 0.75f
+		if (thePlayerInfo->position.x > ScreenLimit)
 		{
 			camera.position.x += 25 * dt * m_speed;
 			camera.target.x += 25 * dt * m_speed;
@@ -336,11 +337,13 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('A'))
 	{
-		m_paddle->pos.x -= 25 * dt * m_speed;
-		if (m_paddle->pos.x < Application::GetWindowWidth() * 0.25f)
+		thePlayerInfo->position.x -= 25 * dt * m_speed;
+		//Application::GetWindowWidth() * 0.25f
+		if (thePlayerInfo->position.x < ScreenLimit)
 		{
 			camera.position.x -= 25 * dt * m_speed;
 			camera.target.x -= 25 * dt * m_speed;
+			ScreenLimit -= 25 * dt * m_speed;
 		}
 	}
 

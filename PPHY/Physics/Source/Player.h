@@ -3,6 +3,7 @@
 #include "Mtx44.h"
 #include <string>
 #include <iostream>
+#include "SingletonTemplate.h"
 
 using std::string;
 
