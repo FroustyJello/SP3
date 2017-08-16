@@ -34,8 +34,8 @@ void SceneCollision::Init()
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	/*thePlayerInfo->SetPos(Vector3(10, 50, 0));*/
-	m_player = thePlayerInfo;
-	m_player = FetchGO();
+	/*m_player = thePlayerInfo;
+	m_player = FetchGO();*/
 	thePlayerInfo->type = GameObject::GO_PLAYER;
 	thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
@@ -67,8 +67,7 @@ void SceneCollision::Init()
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
 	//go->dir.Normalize();
-//<<<<<<< HEAD
-//=======
+
 
 
 	m_paddle = FetchGO();
@@ -82,7 +81,6 @@ void SceneCollision::Init()
 	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
-//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -195,7 +193,7 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
-	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_BALLDYING || go2->type == GameObject::GO_PLAYER)
+	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_PLAYER)
 	{
 		Vector3 u1 = go->vel;
 		Vector3 u2 = go2->vel;
@@ -326,17 +324,14 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('W'))
 	{
-		thePlayerInfo->position.y += 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		thePlayerInfo->position.y -= 25 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
 	{
-		thePlayerInfo->position.x += 25 * dt * m_speed;
 		//Application::GetWindowWidth() * 0.75f
 		if (thePlayerInfo->position.x > ScreenLimit)
 		{
@@ -348,7 +343,6 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('A'))
 	{
-		thePlayerInfo->position.x -= 25 * dt * m_speed;
 		//Application::GetWindowWidth() * 0.25f
 		if (thePlayerInfo->position.x < ScreenLimit)
 		{
@@ -519,23 +513,21 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 			continue;
-//<<<<<<< HEAD
-		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
-//=======
+
+		//GameObject Update (AI LONG) 
 		go->Update(dt, thePlayerInfo->pos, m_goList);
-		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
-//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
+
+
+		//Gravity Codes for Gameobjects
+		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
 
 
-//<<<<<<< HEAD
-			
 			go->vel += gravity * dt;
-
-//=======
-//>>>>>>> c51ddbcccd3d3d299b9f686cbddbc4e4b2059832
 		}
+
+		
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{
@@ -572,9 +564,6 @@ void SceneCollision::Update(double dt)
 		}
 
 	}
-
-	//Enemy Paddle AI
-	//m_enemy->pos.y = m_paddle->pos.y;
 
 	if (m_plives <= 0)
 	{
