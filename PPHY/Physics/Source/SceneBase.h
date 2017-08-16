@@ -59,6 +59,7 @@ public:
 
 		PLAYER_SHIP,
 		PLAYER_BULLET,
+		PLAYER,
 
 		ENEMY,
 		MISSILE,

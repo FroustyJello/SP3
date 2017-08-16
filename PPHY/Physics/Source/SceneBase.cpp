@@ -133,6 +133,9 @@ void SceneBase::Init()
 	meshList[ENEMY] = MeshBuilder::GenerateQuad("enemy", Color(1, 1, 1), 5.f);
 	meshList[ENEMY]->textureID = LoadTGA("Image//enemy.tga");
 
+	meshList[PLAYER] = MeshBuilder::GenerateQuad("player", Color(1, 1, 1), 5.f);
+	meshList[PLAYER]->textureID = LoadTGA("Image//Player/player_right_still.tga");
+
 	meshList[MISSILE] = MeshBuilder::GenerateQuad("missile", Color(1, 1, 1), 5.f);
 	meshList[MISSILE]->textureID = LoadTGA("Image//missile.tga");
 

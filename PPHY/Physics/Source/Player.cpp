@@ -4,6 +4,8 @@
 //#include "KeyboardController.h"
 #include "Mtx44.h"
 #include "Application.h"
+#include "SceneCollision.h"
+#include "GameObject.h"
 //#include "../Projectile/Projectile.h"
 //#include "GoodiesFactory.h"
 //#include "../SoundEngine.h"
@@ -330,15 +332,28 @@ Update
 ********************************************************************************/
 void CPlayer::Update(double dt)
 {
+	float m_speed = 1.0f;
+
 	// Update the player position
-	/*if (Application::IsKeyPressed('W'))
-		MoveUpDown(true, 1.0f);
+	if (Application::IsKeyPressed('W'))
+	{
+		position.y += 25 * dt * m_speed;
+	}
+
 	if (Application::IsKeyPressed('S'))
-		MoveUpDown(false, 1.0f);*/
-	if (Application::IsKeyPressed('A'))
-		MoveLeftRight(true, 1.0f);
+	{
+		position.y -= 25 * dt * m_speed;
+	}
+
 	if (Application::IsKeyPressed('D'))
-		MoveLeftRight(false, 1.0f);
+	{
+		position.x += 25 * dt * m_speed;
+	}
+
+	if (Application::IsKeyPressed('A'))
+	{
+		position.x -= 25 * dt * m_speed;
+	}
 
 	// If the user presses SPACEBAR, then make him jump
 	//if (Application::IsKeyPressed(VK_SPACE))
@@ -433,6 +448,10 @@ void CPlayer::Update(double dt)
 //	}
 //}
 
+void CPlayer::UpdateSideMovements(void)
+{
+}
+
 /********************************************************************************
 Move Up Down
 ********************************************************************************/
@@ -500,11 +519,11 @@ void CPlayer::MoveLeftRight(const bool mode, const float timeDiff)
 //	return false;
 //}
 
-// Constrain the position within the borders
+ //Constrain the position within the borders
 void CPlayer::Constrain(void)
 {
 	// Constrain player within the boundary
-	if (position.x > maxBoundary.x - (tileSize_Width >> 1))
+	/*if (position.x > maxBoundary.x - (tileSize_Width >> 1))
 	{
 		position.x = maxBoundary.x - (tileSize_Width >> 1);
 		mapOffset_x = mapOffset_x + m_dSpeed;
@@ -525,7 +544,7 @@ void CPlayer::Constrain(void)
 	if (position.y < minBoundary.y)
 	{
 		position.y = minBoundary.y + (tileSize_Height >> 1);
-	}
+	}*/
 }
 
 //// Set mapFineOffset_x values

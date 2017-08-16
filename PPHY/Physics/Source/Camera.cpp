@@ -28,3 +28,12 @@ void Camera::Reset()
 void Camera::Update(double dt)
 {
 }
+
+Mtx44 Camera::GetViewMatrix()
+{
+	Mtx44 result;
+	result.SetToLookAt(position.x, position.y, position.z,
+		target.x, target.y, target.z,
+		up.x, up.y, up.z);
+	return result;
+}

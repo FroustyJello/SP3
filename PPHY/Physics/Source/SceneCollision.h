@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
+#include "Player.h"
 #include "csv.h"
 
 using std::vector;
@@ -32,6 +33,9 @@ public:
 	float CheckCollision2(GameObject *go1, GameObject *go2);
 	void CollisionResponse(GameObject *go, GameObject *go2);
 
+	
+	GameObject* m_paddle;
+
 protected:
 
 	//Physics
@@ -40,10 +44,11 @@ protected:
 	float m_worldWidth;
 	float m_worldHeight;
 	GameObject *m_ghost;
-	GameObject* m_paddle;
 	GameObject* m_enemy;
 	vector<GameObject*> v_balls;
 	int m_objectCount;
+
+	CPlayer* thePlayerInfo;
 
 	//Auditing
 	float m1, m2;
