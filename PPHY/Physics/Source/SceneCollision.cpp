@@ -30,6 +30,10 @@ void SceneCollision::Init()
 	m_plives = 5;
 	m_elives = 5;
 
+	thePlayerInfo = CPlayer::GetInstance();
+	thePlayerInfo->Init();
+	thePlayerInfo->SetPos(Vector3(10, 50, 0));
+
 
 	//Physics code here
 	m_speed = 1.f;
@@ -47,16 +51,20 @@ void SceneCollision::Init()
 
 	LoadObjects(data);
 
+
+	GameObject *go = FetchGO();
+	go->type = GameObject::GO_WALL;
+	go->pos.Set(10, 10, 10);
+	go->dir.Set(0, 1, 0);
+	go->scale.Set(1, 100, 1);
+	//go->dir.Normalize();
+
+
 	m_paddle = FetchGO();
 	m_paddle->type = GameObject::GO_BALL;
 	m_paddle->pos.Set(10, 50, 0);
 	m_paddle->dir.Set(1, 0, 0);
 	m_paddle->scale.Set(5, 5, 1.f);
-
-	thePlayerInfo = CPlayer::GetInstance();
-	thePlayerInfo->Init();
-	thePlayerInfo->SetPos(Vector3(10, 50, 0));
-	thePlayerInfo->SetTileSize(5, 5);
 
 	m_enemy = FetchGO();
 	m_enemy->type = GameObject::GO_WALL;
@@ -188,16 +196,15 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 	}
 	else if (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_PADDLE)
 	{
-		//Vector3 u = go->vel;
-		//Vector3 N = go2->dir;
-		//go->vel = u - (2 * u.Dot(N) * N);
+		std::cout << " HELLO " << std::endl;
+		Vector3 u = go->vel;
+		Vector3 N = go2->dir;
+		go->vel = u - (2 * u.Dot(N) * N);
 
-		if (go2->type == GameObject::GO_PADDLE)
-		{
-			go->vel *= 1.4;
-		}
 		float limit = 0;
+
 		limit = go->vel.LengthSquared();
+
 		if (go->vel.LengthSquared() <= limit)
 		{
 			go->vel = 0.f;
@@ -294,6 +301,8 @@ void SceneCollision::Update(double dt)
 	//}
 
 
+	thePlayerInfo->position = m_paddle->pos;
+	thePlayerInfo->position.y = m_paddle->pos.y + 5;
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -304,7 +313,7 @@ void SceneCollision::Update(double dt)
 		m_speed += 0.1f;
 	}
 
-	/*if (Application::IsKeyPressed('W'))
+	if (Application::IsKeyPressed('W'))
 	{
 		m_paddle->pos.y += 25 * dt * m_speed;
 	}
@@ -312,12 +321,12 @@ void SceneCollision::Update(double dt)
 	if (Application::IsKeyPressed('S'))
 	{
 		m_paddle->pos.y -= 25 * dt * m_speed;
-	}*/
+	}
 
 	if (Application::IsKeyPressed('D'))
 	{
-		//m_paddle->pos.x += 25 * dt * m_speed;
-		if (thePlayerInfo->position.x > ScreenLimit)
+		m_paddle->pos.x += 25 * dt * m_speed;
+		if (m_paddle->pos.x > ScreenLimit)
 		{
 			camera.position.x += 25 * dt * m_speed;
 			camera.target.x += 25 * dt * m_speed;
@@ -327,8 +336,8 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('A'))
 	{
-		//m_paddle->pos.x -= 25 * dt * m_speed;
-		if (thePlayerInfo->position.x < 50)
+		m_paddle->pos.x -= 25 * dt * m_speed;
+		if (m_paddle->pos.x < 50)
 		{
 			camera.position.x -= 25 * dt * m_speed;
 			camera.target.x -= 25 * dt * m_speed;
@@ -376,7 +385,7 @@ void SceneCollision::Update(double dt)
 		camera.position.y -= 10 * dt;
 		camera.target.y -= 10 * dt;
 	}
-	thePlayerInfo->Update(dt);
+
 	static bool bSpaceState = false;
 	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
 	{
@@ -539,6 +548,8 @@ void SceneCollision::Update(double dt)
 			}
 
 			m_paddle->vel += gravity * dt;
+			//m_paddle->vel.Set(0, gravity.y*dt, 0);
+			//std::cout << m_paddle->vel.LengthSquared() << std::endl;
 			//m_paddle->vel.Set(0, -100, 0);
 
 			//PADDLE AI 66 HIGH 35 LOW
@@ -697,8 +708,8 @@ void SceneCollision::Render()
 
 	modelStack.PushMatrix();
 	modelStack.Translate(thePlayerInfo->position.x, thePlayerInfo->position.y, thePlayerInfo->position.z);
-	modelStack.Scale(10, 10, 1);
-	RenderMesh(meshList[PLAYER],false);
+	modelStack.Scale(4, 4, 1);
+	RenderMesh(meshList[PLAYER], false);
 	modelStack.PopMatrix();
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
