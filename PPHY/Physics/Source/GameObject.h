@@ -20,7 +20,7 @@ struct GameObject
 		GO_ENEMY,		 //enemy ship
 		GO_MISSILE,		 //player missile
 		GO_POWERUP_HEALTH,		 //powerup item
-
+		GO_PLAYER,
 		GO_WALL,
 		GO_PADDLE,
 		GO_PILLAR,

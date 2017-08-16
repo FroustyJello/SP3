@@ -45,6 +45,7 @@ protected:
 	float m_worldHeight;
 	GameObject *m_ghost;
 	GameObject* m_enemy;
+	GameObject* m_player;
 	vector<GameObject*> v_balls;
 	int m_objectCount;
 
