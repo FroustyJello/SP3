@@ -116,7 +116,7 @@ GameObject* SceneCollision::FetchGO()
 
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 {
-	if (go2->type == GameObject::GO_PLAYER || go2->type == GameObject::GO_BALL)
+	if (go2->type == GameObject::GO_BALL)
 	{
 		Vector3 relativePosition = go1->pos - go2->pos;
 		Vector3 relativeVelocity = go1->vel - go2->vel;
@@ -125,7 +125,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 
 		return relativeVelocity.Dot(relativePosition) < 0 && relativePosition.LengthSquared() < (r1 + r2) * (r1 + r2);
 	}
-	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_WALL)
+	else if ((go1->type == GameObject::GO_PLAYER || go1->type == GameObject::GO_BALL) && go2->type == GameObject::GO_WALL)
 	{
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
@@ -143,7 +143,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
 	}
 
-	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_PADDLE)
+	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_WALL)
 	{
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
@@ -153,15 +153,24 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		Vector3 NP = go2->dir.Cross(Vector3(0, 0, 1));
 		Vector3 N = go2->dir;
 
+		std::cout << "COLLIDED BALL WALL" << std::endl;
+
 		Vector3 relativePos = b1 - w0;
 		if (relativePos.Dot(N) > 0)
 			N = -N;
 
+		//New box code
+		Vector3 detect(Math::Clamp((b1 - w0).x, 0.f, h / 2), Math::Clamp((b1 - w0).y, 0.f, l / 2), 0);
+		detect += w0;
 
-		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
+
+		//return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
+
+		if ((detect - b1).Length() < r)
+			return true;
 	}
 
-	else if (go1->type == GameObject::GO_PLAYER && go2->type == GameObject::GO_PILLAR)
+	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_PILLAR)
 	{
 		Vector3 p1 = go1->pos;
 		Vector3 p2 = go2->pos;
@@ -201,7 +210,7 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
-	if (go2->type == GameObject::GO_BALL || go2->type == GameObject::GO_BALLDYING || go2->type == GameObject::GO_PLAYER)
+	if (go2->type == GameObject::GO_BALL)
 	{
 		Vector3 u1 = go->vel;
 		Vector3 u2 = go2->vel;
@@ -209,10 +218,12 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 u1N = u1.Dot(N) * N;
 		Vector3 u2N = u2.Dot(N) * N;
 
+		std::cout << "COLLIDED BALL" << std::endl;
+
 		go->vel = u1 + 2 * m2 / (m1 + m2) * (u2N - u1N);
 		go2->vel = u2 + 2 * m1 / (m1 + m2) * (u1N - u2N);
 	}
-	else if (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_PADDLE)
+	else if (go2->type == GameObject::GO_WALL && go->type == GameObject::GO_PLAYER)
 	{
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
@@ -226,9 +237,45 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		{
 			
 			go->vel = 0;
-			std::cout << "COLLIDED SPEED: " << go->vel << std::endl;
 		}
 	}
+
+	else if (go2->type == GameObject::GO_WALL && go->type == GameObject::GO_BALL)
+	{
+		//Vector3 u = go->vel;
+		//Vector3 N = go2->dir;
+		//go->vel = u - (2 * u.Dot(N) * N);
+
+		Vector3 u = go->vel;
+		Vector3 N = go2->dir;
+		
+		Vector3 distance;
+		distance = go->pos - go2->pos;
+		distance.x = Math::Clamp(distance.x, -go2->scale.x / 2, go2->scale.x / 2);
+		distance.y = Math::Clamp(distance.y, -go2->scale.y / 2, go2->scale.y / 2);
+
+		distance += N;
+
+		Vector3 right = N.Cross(Vector3(0, 0, 1));
+
+		if (distance.Dot(right) > 0)
+		{
+			N = N.Cross(Vector3(0, 0, 1));
+			N = -N;
+		}
+
+		if (distance.Dot(right) < 0)
+		{
+			N = N.Cross(Vector3(0, 0, 1));
+		}
+
+		go->vel = u - (2 * u.Dot(N) * N);
+
+
+
+
+	}
+
 	else if (go2->type == GameObject::GO_PILLAR)
 	{
 		Vector3 u = go->vel;
@@ -309,7 +356,6 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 void SceneCollision::Update(double dt)
 {
-	std::cout << "CURRENT SPEED: " << thePlayerInfo->vel << std::endl;
 	SceneBase::Update(dt);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -324,6 +370,8 @@ void SceneCollision::Update(double dt)
 	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
 	//}
 	thePlayerInfo->Update(dt);
+
+
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -530,10 +578,10 @@ void SceneCollision::Update(double dt)
 		if (!go->active)
 			continue;
 
-		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
 
 		go->Update(dt, thePlayerInfo->pos, m_goList);
-		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_BALLDYING||go->type == GameObject::GO_PLAYER)
+
+		if (go->type == GameObject::GO_BALL || go->type == GameObject::GO_PLAYER)
 
 		{
 			go->pos += go->vel * static_cast<float>(dt);
@@ -551,7 +599,7 @@ void SceneCollision::Update(double dt)
 			//Practical 4, Exercise 13: improve collision detection algorithm
 			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_BALL)
 			{
-				if (go2->type != GameObject::GO_PLAYER && go->type != GameObject::GO_BALL)
+				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_BALL)
 					continue;
 				goA = go2;
 				goB = go;
@@ -608,13 +656,6 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[PLAYER], false);
-		modelStack.PopMatrix();
-		break;
-	case GameObject::GO_BALLDYING:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BALLDYING], false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BLUE:

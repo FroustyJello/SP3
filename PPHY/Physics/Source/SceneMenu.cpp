@@ -110,14 +110,14 @@ void SceneMenu::Render()
 
 	//Selection
 	ss.str("");
-	ss << "1 Player";
+	ss << "Level 1";
 	if (clickpos == 0)
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 24);
 	else
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
 
 	ss.str("");
-	ss << "2 Player";
+	ss << "Level 2";
 	if (clickpos == 1)
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 18);
 	else
