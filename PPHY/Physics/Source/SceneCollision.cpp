@@ -164,10 +164,9 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		detect += w0;
 
 
-		//return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
-
 		if ((detect - b1).Length() < r)
-			return true;
+			return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
+			//return true;
 	}
 
 	else if (go1->type == GameObject::GO_BALL && go2->type == GameObject::GO_PILLAR)
