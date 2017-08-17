@@ -56,6 +56,50 @@ GameObject* MapEditor::FetchGO()
 }
 
 
+void MapEditor::renderText()
+{
+	std::ostringstream ss;
+	if (!start)
+	{
+		ss << "Choose a level to edit" << std::endl;
+		//RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
+		std::ostringstream ss1;
+		ss1 << "Level1";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss1.str(), Color(0, 1, 0), 3, 25, 40);
+
+		std::ostringstream ss2;
+		ss2 << "Level2";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 25, 30);
+
+		std::ostringstream ss3;
+		ss3 << "Level3";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 25, 20);
+
+		std::ostringstream ss4;
+		ss4 << "Level4";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 25, 10);
+	}
+
+	if (start)
+	{
+		if (saveSuccesfull)
+		{
+			ss << "Saved Succesfully";
+			RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 12);
+		}
+		ss.str(std::string());
+		ss.precision(5);
+		ss << "Current Object: " << selection;
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
+
+		ss.str(std::string());
+		ss.precision(5);
+		ss <<"Press 'SPACE' to save";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 5, 50);
+	}
+}
+
 void MapEditor::chooselevel(int choice)
 {
 	CSV reader;
@@ -84,6 +128,7 @@ void MapEditor::chooselevel(int choice)
 GameObject * MapEditor::type(int i)
 {
 	GameObject *go = FetchGO();
+	go->type = (GameObject::GAMEOBJECT_TYPE)choice;
 	switch (i)
 	{
 	case 0:
@@ -126,24 +171,8 @@ void MapEditor::LoadObjects(vector<string> data)
 			switch (k)
 			{
 			case 0:
-				if (temp == "wall")
-				{
-					go->type = GameObject::GO_WALL;
-					break;
-				}
-
-				if (temp == "pillar")
-				{
-					go->type = GameObject::GO_PILLAR;
-					break;
-				}
-
-				if (temp == "player")
-				{
-					go->type = GameObject::GO_PLAYER;
-					break;
-				}
-				
+				go->type = (GameObject::GAMEOBJECT_TYPE)atoi(temp.c_str());
+				break;
 			case 1:
 				go->pos.x = stof(temp);
 				break;
@@ -195,26 +224,15 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
-		if (go->active)
+		temp = "";
+		if (go->active && go->type!= GameObject::GO_NONE)
 		{
-			switch (go->type)
-			{
-			case GameObject::GO_WALL:
-				temp = "wall";
-				break;
-			case GameObject::GO_PILLAR:
-				temp = "pillar";
-				break;
-			case GameObject::GO_PLAYER:
-				temp = "player";
-				break;
-			}
-		file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+			temp = std::to_string((int)go->type);
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
 		}
 		std::cout << temp << std::endl;
 	}
 	saveSuccesfull = true;
-	//std::cout << "Save Successful" << std::endl;
 	file.close();
 }
 
@@ -224,6 +242,7 @@ void MapEditor::Update(double dt)
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
+
 
 	if (saveSuccesfull)
 	{
@@ -248,6 +267,14 @@ void MapEditor::Update(double dt)
 
 	if (start)
 	{
+
+		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+			if (go->pos == Vector3(0, 0, 0))
+				go->active = false;
+
+		}
 		if (Application::IsKeyPressed('0'))
 		{
 			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -262,25 +289,25 @@ void MapEditor::Update(double dt)
 
 		if (Application::IsKeyPressed('W'))
 		{
-			camera.position.y += 100 * dt;
-			camera.target.y += 100 * dt;
+			camera.position.y += 200 * dt;
+			camera.target.y += 200 * dt;
 		}
 
 		if (Application::IsKeyPressed('S'))
 		{
-			camera.position.y -= 100 * dt;
-			camera.target.y -= 100 * dt;
+			camera.position.y -= 200 * dt;
+			camera.target.y -= 200 * dt;
 		}
 		if (Application::IsKeyPressed('A'))
 		{
-			camera.position.x -= 100 * dt;
-			camera.target.x -= 100 * dt;
+			camera.position.x -= 200 * dt;
+			camera.target.x -= 200 * dt;
 		}
 
 		if (Application::IsKeyPressed('D'))
 		{
-			camera.position.x += 100 * dt;
-			camera.target.x += 100 * dt;
+			camera.position.x += 200 * dt;
+			camera.target.x += 200 * dt;
 		}
 
 		static bool bSpaceState = false;
@@ -315,7 +342,7 @@ void MapEditor::Update(double dt)
 
 			m_ghost->active = false;
 			GameObject*go = type(choice);
-			go->pos.Set(cx, cy, 0);
+			go->pos.Set(cx, cy, 1);
 		}
 		else if (bLButtonState && !Application::IsMousePressed(0))
 		{
@@ -341,36 +368,10 @@ void MapEditor::Update(double dt)
 				GameObject *go = (GameObject *)*it;
 				if ((go->pos - mousepos).Length() < 5)
 				{
+					 go->pos.SetZero();
 					 go->active = false;
-					 delete go;
 				}
 			}
-		}
-		else if (bRButtonState && !Application::IsMousePressed(1))
-		{
-			/*bRButtonState = false;
-			std::cout << "RBUTTON UP" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-			Vector3 mousepos = Vector3(posX, posY, 0);
-
-
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-				if ((go->pos - mousepos).Length() < 3)
-				{
-					go->active = false;
-					delete go;
-					m_objectCount--;
-				}
-			}*/
 		}
 		static bool isQPressed = false;
 		static bool isEPressed = false;
@@ -410,14 +411,14 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BALL], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("ball"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BLUE:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BLUE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_WALL:
@@ -425,14 +426,14 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_CUBE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BLUE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PLAYER:
@@ -465,9 +466,6 @@ void MapEditor::Render()
 	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
 	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
 
-	/*float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;*/
-
 	// Projection matrix : Orthographic Projection
 	Mtx44 projection;
 	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
@@ -483,7 +481,7 @@ void MapEditor::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	RenderMesh(meshList[GEO_AXES], false);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
@@ -500,43 +498,10 @@ void MapEditor::Render()
 	modelStack.PopMatrix();
 
 	//On screen text
-	std::ostringstream ss;
+	renderText();
 
 
-	if (!start)
-	{
-		ss << "Choose a level to edit" << std::endl;
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
-
-		std::ostringstream ss1;
-		ss1 << "Level1";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss1.str(), Color(0, 1, 0), 3, 25, 40);
-
-		std::ostringstream ss2;
-		ss2 << "Level2";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss2.str(), Color(0, 1, 0), 3, 25, 30);
-
-		std::ostringstream ss3;
-		ss3 << "Level3";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss3.str(), Color(0, 1, 0), 3, 25, 20);
-
-		std::ostringstream ss4;
-		ss4 << "Level4";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss4.str(), Color(0, 1, 0), 3, 25, 10);
-	}
-
-	if (start)
-	{
-		if (saveSuccesfull)
-		{
-			ss << "Saved Succesfully";
-			RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
-		}
-		ss.str(std::string());
-		ss.precision(5);
-		ss << "Current Object: " << selection;
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
-	}
+	
 }
 
 void MapEditor::Exit()

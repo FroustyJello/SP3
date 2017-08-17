@@ -18,6 +18,7 @@ SceneBase::~SceneBase()
 
 void SceneBase::Init()
 {
+	thePlayerInfo = CPlayer::GetInstance();
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	// Enable depth test
@@ -141,11 +142,37 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
 
+	//Player sprite
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_still_0")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_still_1")->textureID = LoadTGA("Image//Player/player_right_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_still_0")->textureID = LoadTGA("Image//Player/player_left_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_still_1")->textureID = LoadTGA("Image//Player/player_left_still_1.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_0",Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_0")->textureID = LoadTGA("Image//Player/player_right_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_1")->textureID = LoadTGA("Image//Player/player_right_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_0")->textureID = LoadTGA("Image//Player/player_left_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_1")->textureID = LoadTGA("Image//Player/player_left_1.tga");
 
+	thePlayer = new SpriteEntity*[8];
+	thePlayer[0] = Create::Sprite2DObject("player_right_still_0", true);
+	//thePlayer[1] = Create::Sprite2DObject("player_right_still_1", true);
+	thePlayer[1] = Create::Sprite2DObject("player_right_0", true);
+	thePlayer[2] = Create::Sprite2DObject("player_right_1", true);
+	thePlayer[3] = Create::Sprite2DObject("player_left_still_0", true);
+	//thePlayer[5] = Create::Sprite2DObject("player_left_still_1", true);
+	thePlayer[4] = Create::Sprite2DObject("player_left_0", true);
+	thePlayer[5] = Create::Sprite2DObject("player_left_1", true);
+
+	thePlayerInfo->SetRightIndices(0, 2);
+	thePlayerInfo->SetLeftIndices(3, 5);
 
 	bLightEnabled = false;
 }
