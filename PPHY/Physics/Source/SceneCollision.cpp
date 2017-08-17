@@ -84,17 +84,29 @@ void SceneCollision::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
-	/*m_paddle = FetchGO();
+	m_paddle = FetchGO();
 	m_paddle->type = GameObject::GO_BALL;
 	m_paddle->pos.Set(10, 50, 0);
 	m_paddle->dir.Set(1, 0, 0);
-	m_paddle->scale.Set(5, 5, 1.f);*/
+	m_paddle->scale.Set(5, 5, 1.f);
 
-	/*m_enemy = FetchGO();
-	m_enemy->type = GameObject::GO_ENEMY_MELEE;
-	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
+	m_enemy = FetchGO();
+	m_enemy->type = GameObject::GO_ENEMY_RANGED;
+	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);*/
+	m_enemy->scale.Set(5, 5, 1.f);
+
+	m_enemy = FetchGO();
+	m_enemy->type = GameObject::GO_ENEMY_RANGED;
+	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, m_paddle->pos.z);
+	m_enemy->dir.Set(1, 0, 0);
+	m_enemy->scale.Set(5, 5, 1.f);
+
+	m_enemy = FetchGO();
+	m_enemy->type = GameObject::GO_ENEMY_MELEE;
+	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 10, m_paddle->pos.z);
+	m_enemy->dir.Set(1, 0, 0);
+	m_enemy->scale.Set(5, 5, 1.f);
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -420,12 +432,12 @@ void SceneCollision::Update(double dt)
 	{
 		thePlayerInfo->position.x -= 25 * dt * m_speed;
 		//Application::GetWindowWidth() * 0.25f
-		if (thePlayerInfo->position.x < ScreenLimit)
-		{
-			camera.position.x -= 25 * dt * m_speed;
-			camera.target.x -= 25 * dt * m_speed;
-			ScreenLimit -= 25 * dt * m_speed;
-		}
+		//if (thePlayerInfo->position.x < ScreenLimit)
+		//{
+		//	camera.position.x -= 25 * dt * m_speed;
+		//	camera.target.x -= 25 * dt * m_speed;
+		//	ScreenLimit -= 25 * dt * m_speed;
+		//}
 	}
 
 	bounce++;
@@ -648,7 +660,6 @@ void SceneCollision::Update(double dt)
 
 }
 
-
 void SceneCollision::RenderGO(GameObject *go)
 {
 	switch (go->type)
@@ -705,6 +716,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BOSS_1:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);

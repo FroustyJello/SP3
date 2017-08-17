@@ -27,6 +27,7 @@ struct GameObject :public  Singleton<GameObject>
 
 		GO_ARROW,
 		GO_ENEMY_BULLET,
+		GO_BOSS_LASER,
 
 		GO_PLAYER,
 		GO_WALL,
@@ -64,6 +65,14 @@ struct GameObject :public  Singleton<GameObject>
 	~GameObject();
 
 	void Update(double dt, Vector3 PlayerRef, std::vector<GameObject *> m_goList);
+
+	// Enemy Variables
+	float attackBT; // Attack bounce time
+	GameObject *ClosestEnemy = NULL;
+	bool DetectedPlayer = false;
+
+	// Boss Variables
+	bool Boss_1_Range;
 };
 
 #endif
