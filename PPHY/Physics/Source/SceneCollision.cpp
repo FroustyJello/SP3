@@ -2,6 +2,7 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include <sstream>
+#define integer int
 
 SceneCollision::SceneCollision()
 {
@@ -13,7 +14,6 @@ SceneCollision::~SceneCollision()
 
 void SceneCollision::Init()
 {
-	ScreenLimit = 60.f;
 	SceneBase::Init();
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	num_balls = 5000;
 	m_plives = 5;
 	m_elives = 5;
+
 
 	
 	thePlayerInfo = CPlayer::GetInstance();
@@ -61,7 +62,7 @@ void SceneCollision::Init()
 
 	LoadObjects(data);
 
-	for (int i = 0; i < m_goList.size(); ++i)
+	for (integer i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
@@ -73,11 +74,15 @@ void SceneCollision::Init()
 
 	GameObject *go = FetchGO();
 	go->type = GameObject::GO_WALL;
-	go->pos.Set(10, 10, 10);
+	go->pos.Set(-10, 10, 10);
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
 
+	//ScreenLimit = 60.f;
 
+	ScreenLimit = thePlayerInfo->pos.x + 10;
+
+	m_ghost = new GameObject(GameObject::GO_BALL);
 
 	/*m_paddle = FetchGO();
 	m_paddle->type = GameObject::GO_BALL;
@@ -157,12 +162,16 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		std::cout << "COLLIDED BALL WALL" << std::endl;
 
 		Vector3 relativePos = b1 - w0;
-		if (relativePos.Dot(N) > 0)
-			N = -N;
+		//relativePos += N;
+		//if (relativePos.Dot(N) > 0)
+		//	N = -N;
 
 		//New box code
 		Vector3 detect(Math::Clamp((b1 - w0).x, 0.f, h / 2), Math::Clamp((b1 - w0).y, 0.f, l / 2), 0);
 		detect += w0;
+
+		//Vector3 right = relativePos.Cross(Vector3(0, 0, 1));
+
 
 
 		if ((detect - b1).Length() < r)
@@ -250,31 +259,31 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
 		
-		Vector3 distance;
-		distance = go->pos - go2->pos;
+		Vector3 distance =  go->pos - go2->pos;
 		distance.x = Math::Clamp(distance.x, -go2->scale.x / 2, go2->scale.x / 2);
 		distance.y = Math::Clamp(distance.y, -go2->scale.y / 2, go2->scale.y / 2);
 
-		distance += N;
-
 		Vector3 right = N.Cross(Vector3(0, 0, 1));
 
-		if (distance.Dot(right) > 0)
+		if (abs(distance.x) > abs(distance.y))
 		{
-			N = N.Cross(Vector3(0, 0, 1));
-			N = -N;
-		}
+			if (distance.Dot(right) > 0)
+			{
+				N = N.Cross(Vector3(0, 0, 1));
+				N = -N;
+			}
 
-		if (distance.Dot(right) < 0)
+			if (distance.Dot(right) < 0)
+			{
+				N = N.Cross(Vector3(0, 0, 1));
+			}
+		}
+		else
 		{
-			N = N.Cross(Vector3(0, 0, 1));
+
 		}
 
 		go->vel = u - (2 * u.Dot(N) * N);
-
-
-
-
 	}
 
 	else if (go2->type == GameObject::GO_PILLAR)
@@ -292,14 +301,14 @@ void SceneCollision::LoadObjects(vector<string> data)
 	string temp;
 	GameObject *go;
 
-	for (int i = 0; i < data.size(); i++)
+	for (integer i = 0; i < data.size(); i++)
 	{
 		go = FetchGO();
 
-		for (int k = 0; k < 7; k++)
+		for (integer k = 0; k < 7; k++)
 		{
 			temp = "";
-			int comma = data[i].find(",");
+			integer comma = data[i].find(",");
 			temp = data[i].substr(0, comma);
 
 
@@ -382,6 +391,11 @@ void SceneCollision::Update(double dt)
 	{
 		m_speed += 0.1f;
 	}
+
+	if (Application::IsKeyPressed('3'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if (Application::IsKeyPressed('4'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	if (Application::IsKeyPressed('W'))
 	{
@@ -481,6 +495,12 @@ void SceneCollision::Update(double dt)
 		bSpaceState = false;
 	}
 
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		integer w = Application::GetWindowWidth();
+		integer h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
 	//Mouse Section
 	static bool bLButtonState = false;
@@ -489,15 +509,9 @@ void SceneCollision::Update(double dt)
 		bLButtonState = true;
 		std::cout << "LBUTTON DOWN" << std::endl;
 
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
-		m_ghost->pos.Set(posX, posY, 0); //IMPT
 		m_ghost->active = true;
+		m_ghost->pos.Set(posX, posY, 0); //IMPT
 		float sc = 2;
 		m_ghost->scale.Set(sc, sc, sc);
 	}
@@ -510,13 +524,6 @@ void SceneCollision::Update(double dt)
 		GameObject *go = FetchGO();
 		go->active = true;
 		go->type = GameObject::GO_BALL;
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-
 
 		go->pos = m_ghost->pos;
 		go->vel.Set(m_ghost->pos.x - posX, m_ghost->pos.y - posY, 0);
@@ -533,8 +540,8 @@ void SceneCollision::Update(double dt)
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
+		integer w = Application::GetWindowWidth();
+		integer h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
@@ -554,8 +561,8 @@ void SceneCollision::Update(double dt)
 		go->type = GameObject::GO_BALL;
 		double x, y;
 		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
+		integer w = Application::GetWindowWidth();
+		integer h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
@@ -583,6 +590,11 @@ void SceneCollision::Update(double dt)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
 			go->vel += gravity * dt;
+			if (go->vel.Length() > 40)
+			{
+				go->vel.Normalize();
+				go->vel *= 40;
+			}
 		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
