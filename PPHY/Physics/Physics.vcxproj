@@ -175,6 +175,7 @@
     <ClCompile Include="Source\SceneWin.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\ShaderProgram.cpp" />
+    <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\Strategy.cpp" />
     <ClCompile Include="Source\Strategy_Coward.cpp" />
     <ClCompile Include="Source\Strategy_Kill.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Source\SceneWin.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\ShaderProgram.h" />
+    <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\Strategy.h" />
     <ClInclude Include="Source\Strategy_Coward.h" />
     <ClInclude Include="Source\Strategy_Kill.h" />
