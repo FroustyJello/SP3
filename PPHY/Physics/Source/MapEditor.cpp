@@ -21,14 +21,14 @@ void MapEditor::Init()
 	start = false;
 	saveTime = 0;
 	fileName = "";
-	//selection = "";
 	choice = 0;
 	selection = "Wall1";
 
 	Math::InitRNG();
 
 	m_objectCount = 0;
-	m_ghost = new GameObject(GameObject::GO_BALL);
+	m_ghost = new GameObject(GameObject::GO_WALL);
+	m_ghost->scale.Set(8, 8, 8);
 
 }
 
@@ -88,7 +88,7 @@ GameObject * MapEditor::type(int i)
 	{
 	case 0:
 		go->type = GameObject::GO_WALL;
-		go->scale.Set(8,8,8);
+		go->scale.Set(8, 8, 8);
 		go->dir.Set(0, 1, 0);
 		selection = "Wall1";
 		break;
@@ -100,12 +100,11 @@ GameObject * MapEditor::type(int i)
 		break;
 	case 2:
 		go->type = GameObject::GO_PLAYER;
-		go->scale.Set(4, 4, 4);
+		go->scale.Set(5, 5, 5);
 		go->dir.Set(0, 1, 0);
 		selection = "Player";
 		break;
 	}
-
 	return go;
 }
 
@@ -176,6 +175,15 @@ void MapEditor::LoadObjects(vector<string> data)
 
 void MapEditor::SaveFile(vector<GameObject*> List)
 {
+	if (!m_goList.empty())
+	{
+		for (int i = 0; i < m_goList.size() - 1; ++i)
+		{
+			if (m_goList[i]->pos == m_goList[i + 1]->pos)
+				m_goList[i]->active = false;
+		}
+	}
+
 	std::ofstream file;
 	string temp;
 	file.open(fileName);
@@ -226,9 +234,6 @@ void MapEditor::Update(double dt)
 			saveTime = 0;
 		}
 	}
-
-	previewTime += 1 * dt;
-
 	if (!start)
 	{
 		if (Application::IsKeyPressed('1'))
@@ -308,12 +313,13 @@ void MapEditor::Update(double dt)
 			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
 			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
 
-
+			m_ghost->active = false;
 			GameObject*go = type(choice);
 			go->pos.Set(cx, cy, 0);
 		}
 		else if (bLButtonState && !Application::IsMousePressed(0))
 		{
+			m_ghost->active = true;
 			bLButtonState = false;
 			std::cout << "LBUTTON UP" << std::endl;
 		}
@@ -329,19 +335,22 @@ void MapEditor::Update(double dt)
 			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
 
 			Vector3 mousepos = Vector3(posX, posY, 0);
+
 			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 			{
 				GameObject *go = (GameObject *)*it;
 				if ((go->pos - mousepos).Length() < 5)
-					go->active = false;
+				{
+					 go->active = false;
+					 delete go;
+				}
 			}
 		}
 		else if (bRButtonState && !Application::IsMousePressed(1))
 		{
-			bRButtonState = false;
+			/*bRButtonState = false;
 			std::cout << "RBUTTON UP" << std::endl;
 
-			//spawn large GO_BALL
 			double x, y;
 			Application::GetCursorPos(&x, &y);
 			int w = Application::GetWindowWidth();
@@ -358,69 +367,37 @@ void MapEditor::Update(double dt)
 				if ((go->pos - mousepos).Length() < 3)
 				{
 					go->active = false;
+					delete go;
 					m_objectCount--;
 				}
-			}
+			}*/
 		}
-
-
 		static bool isQPressed = false;
 		static bool isEPressed = false;
 		if (Application::IsKeyPressed('Q') && !isQPressed)
 		{
 			isQPressed = true;
 			choice--;
+			m_ghost->type = type(choice)->type;
+			m_ghost->scale = type(choice)->scale;
 		}
 
 		else if (Application::IsKeyPressed('E') && !isEPressed)
 		{
 			isEPressed = true;
 			choice++;
+			m_ghost->type = type(choice)->type;
+			m_ghost->scale = type(choice)->scale;
 		}
 		 if (isQPressed && !Application::IsKeyPressed('Q'))
 		{
 			isQPressed = false;
+			m_ghost->active = false;
 		}
 		else if (isEPressed && !Application::IsKeyPressed('E'))
 		{
 			isEPressed = false;
-		}
-
-		//if (!bRButtonState && !bLButtonState)
-		//{
-		//	int gridCubeWidth = 5, gridCubeHeight = 5;
-
-		//	double x, y;
-		//	Application::GetCursorPos(&x, &y);
-		//	int w = Application::GetWindowWidth();
-		//	int h = Application::GetWindowHeight();
-
-		//	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
-		//	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-		//	float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-		//	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
-
-		//	//GameObject*go = FetchGO();
-		//	GameObject*go = type(choice);
-		//	go->pos.Set(cx, cy, 0);
-		//}
-
-		//Physics Simulation Section
-		//dt *= m_speed;
-
-		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-		{
-			GameObject *go = (GameObject *)*it;
-		}*/
-
-		if (!m_goList.empty())
-		{
-			for (int i = 0; i < m_goList.size() - 1; ++i)
-			{
-				if (m_goList[i]->pos == m_goList[i + 1]->pos)
-					m_goList[i]->active = false;
-			}
+			m_ghost->active = false;
 		}
 	}
 }
@@ -465,14 +442,6 @@ void MapEditor::RenderGO(GameObject *go)
 		RenderMesh(meshList[PLAYER], false);
 		modelStack.PopMatrix();
 		break;
-
-	/*case GameObject::GO_PLA:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BLUE], false);
-		modelStack.PopMatrix();
-		break;*/
 	}
 }
 
@@ -486,7 +455,7 @@ void MapEditor::Render()
 
 
 
-	int gridCubeWidth = 5, gridCubeHeight = 5;
+	//int gridCubeWidth = 8, gridCubeHeight = 8;
 
 	double x, y;
 	Application::GetCursorPos(&x, &y);
@@ -496,8 +465,8 @@ void MapEditor::Render()
 	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
 	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
 
-	float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+	/*float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;*/
 
 	// Projection matrix : Orthographic Projection
 	Mtx44 projection;
@@ -526,7 +495,7 @@ void MapEditor::Render()
 	}
 
 	modelStack.PushMatrix();
-	modelStack.Translate(cx, cy, 0);
+	modelStack.Translate(posX, posY, 0);
 	RenderGO(m_ghost);
 	modelStack.PopMatrix();
 
@@ -563,12 +532,6 @@ void MapEditor::Render()
 			ss << "Saved Succesfully";
 			RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
 		}
-		ss.str(std::string());
-		ss.precision(3);
-		ss << "Number of Objects: " << m_objectCount;
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 9);
-
-
 		ss.str(std::string());
 		ss.precision(5);
 		ss << "Current Object: " << selection;

@@ -32,20 +32,17 @@ protected:
 	//Physics
 	std::vector<GameObject *> m_goList;
 	GameObject *m_ghost;
+
 	float m_speed;
 	float m_worldWidth;
 	float m_worldHeight;
 	float saveTime;
-
-	double previewTime;
-
 
 	int m_objectCount;
 	int choice;
 
 	bool saveSuccesfull;
 	bool start;
-	bool preview;
 
 	GameObject* type(int i);
 	string fileName;
