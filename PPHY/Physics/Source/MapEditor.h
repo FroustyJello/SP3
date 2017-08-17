@@ -49,6 +49,7 @@ protected:
 	string selection;
 	vector<string>ObjData;
 
+	void renderText();
 	void chooselevel(int choice);
 	void LoadObjects(vector<string> data);
 	void SaveFile(vector<GameObject*> List);
