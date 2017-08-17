@@ -37,17 +37,22 @@ protected:
 	float m_worldHeight;
 	float saveTime;
 
+	double previewTime;
+
+
 	int m_objectCount;
 	int choice;
+
 	bool saveSuccesfull;
 	bool start;
-	void chooselevel(int choice);
-	GameObject* type(int i);
 	bool preview;
-	string fileName;
 
+	GameObject* type(int i);
+	string fileName;
+	string selection;
 	vector<string>ObjData;
 
+	void chooselevel(int choice);
 	void LoadObjects(vector<string> data);
 	void SaveFile(vector<GameObject*> List);
 };

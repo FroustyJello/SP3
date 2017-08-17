@@ -21,11 +21,14 @@ void MapEditor::Init()
 	start = false;
 	saveTime = 0;
 	fileName = "";
+	//selection = "";
 	choice = 0;
+	selection = "Wall1";
 
 	Math::InitRNG();
 
 	m_objectCount = 0;
+	m_ghost = new GameObject(GameObject::GO_BALL);
 
 }
 
@@ -87,16 +90,19 @@ GameObject * MapEditor::type(int i)
 		go->type = GameObject::GO_WALL;
 		go->scale.Set(8,8,8);
 		go->dir.Set(0, 1, 0);
+		selection = "Wall1";
 		break;
 	case 1:
 		go->type = GameObject::GO_PILLAR;
 		go->scale.Set(8, 8, 8);
 		go->dir.Set(0, 1, 0);
+		selection = "Pillar";
 		break;
 	case 2:
 		go->type = GameObject::GO_PLAYER;
 		go->scale.Set(4, 4, 4);
 		go->dir.Set(0, 1, 0);
+		selection = "Player";
 		break;
 	}
 
@@ -220,6 +226,8 @@ void MapEditor::Update(double dt)
 			saveTime = 0;
 		}
 	}
+
+	previewTime += 1 * dt;
 
 	if (!start)
 	{
@@ -378,29 +386,25 @@ void MapEditor::Update(double dt)
 			isEPressed = false;
 		}
 
-		/*if (!bRButtonState && !bLButtonState && !preview)
-		{
-			int gridCubeWidth = 5, gridCubeHeight = 5;
+		//if (!bRButtonState && !bLButtonState)
+		//{
+		//	int gridCubeWidth = 5, gridCubeHeight = 5;
 
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
+		//	double x, y;
+		//	Application::GetCursorPos(&x, &y);
+		//	int w = Application::GetWindowWidth();
+		//	int h = Application::GetWindowHeight();
 
-			float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+		//	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+		//	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
 
-			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+		//	float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+		//	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
 
-			GameObject*go = FetchGO();
-			go->type = GameObject::GO_WALL;
-			go->pos.Set(cx, cy, 0);
-			go->dir.Set(0, 1, 0);
-			go->scale.Set(5, 5, 0);
-			preview = true;
-
-		}*/
+		//	//GameObject*go = FetchGO();
+		//	GameObject*go = type(choice);
+		//	go->pos.Set(cx, cy, 0);
+		//}
 
 		//Physics Simulation Section
 		//dt *= m_speed;
@@ -480,6 +484,21 @@ void MapEditor::Render()
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
+
+
+	int gridCubeWidth = 5, gridCubeHeight = 5;
+
+	double x, y;
+	Application::GetCursorPos(&x, &y);
+	int w = Application::GetWindowWidth();
+	int h = Application::GetWindowHeight();
+
+	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+	float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+
 	// Projection matrix : Orthographic Projection
 	Mtx44 projection;
 	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
@@ -505,6 +524,11 @@ void MapEditor::Render()
 			RenderGO(go);
 		}
 	}
+
+	modelStack.PushMatrix();
+	modelStack.Translate(cx, cy, 0);
+	RenderGO(m_ghost);
+	modelStack.PopMatrix();
 
 	//On screen text
 	std::ostringstream ss;
@@ -547,7 +571,7 @@ void MapEditor::Render()
 
 		ss.str(std::string());
 		ss.precision(5);
-		ss << "Current Object: ";
+		ss << "Current Object: " << selection;
 		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
 	}
 }
@@ -561,5 +585,11 @@ void MapEditor::Exit()
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
+	}
+
+	if (m_ghost)
+	{
+		delete m_ghost;
+		m_ghost = NULL;
 	}
 }
