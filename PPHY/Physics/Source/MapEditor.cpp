@@ -225,6 +225,7 @@ void MapEditor::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
+
 	if (saveSuccesfull)
 	{
 		saveTime += 1 * dt;
@@ -248,6 +249,14 @@ void MapEditor::Update(double dt)
 
 	if (start)
 	{
+
+		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+			if (go->pos == Vector3(0, 0, 0))
+				go->active = false;
+
+		}
 		if (Application::IsKeyPressed('0'))
 		{
 			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -341,36 +350,10 @@ void MapEditor::Update(double dt)
 				GameObject *go = (GameObject *)*it;
 				if ((go->pos - mousepos).Length() < 5)
 				{
+					 go->pos.SetZero();
 					 go->active = false;
-					 delete go;
 				}
 			}
-		}
-		else if (bRButtonState && !Application::IsMousePressed(1))
-		{
-			/*bRButtonState = false;
-			std::cout << "RBUTTON UP" << std::endl;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-			Vector3 mousepos = Vector3(posX, posY, 0);
-
-
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-				if ((go->pos - mousepos).Length() < 3)
-				{
-					go->active = false;
-					delete go;
-					m_objectCount--;
-				}
-			}*/
 		}
 		static bool isQPressed = false;
 		static bool isEPressed = false;
@@ -410,14 +393,14 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BALL], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("ball"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BLUE:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BLUE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_WALL:
@@ -425,14 +408,14 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_CUBE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BLUE], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PLAYER:
@@ -483,7 +466,7 @@ void MapEditor::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	RenderMesh(meshList[GEO_AXES], false);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
@@ -506,23 +489,23 @@ void MapEditor::Render()
 	if (!start)
 	{
 		ss << "Choose a level to edit" << std::endl;
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
-
+		//RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
 		std::ostringstream ss1;
 		ss1 << "Level1";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss1.str(), Color(0, 1, 0), 3, 25, 40);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss1.str(), Color(0, 1, 0), 3, 25, 40);
 
 		std::ostringstream ss2;
 		ss2 << "Level2";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss2.str(), Color(0, 1, 0), 3, 25, 30);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 25, 30);
 
 		std::ostringstream ss3;
 		ss3 << "Level3";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss3.str(), Color(0, 1, 0), 3, 25, 20);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 25, 20);
 
 		std::ostringstream ss4;
 		ss4 << "Level4";
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss4.str(), Color(0, 1, 0), 3, 25, 10);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 25, 10);
 	}
 
 	if (start)
@@ -530,12 +513,12 @@ void MapEditor::Render()
 		if (saveSuccesfull)
 		{
 			ss << "Saved Succesfully";
-			RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
+			RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 12);
 		}
 		ss.str(std::string());
 		ss.precision(5);
 		ss << "Current Object: " << selection;
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 3);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
 	}
 }
 
