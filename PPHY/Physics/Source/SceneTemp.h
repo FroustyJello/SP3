@@ -3,7 +3,6 @@
 #include <vector>
 #include "GameObject.h"
 #include "SceneBase.h"
-#include "Player.h"
 
 #include "csv.h"
 
@@ -49,7 +48,7 @@ protected:
 	vector<GameObject*> v_balls;
 	int m_objectCount;
 
-	CPlayer* thePlayerInfo;
+	//CPlayer* thePlayerInfo;
 
 	//Auditing
 	float m1, m2;
@@ -62,8 +61,6 @@ protected:
 	bool timeStarted;
 	int bounce;
 	int num_balls;
-	int playerMoveIndex;
-	float elapesTime;
 
 	vector<string>ObjData;
 

@@ -24,6 +24,7 @@ CPlayer::CPlayer(void)
 	, m_dFallSpeed(0.0)
 	, m_dFallAcceleration(-10.0)
 	, m_dElapsedTime(0.0)
+	,playerMoveIndex(0)
 	, mapOffset_x(0)
 	, mapOffset_y(0)
 	, tileOffset_x(0)
@@ -348,11 +349,21 @@ void CPlayer::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 	{
 		pos.x += 25 * dt * m_speed;
+		SetAnimationStatus(false);
+		m_dElapsedTime += dt;
 	}
 
 	if (Application::IsKeyPressed('A'))
 	{
 		pos.x -= 25 * dt * m_speed;
+		SetAnimationStatus(true);
+		m_dElapsedTime += dt;
+	}
+
+	if (m_dElapsedTime > 0.3)
+	{
+		m_dElapsedTime = 0;
+		UpdateAnimationIndex();
 	}
 
 	// If the user presses SPACEBAR, then make him jump

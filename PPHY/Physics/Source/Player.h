@@ -2,7 +2,7 @@
 
 #include "Mtx44.h"
 #include "GameObject.h"
-#include "SceneBase.h"
+#include "Animation.h"
 #include <string>
 #include <iostream>
 #include "SingletonTemplate.h"
@@ -10,7 +10,7 @@
 using std::string;
 
 
-class CPlayer:public GameObject
+class CPlayer:public GameObject, public CAnimation
 {
 protected:
 	static CPlayer *s_instance;
@@ -165,6 +165,7 @@ private:
 	double m_dFallAcceleration;
 
 	double m_dElapsedTime;
+	int playerMoveIndex;
 
 	//CMap* theMapReference;
 

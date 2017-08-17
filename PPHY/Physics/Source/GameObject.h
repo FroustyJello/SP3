@@ -55,7 +55,7 @@ struct GameObject :public  Singleton<GameObject>
 	float momentOfInertia;
 	float angularVelocity; //in radians
 
-	std::vector<GameObject*> *AnimList;
+	std::vector<GameObject*> AnimList;
 
 	std::vector<GameObject*> *EnemyHolder;
 	Vector3 PlayerRef;

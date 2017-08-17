@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "Vertex.h"
 #include "GameObject.h"
+#include "MatrixStack.h"
 #include <string>
 
 class Mesh;
@@ -24,6 +25,7 @@ public:
 	virtual void Update(double _dt);
 	virtual void Render();
 	virtual void RenderUI();
+	Mesh* GetMesh() { return modelMesh; };
 
 	inline void SetPosition(const Vector3& _value){ position = _value; };
 	inline Vector3 GetPosition(){ return position; };
@@ -42,7 +44,7 @@ private:
 
 namespace Create
 {
-	SpriteEntity* Sprite2DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f,1.0f,1.0f), bool bAddToLibrary=false);
+	SpriteEntity* Sprite2DObject(const std::string& _meshName, bool bAddToLibrary=false);
 	SpriteEntity* Sprite3DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 };
 

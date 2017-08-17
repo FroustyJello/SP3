@@ -8,7 +8,10 @@
 #include "MatrixStack.h"
 #include "Light.h"
 #include "GameObject.h"
+#include "SpriteEntity.h"
+#include "Player.h"
 #include <vector>
+
 
 class SceneBase : public Scene
 {
@@ -81,6 +84,9 @@ public:
 	void RenderGO(GameObject *go);
 
 	GameObject* FetchGO();
+
+	CPlayer* thePlayerInfo;
+
 protected:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -92,6 +98,7 @@ protected:
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
+	SpriteEntity** thePlayer;
 
 	Light lights[1];
 

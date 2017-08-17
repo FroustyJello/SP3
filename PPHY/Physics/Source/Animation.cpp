@@ -19,34 +19,38 @@ CAnimation::~CAnimation()
 // Set Animation status; left or right
 void CAnimation::SetAnimationStatus(bool m_bAnimationInvert)
 {
-	this->m_bAnimationInvert = m_bAnimationInvert;
-	if (m_bAnimationInvert == false)
+	if (this->m_bAnimationInvert != m_bAnimationInvert)
 	{
-		// If the player is facing right
-		m_iAnimation_Index = m_iRight_Start;
-	}
-	else
-	{
-		// If the player is facing left
-		m_iAnimation_Index = m_iLeft_Start;
+		this->m_bAnimationInvert = m_bAnimationInvert;
+		if (m_bAnimationInvert == false)
+		{
+			// If the player is facing right
+			m_iAnimation_Index = m_iRight_Start;
+		}
+		else
+		{
+			// If the player is facing left
+			m_iAnimation_Index = m_iLeft_Start;
+		}
 	}
 }
 // Update the Animation Index
 void CAnimation::UpdateAnimationIndex(void)
 {
+
 	if (m_bAnimationInvert == false)
 	{
-		// If the player is facing right
-		m_iAnimation_Index += 1;
-		if (m_iAnimation_Index >= m_iRight_End)
-			m_iAnimation_Index = m_iRight_Start;
+			// If the player is facing right
+			m_iAnimation_Index += 1;
+			if (m_iAnimation_Index >= m_iRight_End)
+				m_iAnimation_Index = m_iRight_Start;
 	}
 	else
 	{
-		// If the player is facing left
-		m_iAnimation_Index -= 1;
-		if (m_iAnimation_Index <= m_iLeft_Start)
-			m_iAnimation_Index = m_iLeft_End;
+			// If the player is facing left
+			m_iAnimation_Index -= 1;
+			if (m_iAnimation_Index <= m_iLeft_Start)
+				m_iAnimation_Index = m_iLeft_End;
 	}
 }
 // Get the Animation status

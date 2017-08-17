@@ -23,8 +23,8 @@ void SceneTemp::Init()
 	bounce = 0;
 
 	gravity.Set(0, -50.0f, 0);
-	playerMoveIndex = 0;
-	elapesTime = 0;
+	/*playerMoveIndex = 0;
+	elapesTime = 0;*/
 	CSV reader;
 
 	vector<string> data;
@@ -36,18 +36,11 @@ void SceneTemp::Init()
 
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
-	/*thePlayerInfo->SetPos(Vector3(10, 50, 0));*/
-	//m_player = thePlayerInfo;
-	//m_player = FetchGO();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
 	thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
 	//thePlayerInfo->pos.Set(10, 50, 0);
 	thePlayerInfo->dir.Set(1, 0, 0);
-	/*thePlayerInfo = thePlayerInfo;*/
-	//m_goList.push_back(thePlayerInfo);
-
-
 
 	//Physics code here
 	m_speed = 1.f;
@@ -404,7 +397,7 @@ void SceneTemp::Update(double dt)
 			camera.target.x += 25 * dt * m_speed;
 			ScreenLimit += 25 * dt * m_speed;
 		}
-		elapesTime += dt;
+		//elapesTime += dt;
 	}
 
 	if (Application::IsKeyPressed('A'))
@@ -417,13 +410,13 @@ void SceneTemp::Update(double dt)
 			ScreenLimit -= 25 * dt * m_speed;
 		}
 	}
-	if (elapesTime > 0.5)
+	/*if (elapesTime > 0.5)
 	{
 		++playerMoveIndex;
 		elapesTime = 0;
 		if (playerMoveIndex > 1)
 			playerMoveIndex = 0;
-	}
+	}*/
 	bounce++;
 
 	if (Application::IsKeyPressed('O') && bounce > 20 && num_balls != 0)
@@ -665,7 +658,7 @@ void SceneTemp::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_right_" + std::to_string(playerMoveIndex)), false);
+		RenderMesh(thePlayer[thePlayerInfo->GetAnimationIndex()]->GetMesh(),false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BLUE:
@@ -756,7 +749,6 @@ void SceneTemp::Render()
 	}
 	if (m_ghost->active)
 		RenderGO(m_ghost);
-
 	//On screen text
 	std::ostringstream ss;
 	ss << "Player lives: " << m_plives;

@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
-#include "Player.h"
 #include "csv.h"
 
 using std::vector;
@@ -49,7 +48,7 @@ protected:
 	vector<GameObject*> v_balls;
 	int m_objectCount;
 
-	CPlayer* thePlayerInfo;
+	//CPlayer* thePlayerInfo;
 
 	//Auditing
 	float m1, m2;
