@@ -62,6 +62,8 @@ protected:
 	bool timeStarted;
 	int bounce;
 	int num_balls;
+	int playerMoveIndex;
+	float elapesTime;
 
 	vector<string>ObjData;
 

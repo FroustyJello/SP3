@@ -28,7 +28,7 @@ void MapEditor::Init()
 	Math::InitRNG();
 
 	m_objectCount = 0;
-	m_ghost = new GameObject(GameObject::GO_BALL);
+	m_ghost = new GameObject();
 
 }
 
@@ -462,7 +462,7 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[PLAYER], false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player"), false);
 		modelStack.PopMatrix();
 		break;
 

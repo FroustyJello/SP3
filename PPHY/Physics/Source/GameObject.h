@@ -2,9 +2,12 @@
 #define GAME_OBJECT_H
 
 #include "Vector3.h"
+#include "SingletonTemplate.h"
+#include "MeshBuilder.h"
+#include <string>
 #include <vector>
 
-struct GameObject
+struct GameObject :public  Singleton<GameObject>
 {
 	enum GAMEOBJECT_TYPE
 	{
@@ -13,26 +16,30 @@ struct GameObject
 		GO_CUBE,
 		GO_BLUE,
 
-		GO_ASTEROID_BIG,	 //asteroid
-		GO_ASTEROID_SMALL,	 //asteroid
-		GO_PLANET,
-		GO_SHIP,		 //player ship
-		GO_BULLET,		 //player bullet
-		GO_ENEMY,		 //enemy ship
-		GO_MISSILE,		 //player missile
 		GO_POWERUP_HEALTH,		 //powerup item
 
 		GO_ENEMY_MELEE,
+		GO_ENEMY_MELEE_2,
+		GO_ENEMY_MELEE_3,
+		GO_ENEMY_MELEE_4,
 		GO_ENEMY_RANGED,
+		GO_ENEMY_RANGED_2,
 
 		GO_ARROW,
 		GO_ENEMY_BULLET,
 
 		GO_PLAYER,
 		GO_WALL,
+		GO_WALL_2,
+		GO_WALL_3,
+		GO_WALL_4,
 		GO_PADDLE,
 		GO_PILLAR,
-		GO_BALLDYING,
+
+		GO_BOSS_1,
+		GO_BOSS_2,
+		GO_BOSS_BULLET_1,
+		GO_BOSS_BULLET_2,
 
 		GO_TOTAL, //must be last
 	};
@@ -47,6 +54,8 @@ struct GameObject
 	Vector3 dir; //direction/orientation
 	float momentOfInertia;
 	float angularVelocity; //in radians
+
+	std::vector<GameObject*> *AnimList;
 
 	std::vector<GameObject*> *EnemyHolder;
 	Vector3 PlayerRef;

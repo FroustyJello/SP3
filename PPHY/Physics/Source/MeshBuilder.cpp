@@ -1,9 +1,11 @@
 #include "MeshBuilder.h"
+#include "Mesh.h"
 #include <GL\glew.h>
 #include <vector>
-#include "Vertex.h"
 #include "MyMath.h"
 #include "LoadOBJ.h"
+#include <iostream>
+using namespace std;
 /******************************************************************************/
 /*!
 \brief
@@ -59,6 +61,7 @@ Mesh* MeshBuilder::GenerateAxes(const std::string &meshName, float lengthX, floa
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_LINES;
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -119,6 +122,7 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -214,6 +218,7 @@ Mesh* MeshBuilder::GenerateCube(const std::string &meshName, Color color, float 
 	mesh->indexSize = 36;
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -259,6 +264,7 @@ Mesh* MeshBuilder::GenerateRing(const std::string &meshName, Color color, unsign
 
 	mesh->indexSize = index_buffer_data.size();
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -321,6 +327,7 @@ Mesh* MeshBuilder::GenerateSphere(const std::string &meshName, Color color, unsi
 
 	mesh->indexSize = index_buffer_data.size();
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -365,6 +372,7 @@ Mesh* MeshBuilder::GenerateCone(const std::string &meshName, Color color, unsign
 
 	mesh->indexSize = index_buffer_data.size();
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -393,6 +401,7 @@ Mesh* MeshBuilder::GenerateOBJ(const std::string &meshName, const std::string &f
 
 	mesh->indexSize = index_buffer_data.size();
 
+	AddMesh(meshName, mesh); 
 	return mesh;
 }
 
@@ -447,5 +456,37 @@ Mesh* MeshBuilder::GenerateText(const std::string &meshName, unsigned numRow, un
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
+	AddMesh(meshName, mesh);
 	return mesh;
+}
+
+Mesh* MeshBuilder::GetMesh(const std::string& _meshName)
+{
+	if (meshMap.count(_meshName) != 0)
+		return meshMap[_meshName];
+
+	return nullptr;
+}
+
+void MeshBuilder::AddMesh(const std::string& _meshName, Mesh* _newMesh)
+{
+	// Trivial Rejection : Invalid pointer provided
+	if (_newMesh == nullptr)
+		return;
+
+	// Clean up first if there is an existing mesh with the same name
+	RemoveMesh(_meshName);
+
+	// Add the mesh now
+	meshMap[_meshName] = _newMesh;
+}
+
+void MeshBuilder::RemoveMesh(const std::string& _meshName)
+{
+	Mesh* currMesh = GetMesh(_meshName);
+	if (currMesh != nullptr)
+	{
+		delete currMesh;
+		meshMap.erase(_meshName);
+	}
 }

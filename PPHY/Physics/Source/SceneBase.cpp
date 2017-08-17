@@ -101,46 +101,50 @@ void SceneBase::Init()
 	{
 		meshList[i] = NULL;
 	}
-	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
-	meshList[GEO_BALL] = MeshBuilder::GenerateSphere("ball", Color(1, 1, 1), 10, 10, 1.f);
-	meshList[GEO_BALLDYING] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 0), 10, 10, 1.f);
-	meshList[GEO_BLUE] = MeshBuilder::GenerateSphere("blue", Color(1, 0, 1), 10, 10, 1.f);
-	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
-	meshList[GEO_CALIBRI] = MeshBuilder::GenerateText("text", 16, 16);
-	meshList[GEO_CALIBRI]->textureID = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GenerateAxes("reference", 1000, 1000, 1000);
+	MeshBuilder::GetInstance()->GenerateSphere("ball", Color(1, 1, 1), 10, 10, 1.f);
+	MeshBuilder::GetInstance()->GenerateSphere("blue", Color(1, 0, 1), 10, 10, 1.f);
+	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
 	//meshList[GEO_CALIBRI]->material.kAmbient.Set(1, 0, 0);
 
-	meshList[GEO_BNMACHINE] = MeshBuilder::GenerateText("text", 16, 16);
-	meshList[GEO_BNMACHINE]->textureID = LoadTGA("Image//BNMachine.tga");
-	meshList[GEO_BNMACHINE]->material.kAmbient.Set(1, 0, 0);
+	MeshBuilder::GetInstance()->GenerateText("BNtext", 16, 16);
+	MeshBuilder::GetInstance()->GetMesh("BNtext")->textureID = LoadTGA("Image//BNMachine.tga");
+	MeshBuilder::GetInstance()->GetMesh("BNtext")->material.kAmbient.Set(1, 0, 0);
 
 	//Exercise 14a: render a ship texture or 3D ship model
-	meshList[SPACE] = MeshBuilder::GenerateQuad("space", Color(1, 1, 1), 5.f);
-	meshList[SPACE]->textureID = LoadTGA("Image//space.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("space", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("space")->textureID = LoadTGA("Image//space.tga");
 
-	meshList[PLANET] = MeshBuilder::GenerateQuad("planet", Color(1, 1, 1), 5.f);
-	meshList[PLANET]->textureID = LoadTGA("Image//planet.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("planet", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("planet")->textureID = LoadTGA("Image//planet.tga");
 
-	meshList[PLAYER_SHIP] = MeshBuilder::GenerateQuad("ship", Color(1, 1, 1), 5.f);
-	meshList[PLAYER_SHIP]->textureID = LoadTGA("Image//ship.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("ship", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("ship")->textureID = LoadTGA("Image//ship.tga");
 
-	meshList[PLAYER_BULLET] = MeshBuilder::GenerateQuad("player_bullet", Color(1, 1, 1), 5.f);
-	meshList[PLAYER_BULLET]->textureID = LoadTGA("Image//player_bullet.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_bullet", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_bullet")->textureID = LoadTGA("Image//player_bullet.tga");
 
-	meshList[ASTEROID] = MeshBuilder::GenerateQuad("asteroid", Color(1, 1, 1), 5.f);
-	meshList[ASTEROID]->textureID = LoadTGA("Image//asteroid.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("asteroid", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("asteroid")->textureID = LoadTGA("Image//asteroid.tga");
 
-	meshList[ENEMY] = MeshBuilder::GenerateQuad("enemy", Color(1, 1, 1), 5.f);
-	meshList[ENEMY]->textureID = LoadTGA("Image//enemy.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("enemy", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//enemy.tga");
 
-	meshList[PLAYER] = MeshBuilder::GenerateQuad("player", Color(1, 1, 1), 5.f);
-	meshList[PLAYER]->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
 
-	meshList[MISSILE] = MeshBuilder::GenerateQuad("missile", Color(1, 1, 1), 5.f);
-	meshList[MISSILE]->textureID = LoadTGA("Image//missile.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("missile", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("missile")->textureID = LoadTGA("Image//missile.tga");
 
-	meshList[POWERUP_HEALTH] = MeshBuilder::GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
-	meshList[POWERUP_HEALTH]->textureID = LoadTGA("Image//powerup_health.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_0",Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_0")->textureID = LoadTGA("Image//Player/player_right_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_1")->textureID = LoadTGA("Image//Player/player_right_1.tga");
 
 
 	bLightEnabled = false;
@@ -278,11 +282,6 @@ void SceneBase::Render()
 void SceneBase::Exit()
 {
 	// Cleanup VBO
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
-	{
-		if(meshList[i])
-			delete meshList[i];
-	}
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
