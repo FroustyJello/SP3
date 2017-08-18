@@ -16,20 +16,7 @@ struct GameObject :public  Singleton<GameObject>
 		GO_CUBE,
 		GO_BLUE,
 
-		GO_POWERUP_HEALTH,		 //powerup item
-
-		GO_ENEMY_MELEE,
-		GO_ENEMY_MELEE_2,
-		GO_ENEMY_MELEE_3,
-		GO_ENEMY_MELEE_4,
-		GO_ENEMY_RANGED,
-		GO_ENEMY_RANGED_2,
-
-		GO_ARROW,
-		GO_ENEMY_BULLET,
-		GO_BOSS_LASER,
-
-		GO_PLAYER,
+		//Walls and static objects
 		GO_WALL,
 		GO_WALL_2,
 		GO_WALL_3,
@@ -37,8 +24,25 @@ struct GameObject :public  Singleton<GameObject>
 		GO_PADDLE,
 		GO_PILLAR,
 
+		//Characters
+		GO_PLAYER,
+		GO_ENEMY_MELEE,
+		GO_ENEMY_MELEE_2,
+		GO_ENEMY_MELEE_3,
+		GO_ENEMY_MELEE_4,
+		GO_ENEMY_RANGED,
+		GO_ENEMY_RANGED_2,
 		GO_BOSS_1,
 		GO_BOSS_2,
+
+		//Miscellaneous
+		GO_POWERUP_HEALTH,
+		GO_PLAYER_FACE,
+
+		//Projectiles
+		GO_ARROW,
+		GO_ENEMY_BULLET,
+		GO_BOSS_LASER,
 		GO_BOSS_BULLET_1,
 		GO_BOSS_BULLET_2,
 
@@ -48,19 +52,20 @@ struct GameObject :public  Singleton<GameObject>
 	Vector3 pos;
 	Vector3 vel;
 	Vector3 scale;
-	float rotation;
-	bool active;
-	float mass;
 
-	Vector3 dir; //direction/orientation
+	float rotation;
 	float momentOfInertia;
 	float angularVelocity; //in radians
+	float mass;
 
-	std::vector<GameObject*> AnimList;
+	bool active;
 
-	std::vector<GameObject*> *EnemyHolder;
+	Vector3 dir; //direction/orientation
 	Vector3 PlayerRef;
 
+
+	std::vector<GameObject*> *EnemyHolder;
+	std::vector<GameObject*> AnimList;
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
 

@@ -24,6 +24,7 @@ CPlayer::CPlayer(void)
 	, m_dFallSpeed(0.0)
 	, m_dFallAcceleration(-10.0)
 	, m_dElapsedTime(0.0)
+	, m_dElapsedIdleTime(0.0)
 	,playerMoveIndex(0)
 	, mapOffset_x(0)
 	, mapOffset_y(0)
@@ -335,6 +336,8 @@ void CPlayer::Update(double dt)
 {
 	float m_speed = 1.0f;
 
+	m_dElapsedIdleTime += dt;
+
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
@@ -363,7 +366,13 @@ void CPlayer::Update(double dt)
 	if (m_dElapsedTime > 0.3)
 	{
 		m_dElapsedTime = 0;
-		UpdateAnimationIndex();
+		UpdateAnimationIndex(true);
+	}
+
+	if (m_dElapsedTime > 0.3)
+	{
+		m_dElapsedTime = 0;
+		UpdateAnimationIndex(true);
 	}
 
 	// If the user presses SPACEBAR, then make him jump

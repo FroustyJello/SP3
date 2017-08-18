@@ -271,10 +271,6 @@ void SceneTemp::CollisionResponse(GameObject * go, GameObject * go2)
 		}
 
 		go->vel = u - (2 * u.Dot(N) * N);
-
-
-
-
 	}
 	else if (go2->type == GameObject::GO_PILLAR)
 	{
@@ -305,19 +301,7 @@ void SceneTemp::LoadObjects(vector<string> data)
 			switch (k)
 			{
 			case 0:
-				if (temp == "wall")
-				{
-					go->type = GameObject::GO_WALL;
-				}
-
-				if (temp == "pillar")
-				{
-					go->type = GameObject::GO_PILLAR;
-				}
-				if (temp == "player")
-				{
-					go->type = GameObject::GO_PLAYER;
-				}
+				go->type = (GameObject::GAMEOBJECT_TYPE)atoi(temp.c_str());
 				break;
 			case 1:
 				go->pos.x = stof(temp);
@@ -739,6 +723,8 @@ void SceneTemp::Render()
 	RenderMesh(meshList[PLAYER], false);
 	modelStack.PopMatrix();
 	*/
+
+
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -780,6 +766,12 @@ void SceneTemp::Render()
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
+
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, camera.target.z);
+	modelStack.Scale(12, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
+	modelStack.PopMatrix();
 
 	//RenderTextOnScreen(meshList[GEO_CALIBRI], "Collision", Color(0, 1, 0), 3, 0, 0);
 }
