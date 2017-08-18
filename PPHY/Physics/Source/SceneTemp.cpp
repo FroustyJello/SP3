@@ -37,7 +37,7 @@ void SceneTemp::Init()
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
-	thePlayerInfo->scale.Set(4, 4, 4);
+	//thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
 	//thePlayerInfo->pos.Set(10, 50, 0);
 	thePlayerInfo->dir.Set(1, 0, 0);
@@ -63,6 +63,7 @@ void SceneTemp::Init()
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
 			thePlayerInfo->pos = m_goList[i]->pos;
+			thePlayerInfo->scale = m_goList[i]->scale;
 			m_goList[i] = thePlayerInfo;
 		}
 	}
