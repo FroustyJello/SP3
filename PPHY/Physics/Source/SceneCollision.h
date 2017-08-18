@@ -2,6 +2,7 @@
 #define SCENE_COLLISION_H
 
 #include "GameObject.h"
+#include "Enemy.h"
 #include <vector>
 #include "SceneBase.h"
 #include "csv.h"
@@ -25,8 +26,10 @@ public:
 	virtual void Exit();
 
 	void RenderGO(GameObject *go);
+	void RenderEnemy(Enemy *enemy);
 
 	GameObject* FetchGO();
+	Enemy* FetchEnemy();
 
 	bool CheckCollision(GameObject *go1, GameObject *go2);
 	float CheckCollision2(GameObject *go1, GameObject *go2);
@@ -39,11 +42,12 @@ protected:
 
 	//Physics
 	std::vector<GameObject *> m_goList;
+	std::vector<Enemy *> m_enemies;
 	float m_speed;
 	float m_worldWidth;
 	float m_worldHeight;
 	GameObject *m_ghost;
-	GameObject* m_enemy;
+	Enemy *m_enemy;
 	GameObject* m_player;
 	vector<GameObject*> v_balls;
 	int m_objectCount;

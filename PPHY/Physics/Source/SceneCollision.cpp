@@ -90,21 +90,21 @@ void SceneCollision::Init()
 	m_paddle->dir.Set(1, 0, 0);
 	m_paddle->scale.Set(5, 5, 1.f);
 
-	m_enemy = FetchGO();
+	m_enemy = FetchEnemy();
 	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, m_paddle->pos.z);
+	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, 0);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
 
-	m_enemy = FetchGO();
-	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, m_paddle->pos.z);
-	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);
-
-	m_enemy = FetchGO();
+	m_enemy = FetchEnemy();
 	m_enemy->type = GameObject::GO_ENEMY_MELEE;
-	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 10, m_paddle->pos.z);
+	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 10, 0);
+	m_enemy->dir.Set(1, 0, 0);
+	m_enemy->scale.Set(5, 5, 1.f);
+
+	m_enemy = FetchEnemy();
+	m_enemy->type = GameObject::GO_ENEMY_RANGED;
+	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, 0);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
 }
@@ -130,6 +130,29 @@ GameObject* SceneCollision::FetchGO()
 	go->active = true;
 	++m_objectCount;
 	return go;
+}
+
+Enemy* SceneCollision::FetchEnemy()
+{
+	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+	{
+		Enemy *enemy = (Enemy *)*it;
+		if (!enemy->active)
+		{
+			enemy->active = true;
+			++m_objectCount;
+			return enemy;
+		}
+	}
+	for (unsigned i = 0; i < 10; ++i)
+	{
+		Enemy *enemy = new Enemy(Enemy::GameObject::GO_ENEMY_MELEE);
+		m_enemies.push_back(enemy);
+	}
+	Enemy *enemy = m_enemies.back();
+	enemy->active = true;
+	++m_objectCount;
+	return enemy;
 }
 
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
@@ -589,6 +612,14 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
+	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+	{
+		Enemy *enemy = (Enemy *)*it;
+		if (!enemy->active)
+			continue;
+		enemy->Update(dt, thePlayerInfo->pos, m_enemies);
+	}
+
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -708,24 +739,31 @@ void SceneCollision::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
+	}
+}
+
+void SceneCollision::RenderEnemy(Enemy *enemy)
+{
+	switch (enemy->type)
+	{
 	case GameObject::GO_ENEMY_MELEE:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOSS_1:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
@@ -769,6 +807,14 @@ void SceneCollision::Render()
 		if (go->active)
 		{
 			RenderGO(go);
+		}
+	}
+	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+	{
+		Enemy *enemy = (Enemy *)*it;
+		if (enemy->active)
+		{
+			RenderEnemy(enemy);
 		}
 	}
 	/*if (m_ghost->active)
