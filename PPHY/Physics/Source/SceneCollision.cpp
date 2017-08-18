@@ -327,19 +327,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 			switch (k)
 			{
 			case 0:
-				if (temp == "wall")
-				{
-					go->type = GameObject::GO_WALL;
-				}
-
-				if (temp == "pillar")
-				{
-					go->type = GameObject::GO_PILLAR;
-				}
-				if (temp == "player")
-				{
-					go->type = GameObject::GO_PLAYER;
-				}
+				go->type = (GameObject::GAMEOBJECT_TYPE)atoi(temp.c_str());
 				break;
 			case 1:
 				go->pos.x = stof(temp);

@@ -32,6 +32,7 @@ protected:
 	//Physics
 	std::vector<GameObject *> m_goList;
 	GameObject *m_ghost;
+	GameObject *m_playerFace;
 
 	float m_speed;
 	float m_worldWidth;
@@ -50,6 +51,10 @@ protected:
 	vector<string>ObjData;
 
 	void renderText();
+	void mouseControls();
+	void cameraControls(double dt);
+	void selectObjectControl();
+	void saveControls();
 	void chooselevel(int choice);
 	void LoadObjects(vector<string> data);
 	void SaveFile(vector<GameObject*> List);
