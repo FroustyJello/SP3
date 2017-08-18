@@ -768,9 +768,9 @@ void SceneTemp::Render()
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 12, camera.target.y + 90, camera.target.z);
-	modelStack.Scale(5, 5, 5);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_right_face"), false);
+	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, camera.target.z);
+	modelStack.Scale(12, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
 	modelStack.PopMatrix();
 
 	//RenderTextOnScreen(meshList[GEO_CALIBRI], "Collision", Color(0, 1, 0), 3, 0, 0);

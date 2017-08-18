@@ -1,14 +1,12 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy(GAMEOBJECT_TYPE typeValue)
 {
-
-}
-
-Enemy::Enemy(std::vector<Enemy> EnemyListRef, EnemyType Type)
-{
-	this->EnemyListRef = EnemyListRef;
-	this->Type = Type;
+	this->type = typeValue;
+	this->scale = Vector3(1, 1, 1);
+	this->mass = 1.f;
+	this->momentOfInertia = 1.f;
+	this->angularVelocity = 0.f;
 }
 
 Enemy::~Enemy()
@@ -16,131 +14,223 @@ Enemy::~Enemy()
 
 }
 
-void Enemy::Update(double dt, Vector3 PlayerRef)
+void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 {
-	this->PlayerRef = PlayerRef;
+	switch (this->type)
+	{
+	case(GameObject::GO_ENEMY_MELEE):
+		this->EnemyType = MELEE;
+		break;
+	case(GameObject::GO_ENEMY_MELEE_2):
+		this->EnemyType = MELEE;
+		break;
+	case(GameObject::GO_ENEMY_MELEE_3):
+		this->EnemyType = MELEE;
+		break;
+	case(GameObject::GO_ENEMY_MELEE_4):
+		this->EnemyType = MELEE;
+		break;
+	case(GameObject::GO_ENEMY_RANGED):
+		this->EnemyType = RANGED;
+		break;
+	case(GameObject::GO_ENEMY_RANGED_2):
+		this->EnemyType = RANGED;
+		break;
+	case(GameObject::GO_BOSS_1):
+		this->EnemyType = BOSS_1;
+		break;
+	case(GameObject::GO_BOSS_2):
+		this->EnemyType = BOSS_2;
+		break;
+	}
 
-	if (!HasAllies())
+	switch (this->EnemyType)
 	{
-		LookForAllies(dt);
-	}
-	else
+	case(MELEE):
 	{
-		MoveAndAttack(dt);
-	}
-}
+		// Variable Update
+		attackBT--;
+		this->PlayerRef = PlayerRef;
 
-void Enemy::MoveAndAttack(double dt)
-{
-	if (this->Type == RANGED)
-	{
-		if ((this->pos - PlayerRef).Length() >= 5)
+		// Continous changing/checking of which Enemy is the closest ally
+		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 		{
-			// Move Towards Player
-			// Problem, Verticality(?)
-			if (this->pos.x > PlayerRef.x)
+			Enemy *enemy = (Enemy *)*it;
+			if (!enemy->active)
+				continue;
+			if (enemy->type == Enemy::GO_ENEMY_MELEE || enemy->type == Enemy::GO_ENEMY_RANGED)
 			{
-				this->pos.x -= 10.f * dt;
-			}
-			if (this->pos.x < PlayerRef.x)
-			{
-				this->pos.x += 10.f * dt;
-			}
-		}
-		else
-		{
-			// Attack Player
-			printf("Enemy Attack(Ranged)");
-		}
-	}
-	else
-	{
-		if ((this->pos - PlayerRef).Length() >= 2)
-		{
-			// Move Towards Player
-			// Problem, Verticality(?)
-			if (this->pos.x > PlayerRef.x)
-			{
-				this->pos.x -= 10.f * dt;
-			}
-			if (this->pos.x < PlayerRef.x)
-			{
-				this->pos.x += 10.f * dt;
-			}
-		}
-		else
-		{
-			// Attack Player
-			printf("Enemy Attack(Melee)");
-		}
-	}
-}
-
-void Enemy::LookForAllies(double dt)
-{
-	for (int i = 0; i < EnemyListRef.size(); i++)
-	{
-		if (this->pos != EnemyListRef[i].pos)
-		{
-			// Depending On Enemy Type, Enemy's range to search for Allies increases
-			if (this->type == RANGED)
-			{
-				// If there is an enemy within the range of 15 meters
-				if ((this->pos - EnemyListRef[i].pos).Length() <= 15)
+				if (this->pos != enemy->pos)
 				{
-					if (this->pos.x > EnemyListRef[i].pos.x)
+					if (ClosestEnemy == NULL)
 					{
-						this->pos.x -= 10.f * dt;
+						std::cout << "Assign" << std::endl;
+						ClosestEnemy = enemy;
 					}
-					if (this->pos.x < EnemyListRef[i].pos.x)
+					else if ((this->pos - enemy->pos).Length() < (this->pos - ClosestEnemy->pos).Length())
 					{
-						this->pos.x += 10.f * dt;
+						std::cout << "Change!" << std::endl;
+						ClosestEnemy = enemy;
 					}
 				}
-				//If no Allies are found, Attack Alone
-				else if (i == EnemyListRef.size() - 1)
+			}
+		}
+
+		// Enemy to Player Detection
+		if ((this->pos - PlayerRef).Length() <= 40)
+		{
+			if (this->pos.y + 10 > PlayerRef.y && this->pos.y - 10 < PlayerRef.y)
+			{
+				DetectedPlayer = true;
+			}
+		}
+
+		// Enemy to Enemy Detection
+		if (ClosestEnemy != NULL)
+		{
+			if (DetectedPlayer)
+			{
+				if ((this->pos - ClosestEnemy->pos).Length() >= 30)
 				{
-					MoveAndAttack(dt);
+					if (this->pos.x < ClosestEnemy->pos.x)
+						this->pos.x += 12.5f * dt;
+					else
+						this->pos.x -= 12.5f * dt;
+				}
+			}
+		}
+
+		// Enemy Action
+		if (DetectedPlayer)
+		{
+			if ((this->pos - PlayerRef).Length() > 12)
+			{
+				if (ClosestEnemy != NULL)
+				{
+					if (((this->pos + 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					{
+						if (this->pos.x < PlayerRef.x)
+							this->pos.x += 12.5f * dt;
+					}
+					if (((this->pos - 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					{
+						if (this->pos.x > PlayerRef.x)
+							this->pos.x -= 12.5f * dt;
+					}
+				}
+				else
+				{
+					if (this->pos.x < PlayerRef.x)
+						this->pos.x += 12.5f * dt;
+					else
+						this->pos.x -= 12.5f * dt;
+				}
+			}
+			else if ((this->pos - PlayerRef).Length() <= 12)
+			{
+				if (attackBT <= 0)
+				{
+					attackBT = 60.f;
+					std::cout << "Attack. (Melee)" << std::endl;
+				}
+			}
+		}
+	}
+		break;
+	case(RANGED):
+	{
+		// Variable Update
+		attackBT--;
+		this->PlayerRef = PlayerRef;
+
+		// Continous changing/checking of which Enemy is the closest ally
+		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+		{
+			Enemy *enemy = (Enemy *)*it;
+			if (!enemy->active)
+				continue;
+			if (enemy->type == Enemy::GO_ENEMY_MELEE || enemy->type == Enemy::GO_ENEMY_RANGED)
+			{
+				if (this->pos != enemy->pos)
+				{
+					if (ClosestEnemy == NULL)
+					{
+						std::cout << "Assign" << std::endl;
+						ClosestEnemy = enemy;
+					}
+					else if ((this->pos - enemy->pos).Length() < (this->pos - ClosestEnemy->pos).Length())
+					{
+						std::cout << "Change!" << std::endl;
+						ClosestEnemy = enemy;
+					}
+				}
+			}
+		}
+
+		// Enemy to Player Detection
+		if ((this->pos - PlayerRef).Length() <= 40)
+		{
+			if (this->pos.y + 10 > PlayerRef.y && this->pos.y - 10 < PlayerRef.y)
+			{
+				DetectedPlayer = true;
+			}
+		}
+
+		// Enemy to Enemy Detection
+		if (ClosestEnemy != NULL)
+		{
+			if (DetectedPlayer)
+			{
+				if ((this->pos - ClosestEnemy->pos).Length() >= 30)
+				{
+					if (this->pos.x < ClosestEnemy->pos.x)
+						this->pos.x += 12.5f * dt;
+					else
+						this->pos.x -= 12.5f * dt;
+				}
+			}
+		}
+
+		// Enemy Action
+		if (DetectedPlayer)
+		{
+			if ((this->pos - PlayerRef).Length() > 30)
+			{
+				if (ClosestEnemy != NULL)
+				{
+					if (((this->pos + 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					{
+						if (this->pos.x < PlayerRef.x)
+							this->pos.x += 12.5f * dt;
+					}
+					if (((this->pos - 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					{
+						if (this->pos.x > PlayerRef.x)
+							this->pos.x -= 12.5f * dt;
+					}
+				}
+				else
+				{
+					if (this->pos.x < PlayerRef.x)
+						this->pos.x += 12.5f * dt;
+					else
+						this->pos.x -= 12.5f * dt;
 				}
 			}
 			else
 			{
-				// If there is an enemy within the range of 10 meters
-				if ((this->pos - EnemyListRef[i].pos).Length() <= 10)
+				if (attackBT <= 0)
 				{
-					if (this->pos.x > EnemyListRef[i].pos.x)
-					{
-						this->pos.x -= 10.f * dt;
-					}
-					if (this->pos.x < EnemyListRef[i].pos.x)
-					{
-						this->pos.x += 10.f * dt;
-					}
-				}
-				//If no Allies are found, Attack Alone
-				else if (i == EnemyListRef.size() - 1)
-				{
-					MoveAndAttack(dt);
+					attackBT = 60.f;
+					std::cout << "Attack. (Ranged)" << std::endl;
 				}
 			}
 		}
 	}
-}
-
-bool Enemy::HasAllies()
-{
-	for (int i = 0; i < EnemyListRef.size(); i++)
-	{
-		// Check to see if it's not registering itself
-		if (this->pos != EnemyListRef[i].pos)
-		{
-			// Checks for a length of 5 regardless of Enemy Type
-			if ((this->pos - EnemyListRef[i].pos).Length() <= 5)
-			{
-				return true;
-			}
-		}
+		break;
+	case(BOSS_1):
+		break;
+	case(BOSS_2):
+		break;
 	}
-
-	return false;
 }

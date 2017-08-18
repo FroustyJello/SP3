@@ -72,12 +72,14 @@ struct GameObject :public  Singleton<GameObject>
 	void Update(double dt, Vector3 PlayerRef, std::vector<GameObject *> m_goList);
 
 	// Enemy Variables
-	float attackBT; // Attack bounce time
+	float attackBT = 0.f; // Attack bounce time
 	GameObject *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 
-	// Boss Variables
-	bool Boss_1_Range;
+	// Boss_1 Variables
+	int Boss_1_Attack = 0;
+	bool isAttacking = false;
+	Vector3 LastPlayerPosition;
 };
 
 #endif
