@@ -22,14 +22,13 @@ void MapEditor::Init()
 	saveTime = 0;
 	fileName = "";
 	choice = 0;
-	//selection = "Wall1";
-
+	//selection = "Wall1"
 	Math::InitRNG();
 
 	m_objectCount = 0;
 	m_ghost = new GameObject();
 	m_ghost->scale.Set(8, 8, 8);
-
+	worldX = worldY = 1;
 	//m_playerFace = 
 
 }
@@ -124,7 +123,7 @@ void MapEditor::mouseControls()
 
 		m_ghost->active = false;
 		GameObject*go = type(choice);
-		go->pos.Set(cx, cy, 1);
+		go->pos.Set(cx, cy, 0);
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
@@ -396,9 +395,12 @@ void MapEditor::Update(double dt)
 			if (go->pos == Vector3(0, 0, 0))
 				go->active = false;
 		}
+
 		if (Application::IsKeyPressed('F'))
 		{
-			Application::SetScene(1);
+			worldX -= 20 * dt;
+			worldY -= 20 * dt;
+			//Application::SetScene(1);
 		}
 	}
 }
@@ -426,7 +428,31 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_1"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_2"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_3:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_3"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_4:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
@@ -450,6 +476,8 @@ void MapEditor::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	modelStack.PushMatrix();
+	modelStack.Scale(worldX, worldY, 0);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -499,6 +527,9 @@ void MapEditor::Render()
 	RenderGO(m_ghost);
 	modelStack.PopMatrix();
 
+
+
+	modelStack.PopMatrix();
 	//On screen text
 	renderText();
 
