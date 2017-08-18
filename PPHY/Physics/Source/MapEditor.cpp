@@ -123,7 +123,7 @@ void MapEditor::mouseControls()
 
 		m_ghost->active = false;
 		GameObject*go = type(choice);
-		go->pos.Set(cx, cy, 0);
+		go->pos.Set(cx, cy, 1);
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
@@ -263,9 +263,9 @@ GameObject * MapEditor::type(int i)
 	go->type = (GameObject::GAMEOBJECT_TYPE)i;
 
 	if (i >= 10 && i <= 18)
-		go->scale.Set(5, 5, 5);
+		go->scale.Set(5, 5, 1);
 	else
-		go->scale.Set(8, 8, 8);
+		go->scale.Set(8, 8, 1);
 	go->dir.Set(0, 1, 0);
 	return go;
 }

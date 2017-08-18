@@ -225,7 +225,7 @@ void SceneTemp::CollisionResponse(GameObject * go, GameObject * go2)
 		go->vel = u1 + 2 * m2 / (m1 + m2) * (u2N - u1N);
 		go2->vel = u2 + 2 * m1 / (m1 + m2) * (u1N - u2N);
 	}
-	else if (go2->type == GameObject::GO_WALL && go->type == GameObject::GO_PLAYER)
+	else if (go2->type == GameObject::GO_WALL  && go->type == GameObject::GO_PLAYER)
 	{
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
@@ -623,13 +623,6 @@ void SceneTemp::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("ball"), false);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_PLAYER:
-		modelStack.PushMatrix();
-		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y, thePlayerInfo->pos.z);
-		modelStack.Scale(thePlayerInfo->scale.x, thePlayerInfo->scale.y, thePlayerInfo->scale.z);
-		RenderMesh(thePlayer[thePlayerInfo->GetAnimationIndex()]->GetMesh(),false);
-		modelStack.PopMatrix();
-		break;
 	case GameObject::GO_BLUE:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -669,14 +662,6 @@ void SceneTemp::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_PADDLE:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, m_paddle->pos.y, go->pos.z);
-		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
-		modelStack.PopMatrix();
-		break;
 	case GameObject::GO_PILLAR:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -684,18 +669,11 @@ void SceneTemp::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_ENEMY_MELEE:
+	case GameObject::GO_PLAYER:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
-		modelStack.PopMatrix();
-		break;
-	case GameObject::GO_ENEMY_RANGED:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
+		modelStack.Scale(thePlayerInfo->scale.x, thePlayerInfo->scale.y, thePlayerInfo->scale.z);
+		RenderMesh(thePlayer[thePlayerInfo->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	}
