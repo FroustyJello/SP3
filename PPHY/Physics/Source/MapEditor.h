@@ -38,6 +38,8 @@ protected:
 	float m_worldWidth;
 	float m_worldHeight;
 	float saveTime;
+	float worldX;
+	float worldY;
 
 	int m_objectCount;
 	int choice;

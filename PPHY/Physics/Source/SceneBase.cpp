@@ -143,13 +143,13 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
 
 
-	MeshBuilder::GetInstance()->GenerateQuad("tile_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("tile_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("tile_1")->textureID = LoadTGA("Image//Enviorment/tile1.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("tile_2", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("tile_2", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("tile_2")->textureID = LoadTGA("Image//Enviorment/tile2.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("tile_3", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("tile_3", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("tile_3")->textureID = LoadTGA("Image//Enviorment/tile3.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("tile_4", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("tile_4", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("tile_4")->textureID = LoadTGA("Image//Enviorment/tile4.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_face", Color(1, 1, 1), 5.f);
@@ -157,23 +157,23 @@ void SceneBase::Init()
 
 
 	//Player sprite
-	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_still_0")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_still_1")->textureID = LoadTGA("Image//Player/player_right_still_1.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_0", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_0")->textureID = LoadTGA("Image//Player/player_left_still_0.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_1")->textureID = LoadTGA("Image//Player/player_left_still_1.tga");
 	
 
-	MeshBuilder::GetInstance()->GenerateQuad("player_right_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_0", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_0")->textureID = LoadTGA("Image//Player/player_right_0.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_1")->textureID = LoadTGA("Image//Player/player_right_1.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_0", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_0")->textureID = LoadTGA("Image//Player/player_left_0.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("player_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_1")->textureID = LoadTGA("Image//Player/player_left_1.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
