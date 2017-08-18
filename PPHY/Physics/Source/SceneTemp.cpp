@@ -364,15 +364,6 @@ void SceneTemp::Update(double dt)
 	{
 		m_speed += 0.1f;
 	}
-
-	if (Application::IsKeyPressed('W'))
-	{
-	}
-
-	if (Application::IsKeyPressed('S'))
-	{
-	}
-
 	if (Application::IsKeyPressed('D'))
 	{
 		//Application::GetWindowWidth() * 0.75f
@@ -395,13 +386,6 @@ void SceneTemp::Update(double dt)
 			ScreenLimit -= 25 * dt * m_speed;
 		}
 	}
-	/*if (elapesTime > 0.5)
-	{
-		++playerMoveIndex;
-		elapesTime = 0;
-		if (playerMoveIndex > 1)
-			playerMoveIndex = 0;
-	}*/
 	bounce++;
 
 	if (Application::IsKeyPressed('O') && bounce > 20 && num_balls != 0)
@@ -641,8 +625,8 @@ void SceneTemp::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_PLAYER:
 		modelStack.PushMatrix();
-		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y, thePlayerInfo->pos.z);
+		modelStack.Scale(thePlayerInfo->scale.x, thePlayerInfo->scale.y, thePlayerInfo->scale.z);
 		RenderMesh(thePlayer[thePlayerInfo->GetAnimationIndex()]->GetMesh(),false);
 		modelStack.PopMatrix();
 		break;
@@ -658,7 +642,31 @@ void SceneTemp::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_1"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_2"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_3:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_3"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_4:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PADDLE:
