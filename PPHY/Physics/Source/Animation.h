@@ -8,7 +8,7 @@ public:
 	// Set Animation status; left or right
 	void SetAnimationStatus(bool m_bAnimationInvert);
 	// Update the Animation Index
-	void UpdateAnimationIndex(bool isMoving);
+	void UpdateAnimationIndex(void);
 	// Get the Animation status
 	bool GetAnimationStatus(void) const;
 	// Get the Animation index

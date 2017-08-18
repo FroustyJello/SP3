@@ -41,38 +41,22 @@ void CAnimation::SetAnimationStatus(bool m_bAnimationInvert)
 	}
 }
 // Update the Animation Index
-void CAnimation::UpdateAnimationIndex(bool isMoving)
+void CAnimation::UpdateAnimationIndex(void)
 {
 
 	if (m_bAnimationInvert == false)
 	{
-		m_iAnimation_Index += 1;
-		if (isMoving == true)
-		{
+			m_iAnimation_Index += 1;
 			// If the player is facing right
 			if (m_iAnimation_Index >= m_iRight_End)
 				m_iAnimation_Index = m_iRight_Start;
-		}
-		else
-		{
-			if (m_iAnimation_Index >= m_iRightIdle_End)
-				m_iAnimation_Index = m_iRightIdle_Start;
-		}
 	}
 	else
 	{
-		m_iAnimation_Index -= 1;
-		if (isMoving == true)
-		{
+			m_iAnimation_Index -= 1;
 			// If the player is facing left
 			if (m_iAnimation_Index <= m_iLeft_Start)
 				m_iAnimation_Index = m_iLeft_End;
-		}
-		else
-		{
-			if (m_iAnimation_Index <= m_iLeftIdle_Start)
-				m_iAnimation_Index = m_iLeftIdle_End;
-		}
 	}
 }
 // Get the Animation status
