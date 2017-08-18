@@ -6,9 +6,9 @@ public:
 	virtual ~CAnimation();
 
 	// Set Animation status; left or right
-	void SetAnimationStatus(bool m_bAnimationInvert);
+	void SetAnimationStatus(bool m_bAnimationInvert, bool isMoving, double dt);
 	// Update the Animation Index
-	void UpdateAnimationIndex(void);
+	void UpdateAnimationIndex(double dt);
 	// Get the Animation status
 	bool GetAnimationStatus(void) const;
 	// Get the Animation index
@@ -28,6 +28,8 @@ private:
 	// Flag to indicate if the Animation is inverted to the left. 
 	// true==face right, false==face left
 	bool m_bAnimationInvert;
+	
+	bool isMoving;
 
 	// 0 == The default hero frame, 1/2/3 == Right facing animations, 
 	// 4/5/6 == Left facing animations

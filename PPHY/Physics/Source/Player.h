@@ -167,6 +167,7 @@ private:
 	double m_dElapsedTime;
 	double m_dElapsedIdleTime;
 	int playerMoveIndex;
+	bool RL;
 
 	//CMap* theMapReference;
 
