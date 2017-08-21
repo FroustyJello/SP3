@@ -2,6 +2,7 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include <sstream>
+#include "SoundEngine.h"
 #define integer int
 
 SceneCollision::SceneCollision()
@@ -28,10 +29,9 @@ void SceneCollision::Init()
 	vector<string> data;
 
 	num_balls = 5000;
-	m_plives = 5;
-	m_elives = 5;
-
-
+	m_lives = 5;
+	m_TrailCount = 0;
+	MAX_TRAIL_COUNT = 500;
 	
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
@@ -39,15 +39,13 @@ void SceneCollision::Init()
 	thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
 	thePlayerInfo->dir.Set(1, 0, 0);
-	
+
 	//Physics code here
 	m_speed = 1.f;
 
 	Math::InitRNG();
 
 	m_objectCount = 0;
-
-	//m_ghost = new GameObject(GameObject::GO_BALL);
 
 	m_timeEstimated1 = m_timeTaken1 = 0.f;
 	bool timeStarted = false;
@@ -77,9 +75,6 @@ void SceneCollision::Init()
 			m_goList[i] = theEnemyInfo;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
-			/*heEnemy->pos = m_goList[i]->pos;
-			theEnemy->scale = m_goList[i]->scale;
-			m_goList[i] = theEnemy;*/
 		}
 	}
 
@@ -102,23 +97,13 @@ void SceneCollision::Init()
 	m_paddle->scale.Set(5, 5, 1.f);
 
 
-	/*m_enemy = FetchEnemy();
-	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, 0);
-	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);
+	//m_enemy->scale.Set(5, 5, 1.f);
 
-	m_enemy = FetchEnemy();
-	m_enemy->type = GameObject::GO_ENEMY_MELEE;
-	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 10, 0);
-	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);
+	CSoundEngine::GetInstance()->Init();
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/TheBest.mp3");
 
-	m_enemy = FetchEnemy();
-	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, 0);
-	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);*/
+	CSoundEngine::GetInstance()->PlayASound("BGM_1");
+
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -403,18 +388,10 @@ void SceneCollision::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-	//if (m_paddle->pos.x > ScreenLimit)
-	//{
-	//	ScreenLimit = m_paddle->pos.x + 1;
-	//	camera.position.x += 25 * dt * m_speed;
-	//	camera.target.x += 25 * dt * m_speed;
-	//
-	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
-	//}
 	thePlayerInfo->Update(dt);
-	
 
-	//theEnemyInfo->Update(dt, thePlayerInfo->pos,);
+
+	//UpdateParticles(dt);
 
 
 	if (Application::IsKeyPressed('9'))
@@ -675,19 +652,12 @@ void SceneCollision::Update(double dt)
 
 	}
 
-	//Enemy Paddle AI
-	//m_enemy->pos.y = m_paddle->pos.y;
-
-	if (m_plives <= 0)
+	if (m_lives <= 0)
 	{
 		Application::SetScene(3);
 	}
 
-	if (m_elives <= 0)
-	{
-		Application::SetScene(4);
-	}
-
+	UpdateParticles(dt);
 }
 
 void SceneCollision::RenderGO(GameObject *go)
@@ -786,6 +756,7 @@ void SceneCollision::RenderGO(GameObject *go)
 	}
 }
 
+
 //void SceneCollision::RenderEnemy(Enemy *enemy)
 //{
 //	switch (enemy->type)
@@ -814,6 +785,99 @@ void SceneCollision::RenderGO(GameObject *go)
 //	}
 //}
 
+ParticleObject* SceneCollision::GetParticle(void)
+{
+	std::vector<ParticleObject*>::iterator it, end;
+	end = particleList.end();
+
+	for (it = particleList.begin(); it != end; ++it)
+	{
+		ParticleObject* particle = (ParticleObject*)* it;
+		if (!particle->isActive)
+		{
+			particle->isActive = true;
+			return particle;
+		}
+	}
+
+	for (unsigned i = 0; i < 10; ++i)
+	{
+		ParticleObject* particle = new ParticleObject(ParticleObject_TYPE::P_ARROW_TRAIL);
+		particleList.push_back(particle);
+	}
+	ParticleObject* particle = particleList.back();
+	particle->isActive = true;
+	return particle;
+}
+
+void SceneCollision::UpdateParticles(double dt)
+{
+	if (m_TrailCount < MAX_TRAIL_COUNT)
+	{
+		m_TrailCount++;
+		ParticleObject* particle = GetParticle();
+		particle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
+		particle->scale.Set(1.f, 1.f, 1.f);
+		particle->vel.Set(0.0f, 0.0f, 0.0f);
+		particle->pos.Set(Math::RandFloatMinMax(0, 100), 0, 0);
+	}
+
+	std::vector<ParticleObject*>::iterator it, end;
+	end = particleList.end();
+
+	for (it = particleList.begin(); it != end; ++it)
+	{
+		ParticleObject* particle = (ParticleObject*)*it;
+		if (!particle->isActive)
+			continue;
+
+		if (particle->type == ParticleObject_TYPE::P_ARROW_TRAIL)
+		{
+			particle->vel -= gravity * (float)dt * 0.5f;
+			particle->pos += particle->vel * (float)dt * 10.f;
+			particle->rotation += particle->rotationSpeed *(float)dt;
+
+			if (particle->pos.y > 20.f)
+			{
+				particle->isActive = false;
+				m_TrailCount--;
+			}
+		}
+	}
+}
+
+void SceneCollision::RenderParticles(ParticleObject* particle)
+{
+	switch (particle->type)
+	{
+	case ParticleObject_TYPE::P_ARROW_TRAIL:
+		modelStack.PushMatrix();
+		modelStack.Translate(particle->pos.x, particle->pos.y, particle->pos.z);
+		modelStack.Scale(particle->scale.x, particle->scale.y, particle->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("missile"), false);
+		modelStack.PopMatrix();
+		break;
+	}
+}
+
+void SceneCollision::RenderAllParticles()
+{
+	std::vector<ParticleObject*>::iterator it, end;
+	end = particleList.end();
+
+	for (it = particleList.begin(); it != end; ++it)
+	{
+		ParticleObject* particle = (ParticleObject*)*it;
+		if (!particle->isActive)
+			continue;
+
+		RenderParticles(particle);
+
+	}
+}
+
+
+
 void SceneCollision::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -838,13 +902,8 @@ void SceneCollision::Render()
 	modelStack.LoadIdentity();
 
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
+	RenderAllParticles();
 
-	/*modelStack.PushMatrix();
-	modelStack.Translate(thePlayerInfo->position.x, thePlayerInfo->position.y, thePlayerInfo->position.z);
-	modelStack.Scale(4, 4, 1);
-	RenderMesh(meshList[PLAYER], false);
-	modelStack.PopMatrix();
-*/
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -861,31 +920,22 @@ void SceneCollision::Render()
 		{
 			RenderGO(go);
 		}
+
 	}*/
 	/*if (m_ghost->active)
 		RenderGO(m_ghost);*/
+	
+
 
 	//On screen text
 	std::ostringstream ss;
-	ss << "Player lives: " << m_plives;
+	ss << "Player lives: " << m_lives;
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 12);
 
 	ss.str(std::string());
 	ss.precision(3);
-	ss << "Enemy lives: " << m_elives;
+	ss << "Pos: " << thePlayerInfo->pos;
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 9);
-
-	//ss.str(std::string());
-	//ss.precision(5);
-	//ss << "Initial momentum: " << initialMomentum;
-	//RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 15);
-
-	//ss.str(std::string());
-	//ss.precision(5);
-	//ss << "Final   momentum: " << finalMomentum;
-	//RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, 12);
-
-	//Exercise 3: render initial and final kinetic energy
 
 	ss.str(std::string());
 	ss.precision(3);
@@ -896,8 +946,6 @@ void SceneCollision::Render()
 	ss.precision(5);
 	ss << "FPS: " << fps;
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
-
-	//RenderTextOnScreen(meshList[GEO_CALIBRI], "Collision", Color(0, 1, 0), 3, 0, 0);
 }
 
 void SceneCollision::Exit()

@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Sound Engine">
+      <UniqueIdentifier>{1ec998a5-6daa-4435-a5d6-08f8c52c0aeb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -93,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\SpriteEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundEngine.cpp">
+      <Filter>Sound Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,6 +197,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SpriteEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine.h">
+      <Filter>Sound Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
