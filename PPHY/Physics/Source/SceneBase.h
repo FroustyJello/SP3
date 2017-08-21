@@ -88,7 +88,7 @@ public:
 
 	CPlayer* thePlayerInfo;
 	
-
+	Enemy* theFatEnemyInfo;
 
 protected:
 	unsigned m_vertexArrayID;
@@ -102,6 +102,7 @@ protected:
 	MS viewStack;
 	MS projectionStack;
 	SpriteEntity** thePlayer;
+	SpriteEntity** fatEnemy;
 
 	Light lights[1];
 

@@ -2,7 +2,7 @@
 
 
 
-Enemy::Enemy()
+Enemy::Enemy():prevX(0.f)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -95,9 +95,13 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 				if ((this->pos - ClosestEnemy->pos).Length() >= 30)
 				{
 					if (this->pos.x < ClosestEnemy->pos.x)
+					{
 						this->pos.x += 12.5f * dt;
+					}
 					else
+					{
 						this->pos.x -= 12.5f * dt;
+					}
 				}
 			}
 		}
@@ -123,9 +127,15 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 				else
 				{
 					if (this->pos.x < PlayerRef.x)
+					{
 						this->pos.x += 12.5f * dt;
+						
+					}
 					else
+					{
 						this->pos.x -= 12.5f * dt;
+						
+					}
 				}
 			}
 			else if ((this->pos - PlayerRef).Length() <= 12)
@@ -138,6 +148,21 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 			}
 		}
 	}
+
+	if (this->pos.x < prevX)
+	{
+		SetAnimationStatus(true, true, dt);
+	}
+	else if (this->pos.x > prevX)
+	{
+		SetAnimationStatus(false, true, dt);
+	}
+	else
+	{
+		SetAnimationStatus(true, false, dt);
+	}
+	prevX = this->pos.x;
+
 		break;
 	case(RANGED):
 	{
@@ -229,6 +254,19 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 			}
 		}
 	}
+	if (this->pos.x < prevX)
+	{
+		SetAnimationStatus(true, true, dt);
+	}
+	else if (this->pos.x > prevX)
+	{
+		SetAnimationStatus(false, true, dt);
+	}
+	else
+	{
+		SetAnimationStatus(true, false, dt);
+	}
+	prevX = this->pos.x;
 		break;
 	case(BOSS_1):
 		break;

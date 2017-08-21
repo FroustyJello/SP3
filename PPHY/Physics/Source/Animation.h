@@ -31,6 +31,8 @@ private:
 	
 	bool isMoving;
 
+	double m_dElapsedTime;
+
 	// 0 == The default hero frame, 1/2/3 == Right facing animations, 
 	// 4/5/6 == Left facing animations
 	int m_iAnimation_Index;

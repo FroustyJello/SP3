@@ -4,7 +4,7 @@
 CAnimation::CAnimation()
 	: m_bAnimationInvert(false)
 	, isMoving(false)
-	, m_iAnimation_Index(0)
+	, m_iAnimation_Index(4)
 	, m_iRight_Start(0)
 	, m_iRight_End(0)
 	, m_iLeft_Start(0)
@@ -13,6 +13,7 @@ CAnimation::CAnimation()
 	, m_iRightIdle_End(0)
 	, m_iLeftIdle_Start(0)
 	, m_iLeftIdle_End(0)
+	, m_dElapsedTime(0.0f)
 {
 }
 
@@ -33,10 +34,9 @@ void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, doubl
 		{
 			m_iAnimation_Index = m_iRightIdle_Start;
 		}
-		else if (m_bAnimationInvert && isMoving)
+		else if (m_bAnimationInvert && !isMoving)
 		{
 			m_iAnimation_Index = m_iLeftIdle_Start;
-
 		}
 		else if (!m_bAnimationInvert && isMoving)
 		{
@@ -47,40 +47,56 @@ void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, doubl
 			m_iAnimation_Index = m_iLeft_Start;
 		}
 	}
-
-	//UpdateAnimationIndex(dt);
+	UpdateAnimationIndex(dt);
 }
 // Update the Animation Index
 void CAnimation::UpdateAnimationIndex(double dt)
 {
+	m_dElapsedTime += dt;
 
 	if (!m_bAnimationInvert && isMoving)
 	{
+		if (m_dElapsedTime > 0.3f)
+		{
 			m_iAnimation_Index += 1;
 			// If the player is facing right
-			if (m_iAnimation_Index >= m_iRight_End)
+			if (m_iAnimation_Index > m_iRight_End)
 				m_iAnimation_Index = m_iRight_Start;
+			m_dElapsedTime = 0.f;
+		}
 	}
 	else if(m_bAnimationInvert && isMoving)
 	{
+		if (m_dElapsedTime > 0.3f)
+		{
 			m_iAnimation_Index -= 1;
 			// If the player is facing left
-			if (m_iAnimation_Index <= m_iLeft_Start)
+			if (m_iAnimation_Index < m_iLeft_Start)
 				m_iAnimation_Index = m_iLeft_End;
+			m_dElapsedTime = 0.f;
+		}
 	}
 	else if (!m_bAnimationInvert && !isMoving)
 	{
-		m_iAnimation_Index += 1;
-		// If the player is facing right
-		if (m_iAnimation_Index >= m_iRightIdle_End)
-			m_iAnimation_Index = m_iRightIdle_Start;
+		if (m_dElapsedTime > 0.3f)
+		{
+			m_iAnimation_Index += 1;
+			// If the player is facing right
+			if (m_iAnimation_Index > m_iRightIdle_End)
+				m_iAnimation_Index = m_iRightIdle_Start;
+			m_dElapsedTime = 0.f;
+		}
 	}
 	else if (m_bAnimationInvert && !isMoving)
 	{
-		m_iAnimation_Index += 1;
-		// If the player is facing right
-		if (m_iAnimation_Index >= m_iLeftIdle_End)
-			m_iAnimation_Index = m_iLeftIdle_Start;
+		if (m_dElapsedTime > 0.3f)
+		{
+			m_iAnimation_Index -= 1;
+			// If the player is facing right
+			if (m_iAnimation_Index < m_iLeftIdle_Start)
+				m_iAnimation_Index = m_iLeftIdle_End;
+			m_dElapsedTime = 0.f;
+		}
 	}
 }
 // Get the Animation status
