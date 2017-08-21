@@ -2,7 +2,6 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include <sstream>
-#define integer int
 
 SceneCollision::SceneCollision()
 {
@@ -59,10 +58,11 @@ void SceneCollision::Init()
 	bool timeStarted = false;
 
 	data = reader.Load("level1.csv", data);
+	tileAABB = new CCollider();
 
 	LoadObjects(data);
 
-	for (integer i = 0; i < m_goList.size(); ++i)
+	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
@@ -72,15 +72,16 @@ void SceneCollision::Init()
 	}
 
 
-	GameObject *go = FetchGO();
+	/*GameObject *go = FetchGO();
 	go->type = GameObject::GO_WALL;
-	go->pos.Set(-10, 10, 10);
+	go->pos.Set(20, 10, 10);
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
-
+*/
 	//ScreenLimit = 60.f;
 
-	ScreenLimit = thePlayerInfo->pos.x + 10;
+	RightScreenLimit = thePlayerInfo->pos.x + 10;
+	LeftScreenLimit = thePlayerInfo->pos.x - 10;
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
@@ -95,6 +96,7 @@ void SceneCollision::Init()
 	m_enemy->pos.Set(m_paddle->pos.x + 120, m_paddle->pos.y - 20, m_paddle->pos.z);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);*/
+
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -269,18 +271,16 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		{
 			if (distance.Dot(right) > 0)
 			{
+				std::cout << "hello" << std::endl;
 				N = N.Cross(Vector3(0, 0, 1));
 				N = -N;
 			}
 
 			if (distance.Dot(right) < 0)
 			{
+				std::cout << "asd" << std::endl;
 				N = N.Cross(Vector3(0, 0, 1));
 			}
-		}
-		else
-		{
-
 		}
 
 		go->vel = u - (2 * u.Dot(N) * N);
@@ -301,14 +301,14 @@ void SceneCollision::LoadObjects(vector<string> data)
 	string temp;
 	GameObject *go;
 
-	for (integer i = 0; i < data.size(); i++)
+	for (int i = 0; i < data.size(); i++)
 	{
 		go = FetchGO();
-
-		for (integer k = 0; k < 7; k++)
+		CCollider* Ctemp = new CCollider();
+		for (int k = 0; k < 7; k++)
 		{
 			temp = "";
-			integer comma = data[i].find(",");
+			int comma = data[i].find(",");
 			temp = data[i].substr(0, comma);
 
 
@@ -354,34 +354,44 @@ void SceneCollision::LoadObjects(vector<string> data)
 				go->dir.Normalize();
 			}
 			data[i].erase(0, comma + 1);
-
-
-
 		}
+		Ctemp->SetPAABB(go->scale, go->pos);
+		collisionVector.push_back(Ctemp);
+		Ctemp = nullptr;
+	}
+}
+
+bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vector3 MaxAABB)
+{
+	for (int i = 0; i < vector.size(); i++)
+	{
+		collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[i]->GetMinAABB(), vector[i]->GetMaxAABB());
+		if (collided)
+			break;
 	}
 
+//	collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[19]->GetMinAABB(), vector[19]->GetMaxAABB());
 
-
+	return collided;
 }
 
 void SceneCollision::Update(double dt)
 {
+	thePlayerInfo = CPlayer::GetInstance();
+
+	//std::cout << collisionVector[19]->GetMinAABB() << " " << collisionVector[20]->GetMinAABB() << std::endl;;
+
 	SceneBase::Update(dt);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-	//if (m_paddle->pos.x > ScreenLimit)
-	//{
-	//	ScreenLimit = m_paddle->pos.x + 1;
-	//	camera.position.x += 25 * dt * m_speed;
-	//	camera.target.x += 25 * dt * m_speed;
-	//
-	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
-	//}
+	std::cout << collided << std::endl;
+
+	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
+
 	thePlayerInfo->Update(dt);
-
-
+	
 
 	if (Application::IsKeyPressed('9'))
 	{
@@ -408,24 +418,41 @@ void SceneCollision::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 	{
 		//Application::GetWindowWidth() * 0.75f
-		if (thePlayerInfo->position.x > ScreenLimit)
+		if (thePlayerInfo->pos.x > RightScreenLimit)
 		{
 			camera.position.x += 25 * dt * m_speed;
 			camera.target.x += 25 * dt * m_speed;
-			ScreenLimit += 25 * dt * m_speed;
+			RightScreenLimit += 25 * dt * m_speed;
+			LeftScreenLimit += 25 * dt * m_speed;
+		}
+
+		if (collided)
+		{
+			thePlayerInfo->pos.x -= 25 * dt * m_speed;
 		}
 	}
 
+//	std::cout << "RIGHT: " << RightScreenLimit << " LEFT: " << LeftScreenLimit << " PLAYER X :" << thePlayerInfo->pos.x << std::endl;
+
 	if (Application::IsKeyPressed('A'))
 	{
-		thePlayerInfo->position.x -= 25 * dt * m_speed;
-		//Application::GetWindowWidth() * 0.25f
-		if (thePlayerInfo->position.x < ScreenLimit)
+		if (thePlayerInfo->pos.x < LeftScreenLimit)
 		{
 			camera.position.x -= 25 * dt * m_speed;
 			camera.target.x -= 25 * dt * m_speed;
-			ScreenLimit -= 25 * dt * m_speed;
+			LeftScreenLimit -= 25 * dt * m_speed;
+			RightScreenLimit -= 25 * dt * m_speed;
 		}
+
+		else if (collided)
+		{
+			thePlayerInfo->pos.x += 25 * dt * m_speed;
+		}
+	}
+
+	else
+	{
+		thePlayerInfo->pos.x = thePlayerInfo->pos.x;
 	}
 
 	bounce++;
@@ -497,8 +524,8 @@ void SceneCollision::Update(double dt)
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
-		integer w = Application::GetWindowWidth();
-		integer h = Application::GetWindowHeight();
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
@@ -540,8 +567,8 @@ void SceneCollision::Update(double dt)
 
 		double x, y;
 		Application::GetCursorPos(&x, &y);
-		integer w = Application::GetWindowWidth();
-		integer h = Application::GetWindowHeight();
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
@@ -561,8 +588,8 @@ void SceneCollision::Update(double dt)
 		go->type = GameObject::GO_BALL;
 		double x, y;
 		Application::GetCursorPos(&x, &y);
-		integer w = Application::GetWindowWidth();
-		integer h = Application::GetWindowHeight();
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
@@ -596,6 +623,13 @@ void SceneCollision::Update(double dt)
 				go->vel *= 40;
 			}
 		}
+
+		//Debug code for clearing balls
+		if (go->type == GameObject::GO_BALL && Application::IsKeyPressed('P'))
+		{
+			go->active = false;
+		}
+		//^^
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{

@@ -11,6 +11,7 @@
 #include "SpriteEntity.h"
 #include "Player.h"
 #include <vector>
+#include "Collider.h"
 
 
 class SceneBase : public Scene

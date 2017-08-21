@@ -67,6 +67,8 @@ void CPlayer::Init(void)
 	tileSize_Width = 25;
 	tileSize_Height = 25;
 
+	this->SetPAABB(Vector3(4, 4, 4), GetPos());
+
 	/*CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("Jump", "Image//Mario-jump-sound.mp3");*/
 }
@@ -194,7 +196,7 @@ void CPlayer::Reset(void)
 // Get position x of the player
 Vector3 CPlayer::GetPos(void) const
 {
-	return position;
+	return pos;
 }
 
 // Get target
@@ -338,12 +340,12 @@ void CPlayer::Update(double dt)
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
-		pos.y += 25 * dt * m_speed;
+		pos.y += 30 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		pos.y -= 25 * dt * m_speed;
+		pos.y -= 30 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
@@ -366,6 +368,7 @@ void CPlayer::Update(double dt)
 		UpdateAnimationIndex();
 	}
 
+	this->SetPAABB(Vector3(4, 4, 4), GetPos());
 	// If the user presses SPACEBAR, then make him jump
 	//if (Application::IsKeyPressed(VK_SPACE))
 	//	SetToJumpUpwards(true);

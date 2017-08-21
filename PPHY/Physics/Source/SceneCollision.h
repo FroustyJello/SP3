@@ -32,6 +32,8 @@ public:
 	float CheckCollision2(GameObject *go1, GameObject *go2);
 	void CollisionResponse(GameObject *go, GameObject *go2);
 
+	bool CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vector3 MaxAABB);
+
 	
 	GameObject* m_paddle;
 
@@ -73,7 +75,13 @@ protected:
 	int m_plives;
 	int m_elives;
 
-	float ScreenLimit;
+	float RightScreenLimit;
+	float LeftScreenLimit;
+
+	CCollider* tileAABB;
+	vector<CCollider*> collisionVector;
+
+	bool collided;
 };
 
 #endif

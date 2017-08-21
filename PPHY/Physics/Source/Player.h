@@ -6,11 +6,12 @@
 #include <string>
 #include <iostream>
 #include "SingletonTemplate.h"
+#include "Collider.h"
 
 using std::string;
 
 
-class CPlayer:public GameObject, public CAnimation
+class CPlayer:public GameObject, public CAnimation, public CCollider
 {
 protected:
 	static CPlayer *s_instance;
@@ -146,6 +147,8 @@ public:
 
 	// Check for collision with CGoodies instances
 	void UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row);
+
+	
 
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
