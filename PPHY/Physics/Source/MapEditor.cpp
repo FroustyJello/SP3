@@ -22,13 +22,14 @@ void MapEditor::Init()
 	saveTime = 0;
 	fileName = "";
 	choice = 0;
-	selection = "Wall1";
-
+	//selection = "Wall1"
 	Math::InitRNG();
 
 	m_objectCount = 0;
-	m_ghost = new GameObject(GameObject::GO_WALL);
+	m_ghost = new GameObject();
 	m_ghost->scale.Set(8, 8, 8);
+	worldX = worldY = 1;
+	//m_playerFace = 
 
 }
 
@@ -55,7 +56,6 @@ GameObject* MapEditor::FetchGO()
 	return go;
 }
 
-
 void MapEditor::renderText()
 {
 	std::ostringstream ss;
@@ -63,22 +63,22 @@ void MapEditor::renderText()
 	{
 		ss << "Choose a level to edit" << std::endl;
 		//RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, m_worldHeight * 0.5f);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 8, 40);
 		std::ostringstream ss1;
 		ss1 << "Level1";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss1.str(), Color(0, 1, 0), 3, 25, 40);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss1.str(), Color(0, 1, 0), 3, 28, 36);
 
 		std::ostringstream ss2;
 		ss2 << "Level2";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 25, 30);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 28, 32);
 
 		std::ostringstream ss3;
 		ss3 << "Level3";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 25, 20);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 28, 28);
 
 		std::ostringstream ss4;
 		ss4 << "Level4";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 25, 10);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 28, 24);
 	}
 
 	if (start)
@@ -97,6 +97,142 @@ void MapEditor::renderText()
 		ss.precision(5);
 		ss <<"Press 'SPACE' to save";
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 5, 50);
+	}
+}
+
+void MapEditor::mouseControls()
+{
+	static bool bLButtonState = false;
+	if (!bLButtonState && Application::IsMousePressed(0))
+	{
+		bLButtonState = true;
+		std::cout << "LBUTTON DOWN" << std::endl;
+
+		int gridCubeWidth = 8, gridCubeHeight = 8;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+
+		float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+		float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+		float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+
+		m_ghost->active = false;
+		GameObject*go = type(choice);
+
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)10 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
+			go->pos.Set(posX, posY, 1);
+		else
+			go->pos.Set(cx, cy, 0);
+	}
+	else if (bLButtonState && !Application::IsMousePressed(0))
+	{
+		m_ghost->active = true;
+		bLButtonState = false;
+		std::cout << "LBUTTON UP" << std::endl;
+	}
+
+	static bool bRButtonState = false;
+	if (!bRButtonState && Application::IsMousePressed(1))
+	{
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+		Vector3 mousepos = Vector3(posX, posY, 0);
+
+		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+			if ((go->pos - mousepos).Length() < 5)
+			{
+				go->pos.SetZero();
+				go->active = false;
+			}
+		}
+	}
+}
+
+void MapEditor::cameraControls(double dt)
+{
+	if (Application::IsKeyPressed('W'))
+	{
+		camera.position.y += 200 * dt;
+		camera.target.y += 200 * dt;
+	}
+
+	if (Application::IsKeyPressed('S'))
+	{
+		camera.position.y -= 200 * dt;
+		camera.target.y -= 200 * dt;
+	}
+	if (Application::IsKeyPressed('A'))
+	{
+		camera.position.x -= 200 * dt;
+		camera.target.x -= 200 * dt;
+	}
+
+	if (Application::IsKeyPressed('D'))
+	{
+		camera.position.x += 200 * dt;
+		camera.target.x += 200 * dt;
+	}
+}
+
+void MapEditor::selectObjectControl()
+{
+	static bool isQPressed = false;
+	static bool isEPressed = false;
+	if (Application::IsKeyPressed('Q') && !isQPressed)
+	{
+		isQPressed = true;
+		choice--;
+		if (choice == 0)
+			choice = 1;
+		m_ghost->type = type(choice)->type;
+		m_ghost->scale = type(choice)->scale;
+	}
+
+	else if (Application::IsKeyPressed('E') && !isEPressed)
+	{
+		isEPressed = true;
+		choice++;
+		if (choice == GameObject::GAMEOBJECT_TYPE::GO_TOTAL)
+			choice--;
+		m_ghost->type = type(choice)->type;
+		m_ghost->scale = type(choice)->scale;
+	}
+	if (isQPressed && !Application::IsKeyPressed('Q'))
+	{
+		isQPressed = false;
+		m_ghost->active = false;
+	}
+	else if (isEPressed && !Application::IsKeyPressed('E'))
+	{
+		isEPressed = false;
+		m_ghost->active = false;
+	}
+
+}
+
+void MapEditor::saveControls()
+{
+	static bool bSpaceState = false;
+	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
+	{
+		bSpaceState = true;
+		SaveFile(m_goList);
+	}
+	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
+	{
+		bSpaceState = false;
 	}
 }
 
@@ -128,28 +264,13 @@ void MapEditor::chooselevel(int choice)
 GameObject * MapEditor::type(int i)
 {
 	GameObject *go = FetchGO();
-	go->type = (GameObject::GAMEOBJECT_TYPE)choice;
-	switch (i)
-	{
-	case 0:
-		go->type = GameObject::GO_WALL;
-		go->scale.Set(8, 8, 8);
-		go->dir.Set(0, 1, 0);
-		selection = "Wall1";
-		break;
-	case 1:
-		go->type = GameObject::GO_PILLAR;
-		go->scale.Set(8, 8, 8);
-		go->dir.Set(0, 1, 0);
-		selection = "Pillar";
-		break;
-	case 2:
-		go->type = GameObject::GO_PLAYER;
-		go->scale.Set(5, 5, 5);
-		go->dir.Set(0, 1, 0);
-		selection = "Player";
-		break;
-	}
+	go->type = (GameObject::GAMEOBJECT_TYPE)i;
+
+	if (i >= 10 && i <= 18)
+		go->scale.Set(5, 5, 1);
+	else
+		go->scale.Set(8, 8, 1);
+	go->dir.Set(0, 1, 0);
 	return go;
 }
 
@@ -162,7 +283,7 @@ void MapEditor::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		for (int k = 0; k < 7; k++)
+		for (int k = 0; k < 8; k++)
 		{
 			temp = "";
 			int comma = data[i].find(",");
@@ -180,15 +301,18 @@ void MapEditor::LoadObjects(vector<string> data)
 				go->pos.y = stof(temp);
 				break;
 			case 3:
-				go->scale.x = stof(temp);
+				go->pos.z = stof(temp);
 				break;
 			case 4:
-				go->scale.y = stof(temp);
+				go->scale.x = stof(temp);
 				break;
 			case 5:
-				go->dir.x = stof(temp);
+				go->scale.y = stof(temp);
 				break;
 			case 6:
+				go->dir.x = stof(temp);
+				break;
+			case 7:
 				go->dir.y = stof(temp);
 				break;
 			}
@@ -220,7 +344,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 	if (file.fail())
 		std::cout << "File failed to open" << std::endl;
 
-	file <<"TYPE  "<<"PX " << "PY " << "SX " << "SY " << "DX " << "DY " << std::endl;
+	file <<"TYPE  "<<"PX " << "PY " << "PZ"<< "SX " << "SY " << "DX " << "DY " << std::endl;
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -228,7 +352,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 		if (go->active && go->type!= GameObject::GO_NONE)
 		{
 			temp = std::to_string((int)go->type);
-			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << ","<< go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
 		}
 		std::cout << temp << std::endl;
 	}
@@ -267,138 +391,23 @@ void MapEditor::Update(double dt)
 
 	if (start)
 	{
+		mouseControls();
+		cameraControls(dt);
+		selectObjectControl();
+		saveControls();
 
 		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
 			if (go->pos == Vector3(0, 0, 0))
 				go->active = false;
-
-		}
-		if (Application::IsKeyPressed('0'))
-		{
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-
-				if (go->active)
-					go->active = false;
-			}
-			m_objectCount = 0;
 		}
 
-		if (Application::IsKeyPressed('W'))
+		if (Application::IsKeyPressed('F'))
 		{
-			camera.position.y += 200 * dt;
-			camera.target.y += 200 * dt;
-		}
-
-		if (Application::IsKeyPressed('S'))
-		{
-			camera.position.y -= 200 * dt;
-			camera.target.y -= 200 * dt;
-		}
-		if (Application::IsKeyPressed('A'))
-		{
-			camera.position.x -= 200 * dt;
-			camera.target.x -= 200 * dt;
-		}
-
-		if (Application::IsKeyPressed('D'))
-		{
-			camera.position.x += 200 * dt;
-			camera.target.x += 200 * dt;
-		}
-
-		static bool bSpaceState = false;
-		if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
-		{
-			bSpaceState = true;
-			SaveFile(m_goList);
-		}
-		else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
-		{
-			bSpaceState = false;
-		}
-		//Mouse Section
-		static bool bLButtonState = false;
-		if (!bLButtonState && Application::IsMousePressed(0))
-		{
-			bLButtonState = true;
-			std::cout << "LBUTTON DOWN" << std::endl;
-
-			int gridCubeWidth = 8, gridCubeHeight = 8;
-
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-
-			float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-			float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-			float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
-
-			m_ghost->active = false;
-			GameObject*go = type(choice);
-			go->pos.Set(cx, cy, 1);
-		}
-		else if (bLButtonState && !Application::IsMousePressed(0))
-		{
-			m_ghost->active = true;
-			bLButtonState = false;
-			std::cout << "LBUTTON UP" << std::endl;
-		}
-
-		static bool bRButtonState = false;
-		if (!bRButtonState && Application::IsMousePressed(1))
-		{
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-			Vector3 mousepos = Vector3(posX, posY, 0);
-
-			for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-			{
-				GameObject *go = (GameObject *)*it;
-				if ((go->pos - mousepos).Length() < 5)
-				{
-					 go->pos.SetZero();
-					 go->active = false;
-				}
-			}
-		}
-		static bool isQPressed = false;
-		static bool isEPressed = false;
-		if (Application::IsKeyPressed('Q') && !isQPressed)
-		{
-			isQPressed = true;
-			choice--;
-			m_ghost->type = type(choice)->type;
-			m_ghost->scale = type(choice)->scale;
-		}
-
-		else if (Application::IsKeyPressed('E') && !isEPressed)
-		{
-			isEPressed = true;
-			choice++;
-			m_ghost->type = type(choice)->type;
-			m_ghost->scale = type(choice)->scale;
-		}
-		 if (isQPressed && !Application::IsKeyPressed('Q'))
-		{
-			isQPressed = false;
-			m_ghost->active = false;
-		}
-		else if (isEPressed && !Application::IsKeyPressed('E'))
-		{
-			isEPressed = false;
-			m_ghost->active = false;
+			worldX -= 20 * dt;
+			worldY -= 20 * dt;
+			//Application::SetScene(1);
 		}
 	}
 }
@@ -426,7 +435,31 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_1"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_2"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_3:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_3"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_4:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PILLAR:
@@ -443,6 +476,27 @@ void MapEditor::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player"), false);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_ENEMY_MELEE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BOSS_1:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 
@@ -450,13 +504,11 @@ void MapEditor::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	modelStack.PushMatrix();
+	modelStack.Scale(worldX, worldY, 0);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
-
-
-
-	//int gridCubeWidth = 8, gridCubeHeight = 8;
 
 	double x, y;
 	Application::GetCursorPos(&x, &y);
@@ -483,6 +535,12 @@ void MapEditor::Render()
 
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 12, camera.target.y + 90, camera.target.z);
+	modelStack.Scale(4, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_right_face"), false);
+	modelStack.PopMatrix();
+
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -497,11 +555,12 @@ void MapEditor::Render()
 	RenderGO(m_ghost);
 	modelStack.PopMatrix();
 
+
+
+	modelStack.PopMatrix();
 	//On screen text
 	renderText();
 
-
-	
 }
 
 void MapEditor::Exit()

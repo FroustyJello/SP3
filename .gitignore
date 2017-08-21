@@ -21,3 +21,5 @@ PPHY/Release/Physics.exe
 PPHY/.vs/
 PPHY/Release/Common.lib
 
+PPHY/x64/Debug/Common.pdb
+PPHY/x64/Debug/Common.lib

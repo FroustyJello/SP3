@@ -168,7 +168,9 @@ private:
 	double m_dFallAcceleration;
 
 	double m_dElapsedTime;
+	double m_dElapsedIdleTime;
 	int playerMoveIndex;
+	bool RL;
 
 	//CMap* theMapReference;
 

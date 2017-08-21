@@ -40,12 +40,12 @@ void SpriteEntity::RenderUI()
 	if (mode == MODE_3D)
 		return;
 
-	//MS& modelStack;
-	//modelStack.PushMatrix();
-	//modelStack.Translate(position.x, position.y, position.z);
-	//modelStack.Scale(scale.x, scale.y, scale.z);
-	//RenderMesh(modelMesh, false);
-	//modelStack.PopMatrix();
+	/*MS& modelStack;
+	modelStack.PushMatrix();
+	modelStack.Translate(position.x, position.y, position.z);
+	modelStack.Scale(scale.x, scale.y, scale.z);
+	RenderMesh(modelMesh, false);
+	modelStack.PopMatrix();*/
 }
 
 SpriteEntity* Create::Sprite2DObject(const std::string& _meshName, bool bAddToLibrary)

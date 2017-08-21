@@ -21,10 +21,12 @@ CPlayer::CPlayer(void)
 	, m_dJumpSpeed(10.0)
 	, m_dJumpAcceleration(-10.0)
 	, m_bFallDownwards(false)
+	, RL(false)
 	, m_dFallSpeed(0.0)
 	, m_dFallAcceleration(-10.0)
 	, m_dElapsedTime(0.0)
-	,playerMoveIndex(0)
+	, m_dElapsedIdleTime(0.0)
+	, playerMoveIndex(0)
 	, mapOffset_x(0)
 	, mapOffset_y(0)
 	, tileOffset_x(0)
@@ -337,6 +339,8 @@ void CPlayer::Update(double dt)
 {
 	float m_speed = 1.0f;
 
+	//m_dElapsedIdleTime += dt;
+
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
@@ -350,23 +354,36 @@ void CPlayer::Update(double dt)
 
 	if (Application::IsKeyPressed('D'))
 	{
+		RL = false;
+		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
-		SetAnimationStatus(false);
-		m_dElapsedTime += dt;
+		SetAnimationStatus(RL,true,dt);
+		//m_dElapsedTime += dt;
+		std::cout << this->vel.x << std::endl;
 	}
 
 	if (Application::IsKeyPressed('A'))
 	{
+		RL = true;
 		pos.x -= 25 * dt * m_speed;
-		SetAnimationStatus(true);
-		m_dElapsedTime += dt;
+		SetAnimationStatus(RL,true,dt);
+		//m_dElapsedTime += dt;
 	}
 
-	if (m_dElapsedTime > 0.3)
+	if(!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D'))
+		SetAnimationStatus(RL, false, dt);
+
+	/*if (m_dElapsedTime > 0.3)
 	{
 		m_dElapsedTime = 0;
-		UpdateAnimationIndex();
+		UpdateAnimationIndex(dt);
 	}
+*/
+	/*if (m_dElapsedIdleTime > 0.3)
+	{
+		m_dElapsedIdleTime = 0;
+		UpdateAnimationIndex(dt);
+	}*/
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());
 	// If the user presses SPACEBAR, then make him jump

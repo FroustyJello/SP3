@@ -19,15 +19,16 @@ SceneBase::~SceneBase()
 void SceneBase::Init()
 {
 	thePlayerInfo = CPlayer::GetInstance();
+	enemyCount = 0;
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS); 
-	
+	glDepthFunc(GL_LESS);
+
 	glEnable(GL_CULL_FACE);
-	
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glEnable(GL_BLEND);
@@ -36,8 +37,8 @@ void SceneBase::Init()
 	glGenVertexArrays(1, &m_vertexArrayID);
 	glBindVertexArray(m_vertexArrayID);
 
-	m_programID = LoadShaders( "Shader//comg.vertexshader", "Shader//comg.fragmentshader" );
-	
+	m_programID = LoadShaders("Shader//comg.vertexshader", "Shader//comg.fragmentshader");
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -67,7 +68,7 @@ void SceneBase::Init()
 	// Get a handle for our "textColor" uniform
 	m_parameters[U_TEXT_ENABLED] = glGetUniformLocation(m_programID, "textEnabled");
 	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID, "textColor");
-	
+
 	// Use our shader
 	glUseProgram(m_programID);
 
@@ -82,7 +83,7 @@ void SceneBase::Init()
 	lights[0].cosInner = cos(Math::DegreeToRadian(30));
 	lights[0].exponent = 3.f;
 	lights[0].spotDirection.Set(0.f, 1.f, 0.f);
-	
+
 	glUniform1i(m_parameters[U_NUMLIGHTS], 0);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
 
@@ -98,7 +99,7 @@ void SceneBase::Init()
 
 	camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
+	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = NULL;
 	}
@@ -131,7 +132,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("asteroid")->textureID = LoadTGA("Image//asteroid.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("enemy", Color(1, 1, 1), 5.f);
-	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//enemy.tga");
+	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player", Color(1, 1, 1), 2.f);
 	MeshBuilder::GetInstance()->GetMesh("player")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
@@ -142,6 +143,37 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
 
+
+	MeshBuilder::GetInstance()->GenerateQuad("tile_1", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("tile_1")->textureID = LoadTGA("Image//Enviorment/tile1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("tile_2", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("tile_2")->textureID = LoadTGA("Image//Enviorment/tile2.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("tile_3", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("tile_3")->textureID = LoadTGA("Image//Enviorment/tile3.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("tile_4", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("tile_4")->textureID = LoadTGA("Image//Enviorment/tile4.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_face", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_face")->textureID = LoadTGA("Image//Player/player_right_face.tga");
+	
+	//Fat enemy
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_att")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_still.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_att")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_att.tga");
+
 	//Player sprite
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_still_0")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
@@ -151,8 +183,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_0")->textureID = LoadTGA("Image//Player/player_left_still_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_1")->textureID = LoadTGA("Image//Player/player_left_still_1.tga");
-
-	MeshBuilder::GetInstance()->GenerateQuad("player_right_0",Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_0")->textureID = LoadTGA("Image//Player/player_right_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_1")->textureID = LoadTGA("Image//Player/player_right_1.tga");
@@ -161,20 +192,41 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("player_left_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_1")->textureID = LoadTGA("Image//Player/player_left_1.tga");
 
-	thePlayer = new SpriteEntity*[8];
-	thePlayer[0] = Create::Sprite2DObject("player_right_still_0", true);
-	//thePlayer[1] = Create::Sprite2DObject("player_right_still_1", true);
-	thePlayer[1] = Create::Sprite2DObject("player_right_0", true);
-	thePlayer[2] = Create::Sprite2DObject("player_right_1", true);
-	thePlayer[3] = Create::Sprite2DObject("player_left_still_0", true);
-	//thePlayer[5] = Create::Sprite2DObject("player_left_still_1", true);
-	thePlayer[4] = Create::Sprite2DObject("player_left_0", true);
-	thePlayer[5] = Create::Sprite2DObject("player_left_1", true);
+	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
 
-	thePlayerInfo->SetRightIndices(0, 2);
-	thePlayerInfo->SetLeftIndices(3, 5);
+	thePlayer = new SpriteEntity*[8];
+	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);
+	thePlayer[1] = Create::Sprite2DObject("player_right_1", true);
+	thePlayer[2] = Create::Sprite2DObject("player_left_0", true);
+	thePlayer[3] = Create::Sprite2DObject("player_left_1", true);
+	thePlayer[4] = Create::Sprite2DObject("player_right_still_0", true);
+	thePlayer[5] = Create::Sprite2DObject("player_right_still_1", true);
+	thePlayer[6] = Create::Sprite2DObject("player_left_still_0", true);
+	thePlayer[7] = Create::Sprite2DObject("player_left_still_1", true);
+
+	thePlayerInfo->SetRightIdleIndices(4, 5);
+	thePlayerInfo->SetLeftIdleIndices(6, 7);
+
+	thePlayerInfo->SetRightIndices(0, 1);
+	thePlayerInfo->SetLeftIndices(2, 3);
+
+	fatEnemy = new SpriteEntity*[7];
+	fatEnemy[0] = Create::Sprite2DObject("fat_right_0", true);
+	fatEnemy[1] = Create::Sprite2DObject("fat_right_1", true);
+	fatEnemy[2] = Create::Sprite2DObject("fat_left_0", true);
+	fatEnemy[3] = Create::Sprite2DObject("fat_left_1", true);
+	fatEnemy[4] = Create::Sprite2DObject("fat_left_still_0", true);
+	fatEnemy[5] = Create::Sprite2DObject("fat_right_still_0", true);
+	fatEnemy[6] = Create::Sprite2DObject("fat_right_still_0", true);
+	//fatEnemy[7] = Create::Sprite2DObject("player_left_still_1", true);
+
+	
+
 
 	bLightEnabled = false;
+
 }
 
 void SceneBase::Update(double dt)
@@ -188,15 +240,15 @@ void SceneBase::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
-	
+
 	fps = (float)(1.f / dt);
 }
 
 void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)
 {
-	if(!mesh || mesh->textureID <= 0)
+	if (!mesh || mesh->textureID <= 0)
 		return;
-	
+
 	glDisable(GL_DEPTH_TEST);
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
 	glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
@@ -205,13 +257,13 @@ void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-	for(unsigned i = 0; i < text.length(); ++i)
+	for (unsigned i = 0; i < text.length(); ++i)
 	{
 		Mtx44 characterSpacing;
 		characterSpacing.SetToTranslation(i * 1.0f, 0, 0); //1.0f is the spacing of each character, you may change this value
 		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
+
 		mesh->Render((unsigned)text[i] * 6, 6);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -221,7 +273,7 @@ void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)
 
 void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y)
 {
-	if(!mesh || mesh->textureID <= 0)
+	if (!mesh || mesh->textureID <= 0)
 		return;
 
 	glDisable(GL_DEPTH_TEST);
@@ -242,7 +294,7 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-	for(unsigned i = 0; i < text.length(); ++i)
+	for (unsigned i = 0; i < text.length(); ++i)
 	{
 		Mtx44 characterSpacing;
 		characterSpacing.SetToTranslation(i * 1.0f + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
@@ -262,17 +314,20 @@ void SceneBase::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 void SceneBase::RenderMesh(Mesh *mesh, bool enableLight)
 {
 	Mtx44 MVP, modelView, modelView_inverse_transpose;
-	
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
+
 	MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
 	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	if(enableLight && bLightEnabled)
+	if (enableLight && bLightEnabled)
 	{
 		glUniform1i(m_parameters[U_LIGHTENABLED], 1);
 		modelView = viewStack.Top() * modelStack.Top();
 		glUniformMatrix4fv(m_parameters[U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
 		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();
 		glUniformMatrix4fv(m_parameters[U_MODELVIEW_INVERSE_TRANSPOSE], 1, GL_FALSE, &modelView.a[0]);
-		
+
 		//load material
 		glUniform3fv(m_parameters[U_MATERIAL_AMBIENT], 1, &mesh->material.kAmbient.r);
 		glUniform3fv(m_parameters[U_MATERIAL_DIFFUSE], 1, &mesh->material.kDiffuse.r);
@@ -280,10 +335,10 @@ void SceneBase::RenderMesh(Mesh *mesh, bool enableLight)
 		glUniform1f(m_parameters[U_MATERIAL_SHININESS], mesh->material.kShininess);
 	}
 	else
-	{	
+	{
 		glUniform1i(m_parameters[U_LIGHTENABLED], 0);
 	}
-	if(mesh->textureID > 0)
+	if (mesh->textureID > 0)
 	{
 		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
 		glActiveTexture(GL_TEXTURE0);
@@ -295,11 +350,16 @@ void SceneBase::RenderMesh(Mesh *mesh, bool enableLight)
 		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
 	}
 	mesh->Render();
-	if(mesh->textureID > 0)
+	if (mesh->textureID > 0)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	glDisable(GL_ALPHA_TEST);
+	glEnable(GL_DEPTH_TEST);
 }
+
+
 
 void SceneBase::Render()
 {
