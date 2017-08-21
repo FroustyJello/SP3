@@ -20,7 +20,7 @@ void SceneCollision::Init()
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	bounce = 0;
-
+	hpscale = 40;
 	gravity.Set(0, -50.0f, 0);
 	playerMoveIndex = 0;
 	elapesTime = 0;
@@ -59,7 +59,9 @@ void SceneCollision::Init()
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
 			thePlayerInfo->pos = m_goList[i]->pos;
+			thePlayerInfo->HP = 10;
 			m_goList[i] = thePlayerInfo;
+			break;
 		}
 	}
 
@@ -393,10 +395,26 @@ void SceneCollision::Update(double dt)
 
 	//UpdateParticles(dt);
 
-
-	if (Application::IsKeyPressed('9'))
+	static bool is9pressed = false;
+	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
-		m_speed = Math::Max(0.f, m_speed - 0.1f);
+		is9pressed = true;
+		//m_speed = Math::Max(0.f, m_speed - 0.1f);
+
+		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+			if (go->type == GameObject::GO_PLAYER)
+			{
+				go->HP--;
+				break;
+			}
+		}
+	}
+
+	else if (!Application::IsKeyPressed('9') && is9pressed)
+	{
+		is9pressed = false;
 	}
 	if (Application::IsKeyPressed('0'))
 	{
@@ -599,10 +617,11 @@ void SceneCollision::Update(double dt)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
+		if (go->type == GameObject::GO_PLAYER)
+			hpscale = (go->HP / 10 )* 40;
+
 		if (!go->active)
 			continue;
-
-
 		go->Update(dt, thePlayerInfo->pos, m_goList);
 
 		if (go->type == GameObject::GO_BALL||go->type == GameObject::GO_PLAYER)
@@ -646,7 +665,6 @@ void SceneCollision::Update(double dt)
 				v2 = go2->vel;
 				go->vel = 0.95 * go->vel;
 				go2->vel = 0.95 * go2->vel;
-
 			}
 		}
 
@@ -734,7 +752,7 @@ void SceneCollision::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_ENEMY_MELEE:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y+ 3, go->pos.z);
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
 		modelStack.PopMatrix();
@@ -912,6 +930,19 @@ void SceneCollision::Render()
 			RenderGO(go);
 		}
 	}
+
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 15, camera.target.y + 88.7, 1.1);
+	modelStack.Scale(hpscale, 4, 4);
+	modelStack.Translate(0.5, 0, 0);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, 1);
+	modelStack.Scale(12, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
+	modelStack.PopMatrix();
 
 	/*for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{

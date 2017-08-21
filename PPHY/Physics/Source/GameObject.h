@@ -57,7 +57,7 @@ struct GameObject :public  Singleton<GameObject>
 	float momentOfInertia;
 	float angularVelocity; //in radians
 	float mass;
-
+	float HP;
 	bool active;
 
 	Vector3 dir; //direction/orientation

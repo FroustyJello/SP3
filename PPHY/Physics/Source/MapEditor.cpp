@@ -125,7 +125,7 @@ void MapEditor::mouseControls()
 		GameObject*go = type(choice);
 
 		if (go->type >= (GameObject::GAMEOBJECT_TYPE)10 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
-			go->pos.Set(cx, cy, 1);
+			go->pos.Set(posX, posY, 1);
 		else
 			go->pos.Set(cx, cy, 0);
 	}
