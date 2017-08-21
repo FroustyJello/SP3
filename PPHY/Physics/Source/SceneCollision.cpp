@@ -2,6 +2,7 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include <sstream>
+#include "SoundEngine.h"
 #define integer int
 
 SceneCollision::SceneCollision()
@@ -92,21 +93,26 @@ void SceneCollision::Init()
 
 	m_enemy = FetchEnemy();
 	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, 0);
+	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 20, 0);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
 
-	m_enemy = FetchEnemy();
+	m_enemy = FetchEnemy(); 
 	m_enemy->type = GameObject::GO_ENEMY_MELEE;
-	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 10, 0);
+	m_enemy->pos.Set(m_paddle->pos.x + 75, m_paddle->pos.y - 20, 0);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
 
 	m_enemy = FetchEnemy();
 	m_enemy->type = GameObject::GO_ENEMY_RANGED;
-	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, 0);
+	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 20, 0);
 	m_enemy->dir.Set(1, 0, 0);
 	m_enemy->scale.Set(5, 5, 1.f);
+
+	CSoundEngine::GetInstance()->Init();
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/TheBest.mp3");
+
+	CSoundEngine::GetInstance()->PlayASound("BGM_1");
 }
 
 GameObject* SceneCollision::FetchGO()
