@@ -40,6 +40,10 @@ void SceneCollision::Init()
 	thePlayerInfo->active = true;
 	thePlayerInfo->dir.Set(1, 0, 0);
 
+	/*theFatEnemyInfo->type = GameObject::GO_ENEMY_MELEE;
+	theFatEnemyInfo->active = true;*/
+
+
 	//Physics code here
 	m_speed = 1.f;
 
@@ -69,14 +73,21 @@ void SceneCollision::Init()
 	{
 		if (m_goList[i]->type >= GameObject::GO_ENEMY_MELEE && m_goList[i]->type <= GameObject::GO_BOSS_2)
 		{
-			Enemy* theEnemyInfo = new Enemy();
-			theEnemyInfo->type = m_goList[i]->type;
-			theEnemyInfo->pos = m_goList[i]->pos;
-			theEnemyInfo->scale = m_goList[i]->scale;
-			theEnemyInfo->active = true;
-			m_goList[i] = theEnemyInfo;
+			theFatEnemyInfo = new Enemy();
+			theFatEnemyInfo->type = m_goList[i]->type;
+			theFatEnemyInfo->pos = m_goList[i]->pos;
+			theFatEnemyInfo->scale = m_goList[i]->scale;
+			theFatEnemyInfo->active = true;
+
+			theFatEnemyInfo->SetRightIndices(0, 1);
+			theFatEnemyInfo->SetLeftIndices(2, 3);
+
+			theFatEnemyInfo->SetLeftIdleIndices(4, 3);
+			theFatEnemyInfo->SetRightIdleIndices(6, 5);
+
+			m_goList[i] = theFatEnemyInfo;
 			enemyCount++;
-			m_enemies.push_back(theEnemyInfo);
+			m_enemies.push_back(theFatEnemyInfo);
 		}
 	}
 
@@ -693,7 +704,7 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(thePlayerInfo->pos.x, thePlayerInfo->pos.y + 5, thePlayerInfo->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_right_" + std::to_string(playerMoveIndex)), false);
+		RenderMesh(thePlayer[thePlayerInfo->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BLUE:
@@ -754,14 +765,14 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		RenderMesh(fatEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		RenderMesh(fatEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOSS_1:

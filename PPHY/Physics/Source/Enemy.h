@@ -2,6 +2,7 @@
 #define ENEMY_H
 
 #include "GameObject.h"
+#include "Animation.h"
 #include <vector>
 
 enum EnemyType
@@ -12,7 +13,7 @@ enum EnemyType
 	BOSS_2,
 };
 
-class Enemy : public GameObject
+class Enemy : public GameObject, public CAnimation
 {
 public:
 	Enemy();
@@ -24,6 +25,7 @@ public:
 private:
 	// Enemy Variables
 	float attackBT = 0.f; // Attack bounce time
+	float prevX;
 	Enemy *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 	EnemyType EnemyType;

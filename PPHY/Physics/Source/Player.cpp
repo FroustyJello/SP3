@@ -337,8 +337,7 @@ void CPlayer::Update(double dt)
 {
 	float m_speed = 1.0f;
 
-	m_dElapsedIdleTime += dt;
-	//SetAnimationStatus(RL, false, dt);
+	//m_dElapsedIdleTime += dt;
 
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
@@ -357,7 +356,7 @@ void CPlayer::Update(double dt)
 		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
 		SetAnimationStatus(RL,true,dt);
-		m_dElapsedTime += dt;
+		//m_dElapsedTime += dt;
 		std::cout << this->vel.x << std::endl;
 	}
 
@@ -366,20 +365,23 @@ void CPlayer::Update(double dt)
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
 		SetAnimationStatus(RL,true,dt);
-		m_dElapsedTime += dt;
+		//m_dElapsedTime += dt;
 	}
 
-	if (m_dElapsedTime > 0.3)
+	if(!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D'))
+		SetAnimationStatus(RL, false, dt);
+
+	/*if (m_dElapsedTime > 0.3)
 	{
 		m_dElapsedTime = 0;
 		UpdateAnimationIndex(dt);
 	}
-
-	if (m_dElapsedIdleTime > 0.3)
+*/
+	/*if (m_dElapsedIdleTime > 0.3)
 	{
 		m_dElapsedIdleTime = 0;
 		UpdateAnimationIndex(dt);
-	}
+	}*/
 
 	// If the user presses SPACEBAR, then make him jump
 	//if (Application::IsKeyPressed(VK_SPACE))
