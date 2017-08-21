@@ -101,6 +101,9 @@
     <ClCompile Include="Source\SoundEngine.cpp">
       <Filter>Sound Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -198,6 +201,9 @@
     </ClInclude>
     <ClInclude Include="Source\SoundEngine.h">
       <Filter>Sound Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Particle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
