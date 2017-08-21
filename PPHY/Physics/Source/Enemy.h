@@ -16,7 +16,7 @@ class Enemy : public GameObject
 {
 public:
 	Enemy();
-	Enemy(GAMEOBJECT_TYPE typeValue = GO_BALL);
+	//Enemy(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~Enemy();
 	
 	void Update(double dt, Vector3 PlayerRef, std::vector<Enemy *> m_enemies);

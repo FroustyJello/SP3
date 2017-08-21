@@ -35,17 +35,11 @@ void SceneCollision::Init()
 	
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
-	/*thePlayerInfo->SetPos(Vector3(10, 50, 0));*/
-	//m_player = thePlayerInfo;
-	//m_player = FetchGO();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
 	thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
-	//thePlayerInfo->pos.Set(10, 50, 0);
 	thePlayerInfo->dir.Set(1, 0, 0);
-	/*thePlayerInfo = thePlayerInfo;*/
-	//m_goList.push_back(thePlayerInfo);
-
+	
 	//Physics code here
 	m_speed = 1.f;
 
@@ -71,6 +65,23 @@ void SceneCollision::Init()
 		}
 	}
 
+	for (int i = 0; i < m_goList.size(); ++i)
+	{
+		if (m_goList[i]->type >= GameObject::GO_ENEMY_MELEE && m_goList[i]->type <= GameObject::GO_BOSS_2)
+		{
+			Enemy* theEnemyInfo = new Enemy();
+			theEnemyInfo->type = m_goList[i]->type;
+			theEnemyInfo->pos = m_goList[i]->pos;
+			theEnemyInfo->scale = m_goList[i]->scale;
+			theEnemyInfo->active = true;
+			m_goList[i] = theEnemyInfo;
+			enemyCount++;
+			m_enemies.push_back(theEnemyInfo);
+			/*heEnemy->pos = m_goList[i]->pos;
+			theEnemy->scale = m_goList[i]->scale;
+			m_goList[i] = theEnemy;*/
+		}
+	}
 
 	GameObject *go = FetchGO();
 	go->type = GameObject::GO_WALL;
@@ -90,7 +101,8 @@ void SceneCollision::Init()
 	m_paddle->dir.Set(1, 0, 0);
 	m_paddle->scale.Set(5, 5, 1.f);
 
-	m_enemy = FetchEnemy();
+
+	/*m_enemy = FetchEnemy();
 	m_enemy->type = GameObject::GO_ENEMY_RANGED;
 	m_enemy->pos.Set(m_paddle->pos.x + 50, m_paddle->pos.y - 10, 0);
 	m_enemy->dir.Set(1, 0, 0);
@@ -106,7 +118,7 @@ void SceneCollision::Init()
 	m_enemy->type = GameObject::GO_ENEMY_RANGED;
 	m_enemy->pos.Set(m_paddle->pos.x + 100, m_paddle->pos.y - 10, 0);
 	m_enemy->dir.Set(1, 0, 0);
-	m_enemy->scale.Set(5, 5, 1.f);
+	m_enemy->scale.Set(5, 5, 1.f);*/
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -132,28 +144,28 @@ GameObject* SceneCollision::FetchGO()
 	return go;
 }
 
-Enemy* SceneCollision::FetchEnemy()
-{
-	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
-	{
-		Enemy *enemy = (Enemy *)*it;
-		if (!enemy->active)
-		{
-			enemy->active = true;
-			++m_objectCount;
-			return enemy;
-		}
-	}
-	for (unsigned i = 0; i < 10; ++i)
-	{
-		Enemy *enemy = new Enemy(Enemy::GameObject::GO_ENEMY_MELEE);
-		m_enemies.push_back(enemy);
-	}
-	Enemy *enemy = m_enemies.back();
-	enemy->active = true;
-	++m_objectCount;
-	return enemy;
-}
+//Enemy* SceneCollision::FetchEnemy()
+//{
+//	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+//	{
+//		Enemy *enemy = (Enemy *)*it;
+//		if (!enemy->active)
+//		{
+//			enemy->active = true;
+//			++m_objectCount;
+//			return enemy;
+//		}
+//	}
+//	for (unsigned i = 0; i < 10; ++i)
+//	{
+//		Enemy *enemy = new Enemy(Enemy::GameObject::GO_ENEMY_MELEE);
+//		m_enemies.push_back(enemy);
+//	}
+//	Enemy *enemy = m_enemies.back();
+//	enemy->active = true;
+//	++m_objectCount;
+//	return enemy;
+//}
 
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 {
@@ -336,16 +348,15 @@ void SceneCollision::LoadObjects(vector<string> data)
 	string temp;
 	GameObject *go;
 
-	for (integer i = 0; i < data.size(); i++)
+	for (int i = 0; i < data.size(); i++)
 	{
 		go = FetchGO();
 
-		for (integer k = 0; k < 7; k++)
+		for (int k = 0; k < 8; k++)
 		{
 			temp = "";
-			integer comma = data[i].find(",");
+			int comma = data[i].find(",");
 			temp = data[i].substr(0, comma);
-
 
 			switch (k)
 			{
@@ -359,15 +370,18 @@ void SceneCollision::LoadObjects(vector<string> data)
 				go->pos.y = stof(temp);
 				break;
 			case 3:
-				go->scale.x = stof(temp);
+				go->pos.z = stof(temp);
 				break;
 			case 4:
-				go->scale.y = stof(temp);
+				go->scale.x = stof(temp);
 				break;
 			case 5:
-				go->dir.x = stof(temp);
+				go->scale.y = stof(temp);
 				break;
 			case 6:
+				go->dir.x = stof(temp);
+				break;
+			case 7:
 				go->dir.y = stof(temp);
 				break;
 			}
@@ -377,13 +391,8 @@ void SceneCollision::LoadObjects(vector<string> data)
 				go->dir.Normalize();
 			}
 			data[i].erase(0, comma + 1);
-
-
-
 		}
 	}
-
-
 
 }
 
@@ -403,7 +412,9 @@ void SceneCollision::Update(double dt)
 	//	std::cout << floor(m_paddle->pos.x) << " > " << ScreenLimit << std::endl;
 	//}
 	thePlayerInfo->Update(dt);
+	
 
+	//theEnemyInfo->Update(dt, thePlayerInfo->pos,);
 
 
 	if (Application::IsKeyPressed('9'))
@@ -441,7 +452,7 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed('A'))
 	{
-		thePlayerInfo->position.x -= 25 * dt * m_speed;
+		//thePlayerInfo->position.x -= 25 * dt * m_speed;
 		//Application::GetWindowWidth() * 0.25f
 		//if (thePlayerInfo->position.x < ScreenLimit)
 		//{
@@ -709,7 +720,31 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("cube"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_1"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_2"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_3:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_3"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_WALL_4:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PADDLE:
@@ -727,36 +762,57 @@ void SceneCollision::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
-	}
-}
-
-void SceneCollision::RenderEnemy(Enemy *enemy)
-{
-	switch (enemy->type)
-	{
 	case GameObject::GO_ENEMY_MELEE:
 		modelStack.PushMatrix();
-		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
-		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.Translate(go->pos.x, go->pos.y+ 3, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
-		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
-		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOSS_1:
 		modelStack.PushMatrix();
-		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
-		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	}
 }
+
+//void SceneCollision::RenderEnemy(Enemy *enemy)
+//{
+//	switch (enemy->type)
+//	{
+//	case GameObject::GO_ENEMY_MELEE:
+//		modelStack.PushMatrix();
+//		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+//		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
+//		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+//		modelStack.PopMatrix();
+//		break;
+//	case GameObject::GO_ENEMY_RANGED:
+//		modelStack.PushMatrix();
+//		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+//		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
+//		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+//		modelStack.PopMatrix();
+//		break;
+//	case GameObject::GO_BOSS_1:
+//		modelStack.PushMatrix();
+//		modelStack.Translate(enemy->pos.x, enemy->pos.y, enemy->pos.z);
+//		modelStack.Scale(enemy->scale.x, enemy->scale.y, enemy->scale.z);
+//		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+//		modelStack.PopMatrix();
+//		break;
+//	}
+//}
 
 void SceneCollision::Render()
 {
@@ -797,14 +853,15 @@ void SceneCollision::Render()
 			RenderGO(go);
 		}
 	}
-	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+
+	/*for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
-		Enemy *enemy = (Enemy *)*it;
-		if (enemy->active)
+		Enemy *go = (Enemy *)*it;
+		if (go->active)
 		{
-			RenderEnemy(enemy);
+			RenderGO(go);
 		}
-	}
+	}*/
 	/*if (m_ghost->active)
 		RenderGO(m_ghost);*/
 

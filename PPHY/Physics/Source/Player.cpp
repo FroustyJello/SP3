@@ -354,9 +354,11 @@ void CPlayer::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 	{
 		RL = false;
+		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
 		SetAnimationStatus(RL,true,dt);
 		m_dElapsedTime += dt;
+		std::cout << this->vel.x << std::endl;
 	}
 
 	if (Application::IsKeyPressed('A'))

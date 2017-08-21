@@ -15,16 +15,15 @@ SceneTemp::~SceneTemp()
 
 void SceneTemp::Init()
 {
+	hpscale = 40;
 	ScreenLimit = 60.f;
 	SceneBase::Init();
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	bounce = 0;
-
+	
 	gravity.Set(0, -50.0f, 0);
-	/*playerMoveIndex = 0;
-	elapesTime = 0;*/
 	CSV reader;
 
 	vector<string> data;
@@ -37,9 +36,7 @@ void SceneTemp::Init()
 	thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
-	//thePlayerInfo->scale.Set(4, 4, 4);
 	thePlayerInfo->active = true;
-	//thePlayerInfo->pos.Set(10, 50, 0);
 	thePlayerInfo->dir.Set(1, 0, 0);
 
 	//Physics code here
@@ -65,8 +62,11 @@ void SceneTemp::Init()
 			thePlayerInfo->pos = m_goList[i]->pos;
 			thePlayerInfo->scale = m_goList[i]->scale;
 			m_goList[i] = thePlayerInfo;
+
 		}
 	}
+
+	
 
 
 	GameObject *go = FetchGO();
@@ -74,9 +74,6 @@ void SceneTemp::Init()
 	go->pos.Set(10, 10, 10);
 	go->dir.Set(0, 1, 0);
 	go->scale.Set(1, 100, 1);
-	//go->dir.Normalize();
-
-
 
 	m_paddle = FetchGO();
 	m_paddle->type = GameObject::GO_BALL;
@@ -292,12 +289,11 @@ void SceneTemp::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		for (int k = 0; k < 7; k++)
+		for (int k = 0; k < 8; k++)
 		{
 			temp = "";
 			int comma = data[i].find(",");
 			temp = data[i].substr(0, comma);
-
 
 			switch (k)
 			{
@@ -311,15 +307,18 @@ void SceneTemp::LoadObjects(vector<string> data)
 				go->pos.y = stof(temp);
 				break;
 			case 3:
-				go->scale.x = stof(temp);
+				go->pos.z = stof(temp);
 				break;
 			case 4:
-				go->scale.y = stof(temp);
+				go->scale.x = stof(temp);
 				break;
 			case 5:
-				go->dir.x = stof(temp);
+				go->scale.y = stof(temp);
 				break;
 			case 6:
+				go->dir.x = stof(temp);
+				break;
+			case 7:
 				go->dir.y = stof(temp);
 				break;
 			}
@@ -329,14 +328,8 @@ void SceneTemp::LoadObjects(vector<string> data)
 				go->dir.Normalize();
 			}
 			data[i].erase(0, comma + 1);
-
-
-
 		}
 	}
-
-
-
 }
 
 void SceneTemp::Update(double dt)
@@ -358,7 +351,8 @@ void SceneTemp::Update(double dt)
 
 	if (Application::IsKeyPressed('9'))
 	{
-		m_speed = Math::Max(0.f, m_speed - 0.1f);
+		//m_speed = Math::Max(0.f, m_speed - 0.1f);
+		hpscale-= 1 * dt;
 	}
 	if (Application::IsKeyPressed('0'))
 	{
@@ -452,8 +446,6 @@ void SceneTemp::Update(double dt)
 	{
 		bSpaceState = false;
 	}
-
-
 	//Mouse Section
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
@@ -560,8 +552,6 @@ void SceneTemp::Update(double dt)
 
 			go->vel += gravity * dt;
 		}
-
-
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{
@@ -755,11 +745,19 @@ void SceneTemp::Render()
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, camera.target.z);
+	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, 1);
 	modelStack.Scale(12, 4, 4);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
 	modelStack.PopMatrix();
 
+
+		modelStack.PushMatrix();
+			modelStack.Translate(camera.target.x+15, camera.target.y+88.7 , 1.1);
+			modelStack.Scale(hpscale, 4, 4);
+			modelStack.Translate(0.5, 0, 0);
+			RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
+		modelStack.PopMatrix();
+	
 	//RenderTextOnScreen(meshList[GEO_CALIBRI], "Collision", Color(0, 1, 0), 3, 0, 0);
 }
 

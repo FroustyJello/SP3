@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "SpriteEntity.h"
 #include "Player.h"
+#include "Enemy.h"
 #include <vector>
 
 
@@ -83,9 +84,11 @@ public:
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderGO(GameObject *go);
 
-	GameObject* FetchGO();
+	//GameObject* FetchGO();
 
 	CPlayer* thePlayerInfo;
+	
+
 
 protected:
 	unsigned m_vertexArrayID;
@@ -105,6 +108,8 @@ protected:
 	bool bLightEnabled;
 
 	float fps;
+	float hpscale;
+	float enemyCount;
 };
 
 #endif

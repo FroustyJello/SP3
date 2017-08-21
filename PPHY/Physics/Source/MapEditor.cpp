@@ -123,7 +123,11 @@ void MapEditor::mouseControls()
 
 		m_ghost->active = false;
 		GameObject*go = type(choice);
-		go->pos.Set(cx, cy, 1);
+
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)10 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
+			go->pos.Set(cx, cy, 1);
+		else
+			go->pos.Set(cx, cy, 0);
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
@@ -279,7 +283,7 @@ void MapEditor::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		for (int k = 0; k < 7; k++)
+		for (int k = 0; k < 8; k++)
 		{
 			temp = "";
 			int comma = data[i].find(",");
@@ -297,15 +301,18 @@ void MapEditor::LoadObjects(vector<string> data)
 				go->pos.y = stof(temp);
 				break;
 			case 3:
-				go->scale.x = stof(temp);
+				go->pos.z = stof(temp);
 				break;
 			case 4:
-				go->scale.y = stof(temp);
+				go->scale.x = stof(temp);
 				break;
 			case 5:
-				go->dir.x = stof(temp);
+				go->scale.y = stof(temp);
 				break;
 			case 6:
+				go->dir.x = stof(temp);
+				break;
+			case 7:
 				go->dir.y = stof(temp);
 				break;
 			}
@@ -337,7 +344,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 	if (file.fail())
 		std::cout << "File failed to open" << std::endl;
 
-	file <<"TYPE  "<<"PX " << "PY " << "SX " << "SY " << "DX " << "DY " << std::endl;
+	file <<"TYPE  "<<"PX " << "PY " << "PZ"<< "SX " << "SY " << "DX " << "DY " << std::endl;
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -345,7 +352,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 		if (go->active && go->type!= GameObject::GO_NONE)
 		{
 			temp = std::to_string((int)go->type);
-			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << ","<< go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
 		}
 		std::cout << temp << std::endl;
 	}
@@ -467,6 +474,27 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_MELEE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BOSS_1:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	}

@@ -1,8 +1,10 @@
 #include "Enemy.h"
 
-Enemy::Enemy(GAMEOBJECT_TYPE typeValue)
+
+
+Enemy::Enemy()
 {
-	this->type = typeValue;
+	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
 	this->mass = 1.f;
 	this->momentOfInertia = 1.f;
