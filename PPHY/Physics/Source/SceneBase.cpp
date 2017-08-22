@@ -301,6 +301,8 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("player_right_shoot_0")->textureID = LoadTGA("Image//Player/player_right_shoot_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_shoot_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_shoot_1")->textureID = LoadTGA("Image//Player/player_right_shoot_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_fire_arrow", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_fire_arrow")->textureID = LoadTGA("Image//Player/player_fire_arrow.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
