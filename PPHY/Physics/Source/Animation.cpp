@@ -23,29 +23,39 @@ CAnimation::~CAnimation()
 }
 
 // Set Animation status; left or right
-void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, double dt)
+void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, bool isAttacking, double dt)
 {
-	if (this->m_bAnimationInvert != m_bAnimationInvert || this->isMoving != isMoving)
+	if (this->m_bAnimationInvert != m_bAnimationInvert || this->isMoving != isMoving || this->isAttacking != isAttacking)
 	{
 		this->m_bAnimationInvert = m_bAnimationInvert;
 		this->isMoving = isMoving;
+		this->isAttacking = isAttacking;
 
-		if (!m_bAnimationInvert && !isMoving)
+		if (!m_bAnimationInvert && !isMoving && !isAttacking)
 		{
 			m_iAnimation_Index = m_iRightIdle_Start;
 		}
-		else if (m_bAnimationInvert && !isMoving)
+		else if (m_bAnimationInvert && !isMoving && !isAttacking)
 		{
 			m_iAnimation_Index = m_iLeftIdle_Start;
 		}
-		else if (!m_bAnimationInvert && isMoving)
+		else if (!m_bAnimationInvert && isMoving && !isAttacking)
 		{
 			m_iAnimation_Index = m_iRight_Start;
 		}
-		else if (m_bAnimationInvert && isMoving)
+		else if (m_bAnimationInvert && isMoving && !isAttacking)
 		{
 			m_iAnimation_Index = m_iLeft_Start;
 		}
+		else if (!m_bAnimationInvert && !isMoving && isAttacking)
+		{
+			m_iAnimation_Index = m_iRightAtt_Start;
+		}
+		else if (m_bAnimationInvert && !isMoving && isAttacking)
+		{
+			m_iAnimation_Index = m_iLeftAtt_Start;
+		}
+
 	}
 	UpdateAnimationIndex(dt);
 }
@@ -54,7 +64,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 {
 	m_dElapsedTime += dt;
 
-	if (!m_bAnimationInvert && isMoving)
+	if (!m_bAnimationInvert && isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -65,7 +75,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if(m_bAnimationInvert && isMoving)
+	else if(m_bAnimationInvert && isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -76,7 +86,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (!m_bAnimationInvert && !isMoving)
+	else if (!m_bAnimationInvert && !isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -87,7 +97,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (m_bAnimationInvert && !isMoving)
+	else if (m_bAnimationInvert && !isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -95,6 +105,26 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			// If the player is facing right
 			if (m_iAnimation_Index < m_iLeftIdle_Start)
 				m_iAnimation_Index = m_iLeftIdle_End;
+			m_dElapsedTime = 0.f;
+		}
+	}
+	else if (!m_bAnimationInvert && isAttacking && !isMoving)
+	{
+		if (m_dElapsedTime > 0.3f)
+		{
+			m_iAnimation_Index += 1;
+			if (m_iAnimation_Index > m_iRightAtt_End)
+				m_iAnimation_Index = m_iRightAtt_Start;
+			m_dElapsedTime = 0.f;
+		}
+	}
+	else if (m_bAnimationInvert && isAttacking && !isMoving)
+	{
+		if (m_dElapsedTime > 0.3f)
+		{
+			m_iAnimation_Index -= 1;
+			if (m_iAnimation_Index < m_iLeftAtt_Start)
+				m_iAnimation_Index = m_iLeftAtt_End;
 			m_dElapsedTime = 0.f;
 		}
 	}
@@ -134,4 +164,16 @@ void CAnimation::SetLeftIdleIndices(const int m_iLeftIdle_Start, const int m_iLe
 {
 	this->m_iLeftIdle_Start = m_iLeftIdle_Start;
 	this->m_iLeftIdle_End = m_iLeftIdle_End;
+}
+
+void CAnimation::SetRightAttIndices(const int m_iRightAtt_Start, const int m_iRightAtt_End)
+{
+	this->m_iRightAtt_Start = m_iRightAtt_Start;
+	this->m_iRightAtt_End = m_iRightAtt_End;
+}
+
+void CAnimation::SetLeftAttIndices(const int m_iLeftAtt_Start, const int m_iLeftAtt_End)
+{
+	this->m_iLeftAtt_Start = m_iLeftAtt_Start;
+	this->m_iLeftAtt_End = m_iLeftAtt_End;
 }

@@ -27,20 +27,10 @@ CPlayer::CPlayer(void)
 	, m_dElapsedTime(0.0)
 	, m_dElapsedIdleTime(0.0)
 	, playerMoveIndex(0)
-	, mapOffset_x(0)
-	, mapOffset_y(0)
-	, tileOffset_x(0)
-	, tileOffset_y(0)
-	, mapFineOffset_x(0)
-	, mapFineOffset_y(0)
-	//, theMapReference(NULL)
-	//, theRearMapReference(NULL)
-	, rearTileOffset_x(0)
-	, rearTileOffset_y(0)
-	, rearMapOffset_x(0)
-	, rearMapOffset_y(0)
-	, rearMapFineOffset_x(0)
-	, rearMapFineOffset_y(0)
+	, isShooting(false)
+	, arrowdmg (1)
+	, chargearrow(false)
+	, arrowSpeed(50.f)
 {
 }
 
@@ -235,103 +225,6 @@ Vector3 CPlayer::GetMinBoundary() const
 	return minBoundary;
 }
 
-// Update Jump Upwards
-//void CPlayer::UpdateJumpUpwards(double dt)
-//{
-//	if (m_bJumpUpwards == false)
-//		return;
-//
-//	// Record current position before jump
-//	int currentPosition_Y = theMapReference->GetNumOfTiles_Height() - (int)ceil((float)position.y / tileSize_Height);
-//
-//	// Update the jump
-//	position.y += m_dJumpSpeed;
-//	m_dJumpSpeed -= 1;
-//	if (m_dJumpSpeed == 0)
-//		SetOnFreeFall(true);
-//
-//	// If the player has jumped out of the screen, 
-//	// then quit this method (do not do collision detection anymore)
-//	if (position.y + tileSize_Height > maxBoundary.y)
-//		return;
-//
-//	// Check if the player is stopped by obstacles
-//	int checkPosition_X = (int)((mapOffset_x + position.x - (tileSize_Width >> 1)) / tileSize_Width);
-//	int checkPosition_Y = theMapReference->GetNumOfTiles_Height() -
-//		(int)ceil((float)(position.y + (tileSize_Height >> 1)) / tileSize_Height);
-//	for (int i = checkPosition_Y; i <= currentPosition_Y; i++)
-//	{
-//		if (((int)(position.x - (tileSize_Width >> 1)) % tileSize_Width) == 0)
-//		{
-//			if (theMapReference->theScreenMap[i][checkPosition_X] == 1)
-//			{
-//				// Since the new position does not allow the player to move into, then go back to the old position
-//				position.y = (theMapReference->GetNumOfTiles_Height() - i - 1) * tileSize_Height - (tileSize_Height >> 1);
-//				// Set on free fall
-//				SetOnFreeFall(true);
-//				break;
-//			}
-//		}
-//		else
-//		{
-//			if ((theMapReference->theScreenMap[i][checkPosition_X] == 1) ||
-//				(theMapReference->theScreenMap[i][checkPosition_X + 1] == 1))
-//			{
-//				// Since the new position does not allow the player to move into, then go back to the old position
-//				position.y = (theMapReference->GetNumOfTiles_Height() - i - 1) * tileSize_Height - (tileSize_Height >> 1);
-//				// Set on free fall
-//				SetOnFreeFall(true);
-//				break;
-//			}
-//		}
-//	}
-//}
-//
-//// Update FreeFall
-//void CPlayer::UpdateFreeFall(double dt)
-//{
-//	if (m_bFallDownwards == false)
-//		return;
-//
-//	// Record current position before fall
-//	int currentPosition_Y = theMapReference->GetNumOfTiles_Height() - (int)ceil((float)position.y / tileSize_Height);
-//
-//	// Update the free fall
-//	position.y -= m_dFallSpeed;
-//	m_dFallSpeed += 1;
-//
-//	// Check if the player is still in mid air...
-//	int checkPosition_X = (int)((mapOffset_x + position.x - (tileSize_Width >> 1)) / tileSize_Width);
-//	int checkPosition_Y = theMapReference->GetNumOfTiles_Height() -
-//		(int)ceil((float)(position.y - m_dFallSpeed) / tileSize_Height);
-//	for (int i = currentPosition_Y; i <= checkPosition_Y; i++)
-//	{
-//		if (((int)(position.x - (tileSize_Width >> 1)) % tileSize_Width) == 0)
-//		{
-//			if (theMapReference->theScreenMap[i][checkPosition_X] == 1)
-//			{
-//				// Since the new position does not allow the player to move into, then go back to the old position
-//				position.y = (theMapReference->GetNumOfTiles_Height() - i) * tileSize_Height + (tileSize_Height >> 1);
-//				// Stop all vertical movement
-//				StopVerticalMovement();
-//				break;
-//			}
-//		}
-//		else
-//		{
-//			if ((theMapReference->theScreenMap[i][checkPosition_X] == 1) ||
-//				(theMapReference->theScreenMap[i][checkPosition_X + 1] == 1))
-//			{
-//				// Since the new position does not allow the player to move into, then go back to the old position
-//				position.y = (theMapReference->GetNumOfTiles_Height() - i) * tileSize_Height + (tileSize_Height >> 1);
-//				// Stop all vertical movement
-//				StopVerticalMovement();
-//				break;
-//			}
-//		}
-//	}
-//}
-
 /********************************************************************************
 Update
 ********************************************************************************/
@@ -340,16 +233,16 @@ void CPlayer::Update(double dt)
 	float m_speed = 1.0f;
 
 	//m_dElapsedIdleTime += dt;
-
+	m_dElapsedTime += dt;
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
-		pos.y += 30 * dt * m_speed;
+		pos.y += 20 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))
 	{
-		pos.y -= 30 * dt * m_speed;
+		pos.y -= 20 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('D'))
@@ -357,8 +250,9 @@ void CPlayer::Update(double dt)
 		RL = false;
 		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
-		SetAnimationStatus(RL,true,dt);
-		//m_dElapsedTime += dt;
+		SetAnimationStatus(RL, true,false, dt);
+		//
+		this->dir.x = 1;
 		std::cout << this->vel.x << std::endl;
 	}
 
@@ -366,118 +260,47 @@ void CPlayer::Update(double dt)
 	{
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
-		SetAnimationStatus(RL,true,dt);
+		SetAnimationStatus(RL, true,false, dt);
+		this->dir.x = -1;
 		//m_dElapsedTime += dt;
 	}
 
-	if(!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D'))
-		SetAnimationStatus(RL, false, dt);
+	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
+		SetAnimationStatus(RL, false,false, dt);
 
-	/*if (m_dElapsedTime > 0.3)
+	static bool isSpacepressed = false;
+	if (Application::IsKeyPressed(VK_SPACE) && !isSpacepressed)
 	{
-		m_dElapsedTime = 0;
-		UpdateAnimationIndex(dt);
+		isSpacepressed = true;
+		arrowdmg = 1;
+		chargearrow = true;
+		arrowSpeed = 50.f;
+		SetAnimationStatus(RL, false, true, dt);
 	}
-*/
-	/*if (m_dElapsedIdleTime > 0.3)
+	else if (!Application::IsKeyPressed(VK_SPACE) && isSpacepressed)
 	{
-		m_dElapsedIdleTime = 0;
-		UpdateAnimationIndex(dt);
-	}*/
+		if (m_dElapsedTime > 0.7)
+		{
+			isShooting = true;
+			m_dElapsedTime = 0;
+		}
+		
+		chargearrow = false;
+		isSpacepressed = false;
+	}
+
+	if (chargearrow)
+	{
+		arrowdmg += 1 * dt;
+		arrowSpeed += 50 * dt;
+		if (arrowdmg > 5)
+			arrowdmg = 5;
+	}
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());
-	// If the user presses SPACEBAR, then make him jump
-	//if (Application::IsKeyPressed(VK_SPACE))
-	//	SetToJumpUpwards(true);
-	//else
-	//{
-	//	// Check if the player has walked off the platform
-	//	if (isOnAir())
-	//		this->SetOnFreeFall(true);
-	//}
-
-	// Constrain the position
 	Constrain();
-
-	// If the user presses R key, then reset the view to default values
-	/*if (KeyboardController::GetInstance()->IsKeyDown('P'))
-	{
-		Reset();
-	}
-	else if (KeyboardController::GetInstance()->IsKeyReleased(VK_F5))
-	{
-		Load();
-	}
-	else if (KeyboardController::GetInstance()->IsKeyReleased(VK_F6))
-	{
-		if (Save() == true)
-			cout << "Save to file is successful!" << endl;
-		else
-			cout << "Save to file is unsuccessful!" << endl;
-	}
-	else
-	{
-		UpdateJumpUpwards(dt);
-		UpdateFreeFall(dt);
-		UpdateTileOffset();
-	}*/
-
-	// Check for collision with CGoodies instances
-
-	// Calculate the tile indices for the PlayerInfo2D's latest position
-	/*checkPosition_X = (int)((mapOffset_x + position.x - (tileSize_Width >> 1)) / tileSize_Width);
-	checkPosition_Y = theMapReference->GetNumOfTiles_Height() -
-		(int)ceil(position.y / theMapReference->GetTileSize_Height());*/
-
-	//UpdateGoodies(checkPosition_X, checkPosition_Y);
 }
-
-// Update tile offsets
-//void CPlayer::UpdateTileOffset(void)
-//{
-//	tileOffset_x = (int)(mapOffset_x / theMapReference->GetTileSize_Width());
-//	if (tileOffset_x + theMapReference->GetNumOfTiles_Width() > theMapReference->getNumOfTiles_MapWidth())
-//		tileOffset_x = theMapReference->getNumOfTiles_MapWidth() - theMapReference->GetNumOfTiles_Width();
-//}
-//
-//// Update side movements
-//void CPlayer::UpdateSideMovements(void)
-//{
-//	// Calculate the position to check on, using the player's reference point
-//	checkPosition_Y = theMapReference->GetNumOfTiles_Height() -
-//		(int)ceil(position.y / theMapReference->GetTileSize_Height());
-//
-//	// Check if the hero can move sideways
-//	if (KeyboardController::GetInstance()->IsKeyDown('A'))
-//	{
-//		// Find the tile number which the player's left side is on
-//		checkPosition_X = (int)((mapOffset_x + position.x - (tileSize_Width >> 1)) / tileSize_Width);
-//
-//		if (checkPosition_X >= 0)
-//		{
-//			if (theMapReference->theScreenMap[checkPosition_Y][checkPosition_X] == 1)
-//			{
-//				position.x = (checkPosition_X + 1 - tileOffset_x) * tileSize_Width -
-//					mapFineOffset_x + (tileSize_Width >> 1);
-//			}
-//		}
-//	}
-//	else if (KeyboardController::GetInstance()->IsKeyDown('D'))
-//	{
-//		// Find the tile number which the player's right side is on
-//		checkPosition_X = (int)((mapOffset_x + position.x + (tileSize_Width >> 1)) / tileSize_Width);
-//
-//		if (checkPosition_X < theMapReference->GetNumOfTiles_Width())
-//		{
-//			if (theMapReference->theScreenMap[checkPosition_Y][checkPosition_X] == 1)
-//			{
-//				// this part causes the player to be stuck when there is a tile on its right
-//				position.x = (checkPosition_X - 1 - tileOffset_x) * tileSize_Width -
-//					mapFineOffset_x + (tileSize_Width >> 1);
-//			}
-//		}
-//	}
-//}
+	
 
 void CPlayer::UpdateSideMovements(void)
 {
@@ -520,35 +343,7 @@ void CPlayer::MoveLeftRight(const bool mode, const float timeDiff)
 
 }
 
-// Check if the player is standing on air
-//bool CPlayer::isOnAir(void)
-//{
-//	if ((m_bJumpUpwards == true) || (m_bFallDownwards == true))
-//		return false;
-//
-//	// Check if the player is still in mid air...
-//	int checkPosition_X = (int)((position.x - (tileSize_Width >> 1)) / tileSize_Width);
-//	int checkPosition_Y = theMapReference->GetNumOfTiles_Height() -
-//		(int)ceil(position.y / tileSize_Height);
-//
-//	if (((int)(position.x - (tileSize_Width >> 1)) % tileSize_Width) == 0)
-//	{
-//		if (theMapReference->theScreenMap[checkPosition_Y + 1][checkPosition_X] == 0)
-//		{
-//			return true;
-//		}
-//	}
-//	else
-//	{
-//		if ((theMapReference->theScreenMap[checkPosition_Y + 1][checkPosition_X] == 0)
-//			&& (theMapReference->theScreenMap[checkPosition_Y + 1][checkPosition_X + 1] == 0))
-//		{
-//			return true;
-//		}
-//	}
-//
-//	return false;
-//}
+
 
  //Constrain the position within the borders
 void CPlayer::Constrain(void)
@@ -650,226 +445,5 @@ void CPlayer::Constrain(void)
 //}
 //
 //
-//// Load this class
-//bool CPlayer::Load(const string saveFileName)
-//{
-//	ifstream myfile(saveFileName.c_str(), ios::in);
-//	if (myfile.is_open())
-//	{
-//		string line;
-//		while (getline(myfile, line))
-//		{
-//			cout << line << '\n';
-//
-//			std::istringstream ss(line);
-//			std::string aToken = "";
-//
-//			// Get the tag from the line
-//			while (std::getline(ss, aToken, '=')) {
-//				std::cout << aToken << endl;
-//
-//				// Get the data from the line
-//				std::string theTag = aToken;
-//				std::getline(ss, aToken, '=');
-//				std::cout << aToken << endl;
-//				if (theTag == "defaultPosition")
-//				{
-//					defaultPosition = Token2Vector(aToken);
-//				}
-//				else if (theTag == "defaultTarget")
-//				{
-//					defaultTarget = Token2Vector(aToken);
-//				}
-//				else if (theTag == "defaultUp")
-//				{
-//					defaultUp = Token2Vector(aToken);
-//				}
-//				else if (theTag == "position")
-//				{
-//					position = Token2Vector(aToken);
-//				}
-//				else if (theTag == "target")
-//				{
-//					target = Token2Vector(aToken);
-//				}
-//				else if (theTag == "up")
-//				{
-//					up = Token2Vector(aToken);
-//				}
-//				else if (theTag == "maxBoundary")
-//				{
-//					maxBoundary = Token2Vector(aToken);
-//				}
-//				else if (theTag == "minBoundary")
-//				{
-//					minBoundary = Token2Vector(aToken);
-//				}
-//				else if (theTag == "m_dSpeed")
-//				{
-//					m_dSpeed = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dAcceleration")
-//				{
-//					m_dAcceleration = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dJumpSpeed")
-//				{
-//					m_dJumpSpeed = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dJumpAcceleration")
-//				{
-//					m_dJumpAcceleration = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dFallSpeed")
-//				{
-//					m_dFallSpeed = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dFallAcceleration")
-//				{
-//					m_dFallAcceleration = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_dElapsedTime")
-//				{
-//					m_dElapsedTime = Token2Double(aToken);
-//				}
-//				else if (theTag == "m_bJumpUpwards")
-//				{
-//					m_bJumpUpwards = Token2Bool(aToken);
-//				}
-//				else if (theTag == "m_bFallDownwards")
-//				{
-//					m_bFallDownwards = Token2Bool(aToken);
-//				}
-//				else if (theTag == "m_dFallAcceleration")
-//				{
-//					m_dFallAcceleration = Token2Bool(aToken);
-//				}
-//				else if (theTag == "m_dElapsedTime")
-//				{
-//					m_dElapsedTime = Token2Bool(aToken);
-//				}
-//				else if (theTag == "tileOffset_x")
-//				{
-//					tileOffset_x = Token2Bool(aToken);
-//				}
-//				else if (theTag == "tileOffset_y")
-//				{
-//					tileOffset_y = Token2Bool(aToken);
-//				}
-//				else if (theTag == "mapFineOffset_x")
-//				{
-//					mapFineOffset_x = Token2Bool(aToken);
-//				}
-//				else if (theTag == "mapFineOffset_y")
-//				{
-//					mapFineOffset_y = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearTileOffset_x")
-//				{
-//					rearTileOffset_x = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearTileOffset_y")
-//				{
-//					rearTileOffset_y = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearMapOffset_x")
-//				{
-//					rearMapOffset_x = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearMapOffset_y")
-//				{
-//					rearMapOffset_y = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearMapFineOffset_x")
-//				{
-//					rearMapFineOffset_x = Token2Bool(aToken);
-//				}
-//				else if (theTag == "rearMapFineOffset_y")
-//				{
-//					rearMapFineOffset_y = Token2Bool(aToken);
-//				}
-//			}
-//		}
-//		myfile.close();
-//	}
-//	else
-//	{
-//#if(_DEBUG == TRUE)
-//		cout << "PlayerInfo: Unable to load " << saveFileName.c_str() << endl;
-//#endif
-//		myfile.close();
-//		return false;
-//	}
-//
-//	return true;
-//}
-//
-//// Save this class
-//bool CPlayer::Save(const string saveFileName)
-//{
-//	ofstream myfile;
-//	myfile.open(saveFileName.c_str(), ios::out | ios::ate);
-//	if (myfile.is_open())
-//	{
-//		myfile << "defaultPosition=" << defaultPosition.x << "," << defaultPosition.y << ","
-//			<< defaultPosition.z << endl;
-//		myfile << "defaultTarget=" << defaultTarget.x << "," << defaultTarget.y << ","
-//			<< defaultTarget.z << endl;
-//		myfile << "defaultUp=" << defaultUp.x << "," << defaultUp.y << "," << defaultUp.z << endl;
-//		myfile << "position=" << position.x << "," << position.y << "," << position.z << endl;
-//		myfile << "target=" << target.x << "," << target.y << "," << target.z << endl;
-//		myfile << "up=" << up.x << "," << up.y << "," << up.z << endl;
-//		myfile << "maxBoundary=" << maxBoundary.x << "," << maxBoundary.y << "," << maxBoundary.z << endl;
-//		myfile << "minBoundary=" << minBoundary.x << "," << minBoundary.y << "," << minBoundary.z << endl;
-//		myfile << "tileSize_Width=" << tileSize_Width << endl;
-//		myfile << "tileSize_Height=" << tileSize_Height << endl;
-//		myfile << "m_dSpeed=" << m_dSpeed << endl;
-//		myfile << "m_dAcceleration=" << m_dAcceleration << endl;
-//		myfile << "m_bJumpUpwards=" << m_bJumpUpwards << endl;
-//		myfile << "m_dJumpSpeed=" << m_dJumpSpeed << endl;
-//		myfile << "m_dJumpAcceleration=" << m_dJumpAcceleration << endl;
-//		myfile << "m_dFallSpeed=" << m_dFallSpeed << endl;
-//		myfile << "m_bFallDownwards=" << m_bFallDownwards << endl;
-//		myfile << "m_dFallAcceleration=" << m_dFallAcceleration << endl;
-//		myfile << "m_dElapsedTime=" << m_dElapsedTime << endl;
-//		myfile << "tileOffset_x=" << tileOffset_x << endl;
-//		myfile << "tileOffset_y=" << tileOffset_y << endl;
-//		myfile << "mapFineOffset_x=" << mapFineOffset_x << endl;
-//		myfile << "mapFineOffset_y=" << mapFineOffset_y << endl;
-//		myfile << "rearTileOffset_x=" << rearTileOffset_x << endl;
-//		myfile << "rearTileOffset_y=" << rearTileOffset_y << endl;
-//		myfile << "rearMapOffset_x=" << rearMapOffset_x << endl;
-//		myfile << "rearMapOffset_y=" << rearMapOffset_y << endl;
-//		myfile << "rearMapFineOffset_x=" << rearMapFineOffset_x << endl;
-//		myfile << "rearMapFineOffset_y=" << rearMapFineOffset_y << endl;
-//
-//		myfile.close();
-//		return true;
-//	}
-//	else
-//	{
-//#if(_DEBUG == TRUE)
-//		cout << "PlayerInfo: Unable to save " << saveFileName.c_str() << endl;
-//#endif
-//		myfile.close();
-//		return false;
-//	}
-//}
-//
-//// Check for collision with CGoodies instances
-//void CPlayer::UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row)
-//{
-//	CGoodies* theGoodie = CGoodiesFactory::GetInstance()->GetGoodies(tileIndex_Column, tileIndex_Row);
-//	if (theGoodie)
-//	{
-//		// Perform any special operation
-//
-//		// Remove the goodie from the factory
-//		if (CGoodiesFactory::GetInstance()->RemoveGoodies(tileIndex_Column, tileIndex_Row) == true)
-//		{
-//			// Remove the instance from the map
-//			theMapReference->theScreenMap[tileIndex_Row][tileIndex_Column] = 0;
-//		}
-//	}
-//}
+
 

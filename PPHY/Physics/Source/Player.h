@@ -113,6 +113,7 @@ public:
 
 	// Check if the player is standing on air
 	bool isOnAir(void);
+	bool isShooting;
 
 	// Constrain the position within the borders
 	void Constrain(void);
@@ -147,6 +148,10 @@ public:
 
 	// Check for collision with CGoodies instances
 	void UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row);
+	bool RL;
+	bool chargearrow;
+	float arrowSpeed;
+	float arrowdmg;
 
 	
 
@@ -170,7 +175,7 @@ private:
 	double m_dElapsedTime;
 	double m_dElapsedIdleTime;
 	int playerMoveIndex;
-	bool RL;
+	
 
 	//CMap* theMapReference;
 

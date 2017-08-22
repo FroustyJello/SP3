@@ -89,7 +89,7 @@ public:
 
 	CPlayer* thePlayerInfo;
 	
-	Enemy* theFatEnemyInfo;
+	Enemy* theEnemyInfo;
 
 protected:
 	unsigned m_vertexArrayID;
@@ -104,6 +104,9 @@ protected:
 	MS projectionStack;
 	SpriteEntity** thePlayer;
 	SpriteEntity** fatEnemy;
+	SpriteEntity** femaleEnemy;
+	SpriteEntity** regularEnemy;
+	SpriteEntity** pistolEnemy;
 
 	Light lights[1];
 

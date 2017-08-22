@@ -2,7 +2,7 @@
 
 
 
-Enemy::Enemy():prevX(0.f)
+Enemy::Enemy():prevX(0.f), RL(false)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -24,12 +24,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		this->EnemyType = MELEE;
 		break;
 	case(GameObject::GO_ENEMY_MELEE_2):
-		this->EnemyType = MELEE;
-		break;
-	case(GameObject::GO_ENEMY_MELEE_3):
-		this->EnemyType = MELEE;
-		break;
-	case(GameObject::GO_ENEMY_MELEE_4):
 		this->EnemyType = MELEE;
 		break;
 	case(GameObject::GO_ENEMY_RANGED):
@@ -171,28 +165,36 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 					}
 				}
 			}
+<<<<<<< HEAD
 			else if ((this->pos - PlayerRef->pos).Length() <= 12)
+=======
+			else if ((this->pos - PlayerRef).Length() <= 18)
+>>>>>>> 0ca53695081373a90852cdee63e3fe683965425d
 			{
 				if (attackBT <= 0)
 				{
 					attackBT = 60.f;
+
 					std::cout << "Attack. (Melee)" << std::endl;
 				}
+				SetAnimationStatus(RL, false, true, dt);
 			}
 		}
 	}
 
 	if (this->pos.x < prevX)
 	{
-		SetAnimationStatus(true, true, dt);
+		RL = true;
+		SetAnimationStatus(RL, true,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
-		SetAnimationStatus(false, true, dt);
+		RL = false;
+		SetAnimationStatus(RL, true,false, dt);
 	}
-	else
+	else if(!DetectedPlayer)
 	{
-		SetAnimationStatus(true, false, dt);
+		SetAnimationStatus(RL, false,false, dt);
 	}
 	prevX = this->pos.x;
 
@@ -288,15 +290,15 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	}
 	if (this->pos.x < prevX)
 	{
-		SetAnimationStatus(true, true, dt);
+		SetAnimationStatus(true, true,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
-		SetAnimationStatus(false, true, dt);
+		SetAnimationStatus(false, true,false, dt);
 	}
 	else
 	{
-		SetAnimationStatus(true, false, dt);
+		SetAnimationStatus(true, false,false, dt);
 	}
 	prevX = this->pos.x;
 		break;

@@ -28,8 +28,6 @@ struct GameObject :public  Singleton<GameObject>
 		GO_PLAYER,
 		GO_ENEMY_MELEE,
 		GO_ENEMY_MELEE_2,
-		GO_ENEMY_MELEE_3,
-		GO_ENEMY_MELEE_4,
 		GO_ENEMY_RANGED,
 		GO_ENEMY_RANGED_2,
 		GO_BOSS_1,
@@ -41,6 +39,7 @@ struct GameObject :public  Singleton<GameObject>
 
 		//Projectiles
 		GO_ARROW,
+		GO_FIRE_ARROW,
 		GO_ENEMY_BULLET,
 		GO_BOSS_LASER,
 		GO_BOSS_BULLET_1,
@@ -58,6 +57,7 @@ struct GameObject :public  Singleton<GameObject>
 	float angularVelocity; //in radians
 	float mass;
 	float HP;
+	float dmg;
 	bool active;
 
 	Vector3 dir; //direction/orientation
