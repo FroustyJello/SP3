@@ -145,15 +145,15 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 
 	if (this->pos.x < prevX)
 	{
-		SetAnimationStatus(true, true, dt);
+		SetAnimationStatus(true, true,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
-		SetAnimationStatus(false, true, dt);
+		SetAnimationStatus(false, true,false, dt);
 	}
 	else
 	{
-		SetAnimationStatus(true, false, dt);
+		SetAnimationStatus(true, false,false, dt);
 	}
 	prevX = this->pos.x;
 
@@ -250,15 +250,15 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 	}
 	if (this->pos.x < prevX)
 	{
-		SetAnimationStatus(true, true, dt);
+		SetAnimationStatus(true, true,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
-		SetAnimationStatus(false, true, dt);
+		SetAnimationStatus(false, true,false, dt);
 	}
 	else
 	{
-		SetAnimationStatus(true, false, dt);
+		SetAnimationStatus(true, false,false, dt);
 	}
 	prevX = this->pos.x;
 		break;

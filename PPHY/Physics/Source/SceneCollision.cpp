@@ -664,7 +664,7 @@ void SceneCollision::Update(double dt)
 		GameObject* shoot = FetchGO();
 		shoot->type = GameObject::GO_ARROW;
 		shoot->pos = thePlayerInfo->pos;
-		shoot->pos.y += 5;
+		shoot->pos.y += 9.3;
 		shoot->dir = thePlayerInfo->dir;
 		shoot->vel = thePlayerInfo->dir * 50;
 		shoot->scale.Set(2, 2, 1);

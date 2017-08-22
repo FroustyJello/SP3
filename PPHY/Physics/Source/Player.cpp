@@ -247,7 +247,7 @@ void CPlayer::Update(double dt)
 		RL = false;
 		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
-		SetAnimationStatus(RL, true, dt);
+		SetAnimationStatus(RL, true,false, dt);
 		//m_dElapsedTime += dt;
 		this->dir.x = 1;
 		std::cout << this->vel.x << std::endl;
@@ -257,19 +257,20 @@ void CPlayer::Update(double dt)
 	{
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
-		SetAnimationStatus(RL, true, dt);
+		SetAnimationStatus(RL, true,false, dt);
 		this->dir.x = -1;
 		//m_dElapsedTime += dt;
 	}
 
-	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D'))
-		SetAnimationStatus(RL, false, dt);
+	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
+		SetAnimationStatus(RL, false,false, dt);
 
 	static bool isSpacepressed = false;
 	if (Application::IsKeyPressed(VK_SPACE) && !isSpacepressed)
 	{
 		isSpacepressed = true;
 		isShooting = true;
+		SetAnimationStatus(RL, false, true, dt);
 	}
 	else if (!Application::IsKeyPressed(VK_SPACE) && isSpacepressed)
 	{

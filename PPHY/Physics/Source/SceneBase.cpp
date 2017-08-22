@@ -293,12 +293,20 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("player_left_0")->textureID = LoadTGA("Image//Player/player_left_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_left_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_1")->textureID = LoadTGA("Image//Player/player_left_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_shoot_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_shoot_0")->textureID = LoadTGA("Image//Player/player_left_shoot_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_shoot_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_shoot_1")->textureID = LoadTGA("Image//Player/player_left_shoot_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_shoot_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_shoot_0")->textureID = LoadTGA("Image//Player/player_right_shoot_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_shoot_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_shoot_1")->textureID = LoadTGA("Image//Player/player_right_shoot_1.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
 
-	thePlayer = new SpriteEntity*[10];
+	thePlayer = new SpriteEntity*[12];
 	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);
 	thePlayer[1] = Create::Sprite2DObject("player_right_1", true);
 	thePlayer[2] = Create::Sprite2DObject("player_left_0", true);
@@ -309,12 +317,19 @@ void SceneBase::Init()
 	thePlayer[7] = Create::Sprite2DObject("player_left_still_0", true);
 	thePlayer[8] = Create::Sprite2DObject("player_left_still_1", true);
 	thePlayer[9] = Create::Sprite2DObject("player_left_still_2", true);
+	thePlayer[10] = Create::Sprite2DObject("player_left_shoot_0", true);
+	thePlayer[11] = Create::Sprite2DObject("player_left_shoot_1", true);
+	thePlayer[12] = Create::Sprite2DObject("player_right_shoot_0", true);
+	thePlayer[13] = Create::Sprite2DObject("player_right_shoot_1", true);
 
 	thePlayerInfo->SetRightIdleIndices(4, 6);
 	thePlayerInfo->SetLeftIdleIndices(7, 9);
 
 	thePlayerInfo->SetRightIndices(0, 1);
 	thePlayerInfo->SetLeftIndices(2, 3);
+
+	thePlayerInfo->SetRightAttIndices(12, 13);
+	thePlayerInfo->SetLeftAttIndices(10, 11);
 
 	fatEnemy = new SpriteEntity*[8];
 	fatEnemy[0] = Create::Sprite2DObject("fat_right_0", true);
