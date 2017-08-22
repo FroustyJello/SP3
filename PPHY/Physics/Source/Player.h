@@ -113,6 +113,7 @@ public:
 
 	// Check if the player is standing on air
 	bool isOnAir(void);
+	bool isShooting;
 
 	// Constrain the position within the borders
 	void Constrain(void);

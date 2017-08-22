@@ -22,7 +22,7 @@ void MapEditor::Init()
 	saveTime = 0;
 	fileName = "";
 	choice = 0;
-	//selection = "Wall1"
+	alreadyHavePlayer = false;
 	Math::InitRNG();
 
 	m_objectCount = 0;
@@ -88,15 +88,19 @@ void MapEditor::renderText()
 			ss << "Saved Succesfully";
 			RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 12);
 		}
-		ss.str(std::string());
-		ss.precision(5);
-		ss << "Current Object: " << selection;
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 3);
+		if (alreadyHavePlayer)
+		{
+			ss.str(std::string());
+			ss.precision(1);
+			ss << "You already have a player on screen";
+			RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 2.3f, 0, 3);
+		}
 
 		ss.str(std::string());
 		ss.precision(5);
 		ss <<"Press 'SPACE' to save";
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 5, 50);
+
 	}
 }
 
@@ -124,9 +128,14 @@ void MapEditor::mouseControls()
 		m_ghost->active = false;
 		GameObject*go = type(choice);
 
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)10 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
 			go->pos.Set(posX, posY, 1);
-		else
+		else if (go->type == GameObject::GO_PLAYER && !alreadyHavePlayer)
+		{
+			go->pos.Set(posX, posY, 1);
+			alreadyHavePlayer = true;
+		}
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)4 && go->type <= (GameObject::GAMEOBJECT_TYPE)9)
 			go->pos.Set(cx, cy, 0);
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
@@ -153,6 +162,8 @@ void MapEditor::mouseControls()
 			GameObject *go = (GameObject *)*it;
 			if ((go->pos - mousepos).Length() < 5)
 			{
+				if (go->type == GameObject::GO_PLAYER)
+					alreadyHavePlayer = false;
 				go->pos.SetZero();
 				go->active = false;
 			}
@@ -317,6 +328,9 @@ void MapEditor::LoadObjects(vector<string> data)
 				break;
 			}
 
+			if (go->type == GameObject::GO_PLAYER)
+				alreadyHavePlayer = true;
+
 			if (go->dir != Vector3{ 0,0,0 })
 			{
 				go->dir.Normalize();
@@ -405,9 +419,7 @@ void MapEditor::Update(double dt)
 
 		if (Application::IsKeyPressed('F'))
 		{
-			worldX -= 20 * dt;
-			worldY -= 20 * dt;
-			//Application::SetScene(1);
+			Application::SetScene(1);
 		}
 	}
 }
@@ -535,12 +547,6 @@ void MapEditor::Render()
 
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 12, camera.target.y + 90, camera.target.z);
-	modelStack.Scale(4, 4, 4);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_right_face"), false);
-	modelStack.PopMatrix();
-
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
@@ -554,8 +560,6 @@ void MapEditor::Render()
 	modelStack.Translate(posX, posY, 0);
 	RenderGO(m_ghost);
 	modelStack.PopMatrix();
-
-
 
 	modelStack.PopMatrix();
 	//On screen text

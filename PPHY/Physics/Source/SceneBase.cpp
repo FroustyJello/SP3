@@ -134,7 +134,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("enemy", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("player", Color(1, 1, 1), 2.f);
+	MeshBuilder::GetInstance()->GenerateQuad("player", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("missile", Color(1, 1, 1), 5.f);
@@ -142,6 +142,12 @@ void SceneBase::Init()
 
 	MeshBuilder::GetInstance()->GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("powerup_health", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("powerup_health")->textureID = LoadTGA("Image//powerup_health.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("arrow", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("arrow")->textureID = LoadTGA("Image//Player/player_right_arrow.tga");
 
 
 	MeshBuilder::GetInstance()->GenerateQuad("tile_1", Color(1, 1, 1), 1.f);

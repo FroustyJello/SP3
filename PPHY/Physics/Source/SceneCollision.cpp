@@ -657,6 +657,14 @@ void SceneCollision::Update(double dt)
 		go->mass = sc * sc * sc;
 	}
 
+	//if (thePlayerInfo->isShooting)
+	//{
+	//	GameObject* shoot = FetchGO();
+	//	shoot->type = GameObject::GO_BALL;
+	//	shoot->pos = thePlayerInfo->pos;
+	//	thePlayerInfo->isShooting = false;
+	//}
+
 	//Physics Simulation Section
 	dt *= m_speed;
 
@@ -671,8 +679,39 @@ void SceneCollision::Update(double dt)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
+		if (go->pos.x > m_worldWidth + camera.position.x + 3|| go->pos.x < 0 + camera.position.x - 3 ||
+			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+		{
+			go->active = false;
+		}
+		else
+		{
+			go->active = true;
+		}
+
+
 		if (go->type == GameObject::GO_PLAYER)
+		{
 			hpscale = (go->HP / 10 )* 40;
+			if (thePlayerInfo->isShooting)
+			{
+				GameObject* shoot = FetchGO();
+				shoot->type = GameObject::GO_ARROW;
+				shoot->pos = thePlayerInfo->pos;
+				shoot->pos.y += 5;
+				shoot->dir.Set(-1, 0, 0);
+				shoot->scale.Set(2, 2, 1);
+				thePlayerInfo->isShooting = false;
+				break;
+			}
+			
+		}
+		if (go->type == GameObject::GO_ARROW)
+		{
+			go->vel.x = 1 ;
+			go->pos += go->vel;
+		}
+
 
 		if (!go->active)
 			continue;
@@ -694,7 +733,6 @@ void SceneCollision::Update(double dt)
 		{
 			go->active = false;
 		}
-		//^^
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{
@@ -830,6 +868,15 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.PopMatrix();
+		break;
+
+	case GameObject::GO_ARROW:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("arrow"), false);
 		modelStack.PopMatrix();
 		break;
 	}

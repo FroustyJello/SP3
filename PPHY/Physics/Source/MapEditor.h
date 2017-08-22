@@ -46,6 +46,7 @@ protected:
 
 	bool saveSuccesfull;
 	bool start;
+	bool alreadyHavePlayer;
 
 	GameObject* type(int i);
 	string fileName;
