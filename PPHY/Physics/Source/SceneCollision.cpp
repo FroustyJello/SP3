@@ -665,14 +665,18 @@ void SceneCollision::Update(double dt)
 	if (thePlayerInfo->isShooting)
 	{
 		GameObject* shoot = FetchGO();
-		shoot->type = GameObject::GO_ARROW;
+		if (thePlayerInfo->arrowdmg < 3)
+			shoot->type = GameObject::GO_ARROW;	
+		else
+			shoot->type = GameObject::GO_FIRE_ARROW;
+
 		shoot->pos = thePlayerInfo->pos;
 		shoot->pos.y += 9.3;
 		shoot->pos.x += 5;
 		shoot->dir = thePlayerInfo->dir;
-		shoot->dmg = 1;
+		shoot->dmg = thePlayerInfo->arrowdmg;
 		shoot->vel = thePlayerInfo->dir * thePlayerInfo->arrowSpeed;
-		shoot->scale.Set(2, 2, 1);
+		shoot->scale.Set(3, 3, 1);
 		thePlayerInfo->isShooting = false;
 	}
 
@@ -883,6 +887,14 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("arrow"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_FIRE_ARROW:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_fire_arrow"), false);
 		modelStack.PopMatrix();
 		break;
 	}

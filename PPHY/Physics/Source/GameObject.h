@@ -39,6 +39,7 @@ struct GameObject :public  Singleton<GameObject>
 
 		//Projectiles
 		GO_ARROW,
+		GO_FIRE_ARROW,
 		GO_ENEMY_BULLET,
 		GO_BOSS_LASER,
 		GO_BOSS_BULLET_1,

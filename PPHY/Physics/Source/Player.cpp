@@ -233,7 +233,7 @@ void CPlayer::Update(double dt)
 	float m_speed = 1.0f;
 
 	//m_dElapsedIdleTime += dt;
-
+	m_dElapsedTime += dt;
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
@@ -251,7 +251,7 @@ void CPlayer::Update(double dt)
 		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
 		SetAnimationStatus(RL, true,false, dt);
-		//m_dElapsedTime += dt;
+		//
 		this->dir.x = 1;
 		std::cout << this->vel.x << std::endl;
 	}
@@ -276,11 +276,15 @@ void CPlayer::Update(double dt)
 		chargearrow = true;
 		arrowSpeed = 50.f;
 		SetAnimationStatus(RL, false, true, dt);
-		std::cout << "arrow dmg" <<  arrowdmg << std::endl;
 	}
 	else if (!Application::IsKeyPressed(VK_SPACE) && isSpacepressed)
 	{
-		isShooting = true;
+		if (m_dElapsedTime > 0.7)
+		{
+			isShooting = true;
+			m_dElapsedTime = 0;
+		}
+		
 		chargearrow = false;
 		isSpacepressed = false;
 	}
@@ -289,9 +293,8 @@ void CPlayer::Update(double dt)
 	{
 		arrowdmg += 1 * dt;
 		arrowSpeed += 50 * dt;
-		if (arrowdmg > 3)
-			arrowdmg = 3;
-		std::cout << "arrow dmg" << arrowdmg << std::endl;
+		if (arrowdmg > 5)
+			arrowdmg = 5;
 	}
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());
