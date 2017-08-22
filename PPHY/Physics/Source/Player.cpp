@@ -249,6 +249,7 @@ void CPlayer::Update(double dt)
 		pos.x += 25 * dt * m_speed;
 		SetAnimationStatus(RL, true, dt);
 		//m_dElapsedTime += dt;
+		this->dir.x = 1;
 		std::cout << this->vel.x << std::endl;
 	}
 
@@ -257,6 +258,7 @@ void CPlayer::Update(double dt)
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
 		SetAnimationStatus(RL, true, dt);
+		this->dir.x = -1;
 		//m_dElapsedTime += dt;
 	}
 

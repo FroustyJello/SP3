@@ -128,7 +128,7 @@ void MapEditor::mouseControls()
 		m_ghost->active = false;
 		GameObject*go = type(choice);
 
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)18)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
 			go->pos.Set(posX, posY, 1);
 		else if (go->type == GameObject::GO_PLAYER && !alreadyHavePlayer)
 		{
@@ -492,14 +492,28 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("fat_left_still_0"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_MELEE_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("female_left_still_0"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("enemy"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("regular_left_still_0"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_RANGED_2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("pistol_left_still_0"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOSS_1:

@@ -148,7 +148,7 @@ public:
 
 	// Check for collision with CGoodies instances
 	void UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row);
-
+	bool RL;
 	
 
 private:
@@ -171,7 +171,7 @@ private:
 	double m_dElapsedTime;
 	double m_dElapsedIdleTime;
 	int playerMoveIndex;
-	bool RL;
+	
 
 	//CMap* theMapReference;
 
