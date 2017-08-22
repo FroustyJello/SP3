@@ -28,8 +28,6 @@ struct GameObject :public  Singleton<GameObject>
 		GO_PLAYER,
 		GO_ENEMY_MELEE,
 		GO_ENEMY_MELEE_2,
-		GO_ENEMY_MELEE_3,
-		GO_ENEMY_MELEE_4,
 		GO_ENEMY_RANGED,
 		GO_ENEMY_RANGED_2,
 		GO_BOSS_1,

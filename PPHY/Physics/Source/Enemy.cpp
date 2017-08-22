@@ -26,12 +26,6 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 	case(GameObject::GO_ENEMY_MELEE_2):
 		this->EnemyType = MELEE;
 		break;
-	case(GameObject::GO_ENEMY_MELEE_3):
-		this->EnemyType = MELEE;
-		break;
-	case(GameObject::GO_ENEMY_MELEE_4):
-		this->EnemyType = MELEE;
-		break;
 	case(GameObject::GO_ENEMY_RANGED):
 		this->EnemyType = RANGED;
 		break;
