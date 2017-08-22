@@ -270,7 +270,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_att_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("pistol_right_att_1")->textureID = LoadTGA("Image//Enemies/Pistol/pistol_right_att_1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_died", Color(1, 1, 1), 5.f);
-	MeshBuilder::GetInstance()->GetMesh("pistol_right_died")->textureID = LoadTGA("Image//Enemies/Regular/pistol_right_died.tga");
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_died")->textureID = LoadTGA("Image//Enemies/Pistol/pistol_right_died.tga");
 
 	//Player sprite
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 5.f);

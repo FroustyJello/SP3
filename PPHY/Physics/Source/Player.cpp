@@ -28,6 +28,9 @@ CPlayer::CPlayer(void)
 	, m_dElapsedIdleTime(0.0)
 	, playerMoveIndex(0)
 	, isShooting(false)
+	, arrowdmg (1)
+	, chargearrow(false)
+	, arrowSpeed(50.f)
 {
 }
 
@@ -269,12 +272,26 @@ void CPlayer::Update(double dt)
 	if (Application::IsKeyPressed(VK_SPACE) && !isSpacepressed)
 	{
 		isSpacepressed = true;
-		isShooting = true;
+		arrowdmg = 1;
+		chargearrow = true;
+		arrowSpeed = 50.f;
 		SetAnimationStatus(RL, false, true, dt);
+		std::cout << "arrow dmg" <<  arrowdmg << std::endl;
 	}
 	else if (!Application::IsKeyPressed(VK_SPACE) && isSpacepressed)
 	{
+		isShooting = true;
+		chargearrow = false;
 		isSpacepressed = false;
+	}
+
+	if (chargearrow)
+	{
+		arrowdmg += 1 * dt;
+		arrowSpeed += 50 * dt;
+		if (arrowdmg > 3)
+			arrowdmg = 3;
+		std::cout << "arrow dmg" << arrowdmg << std::endl;
 	}
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());

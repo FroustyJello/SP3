@@ -149,6 +149,10 @@ public:
 	// Check for collision with CGoodies instances
 	void UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row);
 	bool RL;
+	bool chargearrow;
+	float arrowSpeed;
+	float arrowdmg;
+
 	
 
 private:

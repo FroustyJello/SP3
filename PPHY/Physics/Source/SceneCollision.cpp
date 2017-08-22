@@ -421,7 +421,7 @@ void SceneCollision::Update(double dt)
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
 
-	std::cout << collided << std::endl;
+	//std::cout << collided << std::endl;
 
 	thePlayerInfo->Update(dt);
 
@@ -665,8 +665,10 @@ void SceneCollision::Update(double dt)
 		shoot->type = GameObject::GO_ARROW;
 		shoot->pos = thePlayerInfo->pos;
 		shoot->pos.y += 9.3;
+		shoot->pos.x += 5;
 		shoot->dir = thePlayerInfo->dir;
-		shoot->vel = thePlayerInfo->dir * 50;
+		shoot->dmg = 1;
+		shoot->vel = thePlayerInfo->dir * thePlayerInfo->arrowSpeed;
 		shoot->scale.Set(2, 2, 1);
 		thePlayerInfo->isShooting = false;
 	}
