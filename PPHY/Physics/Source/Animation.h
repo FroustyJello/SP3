@@ -6,7 +6,7 @@ public:
 	virtual ~CAnimation();
 
 	// Set Animation status; left or right
-	void SetAnimationStatus(bool m_bAnimationInvert, bool isMoving, double dt);
+	void SetAnimationStatus(bool m_bAnimationInvert, bool isMoving,bool isAttacking, double dt);
 	// Update the Animation Index
 	void UpdateAnimationIndex(double dt);
 	// Get the Animation status
@@ -24,12 +24,19 @@ public:
 	// Set left idle indices
 	void SetLeftIdleIndices(const int m_iLeftIdle_Start, const int m_iLeftIdle_End);
 
+	// Set right attack indices
+	void SetRightAttIndices(const int m_iRightAtt_Start, const int m_iRightAtt_End);
+	// Set left attack indices
+	void SetLeftAttIndices(const int m_iLeftAtt_Start, const int m_iLeftAtt_End);
+
 private:
 	// Flag to indicate if the Animation is inverted to the left. 
 	// true==face right, false==face left
 	bool m_bAnimationInvert;
 	
 	bool isMoving;
+
+	bool isAttacking;
 
 	double m_dElapsedTime;
 
@@ -54,5 +61,14 @@ private:
 	int m_iLeftIdle_Start;
 	// End index of left facing Animations
 	int m_iLeftIdle_End;
+
+	// Start index of right facing Animations
+	int m_iRightAtt_Start;
+	// End index of right facing Animations
+	int m_iRightAtt_End;
+	// Start index of left facing Animations
+	int m_iLeftAtt_Start;
+	// End index of left facing Animations
+	int m_iLeftAtt_End;
 };
 

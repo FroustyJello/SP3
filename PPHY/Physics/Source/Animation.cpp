@@ -23,9 +23,9 @@ CAnimation::~CAnimation()
 }
 
 // Set Animation status; left or right
-void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, double dt)
+void CAnimation::SetAnimationStatus(bool m_bAnimationInvert,bool isMoving, bool isAttacking, double dt)
 {
-	if (this->m_bAnimationInvert != m_bAnimationInvert || this->isMoving != isMoving)
+	if (this->m_bAnimationInvert != m_bAnimationInvert || this->isMoving != isMoving || this->isAttacking != isAttacking)
 	{
 		this->m_bAnimationInvert = m_bAnimationInvert;
 		this->isMoving = isMoving;
@@ -134,4 +134,12 @@ void CAnimation::SetLeftIdleIndices(const int m_iLeftIdle_Start, const int m_iLe
 {
 	this->m_iLeftIdle_Start = m_iLeftIdle_Start;
 	this->m_iLeftIdle_End = m_iLeftIdle_End;
+}
+
+void CAnimation::SetRightAttIndices(const int m_iRightAtt_Start, const int m_iRightAtt_End)
+{
+}
+
+void CAnimation::SetLeftAttIndices(const int m_iLeftAtt_Start, const int m_iLeftAtt_End)
+{
 }
