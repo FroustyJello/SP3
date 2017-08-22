@@ -42,8 +42,7 @@ Vector3 CCollider::GetMinAABB(void)
 bool CCollider::CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vector3 thatMinAABB, Vector3 thatMaxAABB)
 {
 	return ((thisMinAABB.x <= thatMaxAABB.x && thisMaxAABB.x >= thatMinAABB.x)
-		&& (thisMinAABB.y <= thatMaxAABB.y && thisMaxAABB.y >= thatMinAABB.y)
-		&& (thisMinAABB.z <= thatMaxAABB.z && thisMaxAABB.z >= thatMinAABB.z));
+		&& (thisMinAABB.y <= thatMaxAABB.y && thisMaxAABB.y >= thatMinAABB.y));
 }
 
 void CCollider::SetPAABB(Vector3 size, Vector3 pos)

@@ -14,8 +14,3 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 GameObject::~GameObject()
 {
 }
-
-void GameObject::Update(double dt, Vector3 PlayerRef, std::vector<GameObject *> m_goList)
-{
-
-}

@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Animation.h"
+#include "Player.h"
 #include <vector>
 
 enum EnemyType
@@ -20,7 +21,7 @@ public:
 	//Enemy(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~Enemy();
 	
-	void Update(double dt, Vector3 PlayerRef, std::vector<Enemy *> m_enemies);
+	void Update(double dt, CPlayer *PlayerRef, std::vector<Enemy *> m_enemies, std::vector<CCollider*> m_Collider);
 
 private:
 	// Enemy Variables
@@ -29,10 +30,11 @@ private:
 	Enemy *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 	EnemyType EnemyType;
+	CCollider *LeftSight = new CCollider;
+	CCollider *RightSight = new CCollider;
 
 	// Boss_1 Variables
 	int Boss_1_Attack = 0;
 	bool isAttacking = false;
-	Vector3 LastPlayerPosition;
 };
 #endif // !ENEMY_H

@@ -61,25 +61,10 @@ struct GameObject :public  Singleton<GameObject>
 	bool active;
 
 	Vector3 dir; //direction/orientation
-	Vector3 PlayerRef;
 
-
-	std::vector<GameObject*> *EnemyHolder;
 	std::vector<GameObject*> AnimList;
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
-
-	void Update(double dt, Vector3 PlayerRef, std::vector<GameObject *> m_goList);
-
-	// Enemy Variables
-	float attackBT = 0.f; // Attack bounce time
-	GameObject *ClosestEnemy = NULL;
-	bool DetectedPlayer = false;
-
-	// Boss_1 Variables
-	int Boss_1_Attack = 0;
-	bool isAttacking = false;
-	Vector3 LastPlayerPosition;
 };
 
 #endif

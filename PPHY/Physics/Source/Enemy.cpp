@@ -16,7 +16,7 @@ Enemy::~Enemy()
 
 }
 
-void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
+void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies, std::vector<CCollider*> m_Colliders)
 {
 	switch (this->type)
 	{
@@ -52,7 +52,12 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 	{
 		// Variable Update
 		attackBT--;
-		this->PlayerRef = PlayerRef;
+		//Left Collider Update
+		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - this->scale.y, this->pos.z));
+		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + this->scale.y, this->pos.z));
+		//Right Collider Update
+		RightSight->SetMinAABB(Vector3(this->pos.x, this->pos.y - this->scale.y, this->pos.z));
+		RightSight->SetMaxAABB(Vector3(this->pos.x + 50, this->pos.y + this->scale.y, this->pos.z));
 
 		// Continous changing/checking of which Enemy is the closest ally
 		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
@@ -60,7 +65,7 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 			Enemy *enemy = (Enemy *)*it;
 			if (!enemy->active)
 				continue;
-			if (enemy->type == Enemy::GO_ENEMY_MELEE || enemy->type == Enemy::GO_ENEMY_RANGED)
+			if (enemy->EnemyType == MELEE|| enemy->EnemyType == RANGED)
 			{
 				if (this->pos != enemy->pos)
 				{
@@ -79,11 +84,39 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 		}
 
 		// Enemy to Player Detection
-		if ((this->pos - PlayerRef).Length() <= 40)
+		if (PlayerRef->CheckOverlap(PlayerRef->GetMinAABB(), PlayerRef->GetMaxAABB(), LeftSight->GetMinAABB(), LeftSight->GetMaxAABB()) ||
+			PlayerRef->CheckOverlap(PlayerRef->GetMinAABB(), PlayerRef->GetMaxAABB(), RightSight->GetMinAABB(), RightSight->GetMaxAABB()))
 		{
-			if (this->pos.y + 10 > PlayerRef.y && this->pos.y - 10 < PlayerRef.y)
+			for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
 			{
-				DetectedPlayer = true;
+				CCollider *collider = (CCollider *)*it;
+
+				if (LeftSight->CheckOverlap(LeftSight->GetMinAABB(), LeftSight->GetMaxAABB(), collider->GetMinAABB(), collider->GetMaxAABB()) ||
+					RightSight->CheckOverlap(RightSight->GetMinAABB(), RightSight->GetMaxAABB(), collider->GetMinAABB(), collider->GetMaxAABB()))
+				{
+					Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+					colliderPos.x *= 0.5f;
+					colliderPos.y *= 0.5f;
+					colliderPos.z *= 0.5f;
+
+					if (this->pos == colliderPos)
+					{
+						continue;
+					}
+
+					if ((this->pos - colliderPos).Length() > (this->pos - PlayerRef->pos).Length())
+					{
+						std::cout << "Detected!" << std::endl;
+						DetectedPlayer = true;
+						break;
+					}
+				}
+				if ((it != m_Colliders.end()) && (next(it) == m_Colliders.end()))
+				{
+					std::cout << "Undetected!" << std::endl;
+					DetectedPlayer = false;
+					break;
+				}
 			}
 		}
 
@@ -109,24 +142,24 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 		// Enemy Action
 		if (DetectedPlayer)
 		{
-			if ((this->pos - PlayerRef).Length() > 12)
+			if ((this->pos - PlayerRef->pos).Length() > 12)
 			{
 				if (ClosestEnemy != NULL)
 				{
 					if (((this->pos + 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
-						if (this->pos.x < PlayerRef.x)
+						if (this->pos.x < PlayerRef->pos.x)
 							this->pos.x += 12.5f * dt;
 					}
 					if (((this->pos - 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
-						if (this->pos.x > PlayerRef.x)
+						if (this->pos.x > PlayerRef->pos.x)
 							this->pos.x -= 12.5f * dt;
 					}
 				}
 				else
 				{
-					if (this->pos.x < PlayerRef.x)
+					if (this->pos.x < PlayerRef->pos.x)
 					{
 						this->pos.x += 12.5f * dt;
 						
@@ -138,7 +171,7 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 					}
 				}
 			}
-			else if ((this->pos - PlayerRef).Length() <= 12)
+			else if ((this->pos - PlayerRef->pos).Length() <= 12)
 			{
 				if (attackBT <= 0)
 				{
@@ -168,7 +201,6 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 	{
 		// Variable Update
 		attackBT--;
-		this->PlayerRef = PlayerRef;
 
 		// Continous changing/checking of which Enemy is the closest ally
 		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
@@ -195,9 +227,9 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 		}
 
 		// Enemy to Player Detection
-		if ((this->pos - PlayerRef).Length() <= 40)
+		if ((this->pos - PlayerRef->pos).Length() <= 40)
 		{
-			if (this->pos.y + 10 > PlayerRef.y && this->pos.y - 10 < PlayerRef.y)
+			if (this->pos.y + 10 > PlayerRef->pos.y && this->pos.y - 10 < PlayerRef->pos.y)
 			{
 				DetectedPlayer = true;
 			}
@@ -221,24 +253,24 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 		// Enemy Action
 		if (DetectedPlayer)
 		{
-			if ((this->pos - PlayerRef).Length() > 30)
+			if ((this->pos - PlayerRef->pos).Length() > 30)
 			{
 				if (ClosestEnemy != NULL)
 				{
 					if (((this->pos + 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
-						if (this->pos.x < PlayerRef.x)
+						if (this->pos.x < PlayerRef->pos.x)
 							this->pos.x += 12.5f * dt;
 					}
 					if (((this->pos - 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
-						if (this->pos.x > PlayerRef.x)
+						if (this->pos.x > PlayerRef->pos.x)
 							this->pos.x -= 12.5f * dt;
 					}
 				}
 				else
 				{
-					if (this->pos.x < PlayerRef.x)
+					if (this->pos.x < PlayerRef->pos.x)
 						this->pos.x += 12.5f * dt;
 					else
 						this->pos.x -= 12.5f * dt;

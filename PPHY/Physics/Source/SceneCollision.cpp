@@ -99,20 +99,15 @@ void SceneCollision::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
-	m_paddle = FetchGO();
-	m_paddle->type = GameObject::GO_BALL;
-	m_paddle->pos.Set(10, 50, 0);
-	m_paddle->dir.Set(1, 0, 0);
-	m_paddle->scale.Set(5, 5, 1.f);
-
-
-	//m_enemy->scale.Set(5, 5, 1.f);
+	//m_paddle = FetchGO();
+	//m_paddle->type = GameObject::GO_BALL;
+	//m_paddle->pos.Set(10, 50, 0);
+	//m_paddle->dir.Set(1, 0, 0);
+	//m_paddle->scale.Set(5, 5, 1.f);
 
 	CSoundEngine::GetInstance()->Init();
-	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/TheBest.mp3");
-
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/RakeHorn.mp3");
 	CSoundEngine::GetInstance()->PlayASound("BGM_1");
-
 }
 
 GameObject* SceneCollision::FetchGO()
@@ -418,12 +413,9 @@ void SceneCollision::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-
-	std::cout << collided << std::endl;
-
 	thePlayerInfo->Update(dt);
 
-
+	//std::cout << collided << std::endl;
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
 
 
@@ -488,8 +480,6 @@ void SceneCollision::Update(double dt)
 		}
 	}
 
-//	std::cout << "RIGHT: " << RightScreenLimit << " LEFT: " << LeftScreenLimit << " PLAYER X :" << thePlayerInfo->pos.x << std::endl;
-
 	if (Application::IsKeyPressed('A'))
 	{
 		if (thePlayerInfo->pos.x < LeftScreenLimit)
@@ -531,26 +521,26 @@ void SceneCollision::Update(double dt)
 
 	if (Application::IsKeyPressed(VK_RIGHT))
 	{
-		camera.position.x += 10 * dt;
-		camera.target.x += 10 * dt;
+		camera.position.x += 100 * dt;
+		camera.target.x += 100 * dt;
 	}
 
 	if (Application::IsKeyPressed(VK_LEFT))
 	{
-		camera.position.x -= 10 * dt;
-		camera.target.x -= 10 * dt;
+		camera.position.x -= 100 * dt;
+		camera.target.x -= 100 * dt;
 	}
 
 	if (Application::IsKeyPressed(VK_UP))
 	{
-		camera.position.y += 10 * dt;
-		camera.target.y += 10 * dt;
+		camera.position.y += 100 * dt;
+		camera.target.y += 100 * dt;
 	}
 
 	if (Application::IsKeyPressed(VK_DOWN))
 	{
-		camera.position.y -= 10 * dt;
-		camera.target.y -= 10 * dt;
+		camera.position.y -= 100 * dt;
+		camera.target.y -= 100 * dt;
 	}
 
 	static bool bSpaceState = false;
@@ -665,7 +655,7 @@ void SceneCollision::Update(double dt)
 		Enemy *enemy = (Enemy *)*it;
 		if (!enemy->active)
 			continue;
-		enemy->Update(dt, thePlayerInfo->pos, m_enemies);
+		enemy->Update(dt, thePlayerInfo, m_enemies, collisionVector);
 	}
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -676,7 +666,6 @@ void SceneCollision::Update(double dt)
 
 		if (!go->active)
 			continue;
-		go->Update(dt, thePlayerInfo->pos, m_goList);
 
 		if (go->type == GameObject::GO_BALL||go->type == GameObject::GO_PLAYER)
 		{
@@ -835,7 +824,6 @@ void SceneCollision::RenderGO(GameObject *go)
 	}
 }
 
-
 //void SceneCollision::RenderEnemy(Enemy *enemy)
 //{
 //	switch (enemy->type)
@@ -954,8 +942,6 @@ void SceneCollision::RenderAllParticles()
 
 	}
 }
-
-
 
 void SceneCollision::Render()
 {

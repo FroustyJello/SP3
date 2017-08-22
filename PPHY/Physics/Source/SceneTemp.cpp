@@ -541,7 +541,7 @@ void SceneTemp::Update(double dt)
 			continue;
 
 		//GameObject Update (AI LONG) 
-		go->Update(dt, thePlayerInfo->pos, m_goList);
+		//go->Update(dt, thePlayerInfo->pos, m_goList);
 
 
 		//Gravity Codes for Gameobjects
