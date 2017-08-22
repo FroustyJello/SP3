@@ -2,7 +2,7 @@
 
 
 
-Enemy::Enemy():prevX(0.f)
+Enemy::Enemy():prevX(0.f), RL(false)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -132,28 +132,32 @@ void Enemy::Update(double dt, Vector3 PlayerRef, std::vector<Enemy*> m_enemies)
 					}
 				}
 			}
-			else if ((this->pos - PlayerRef).Length() <= 12)
+			else if ((this->pos - PlayerRef).Length() <= 18)
 			{
 				if (attackBT <= 0)
 				{
 					attackBT = 60.f;
+
 					std::cout << "Attack. (Melee)" << std::endl;
 				}
+				SetAnimationStatus(RL, false, true, dt);
 			}
 		}
 	}
 
 	if (this->pos.x < prevX)
 	{
-		SetAnimationStatus(true, true,false, dt);
+		RL = true;
+		SetAnimationStatus(RL, true,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
-		SetAnimationStatus(false, true,false, dt);
+		RL = false;
+		SetAnimationStatus(RL, true,false, dt);
 	}
-	else
+	else if(!DetectedPlayer)
 	{
-		SetAnimationStatus(true, false,false, dt);
+		SetAnimationStatus(RL, false,false, dt);
 	}
 	prevX = this->pos.x;
 

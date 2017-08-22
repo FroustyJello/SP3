@@ -64,7 +64,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 {
 	m_dElapsedTime += dt;
 
-	if (!m_bAnimationInvert && isMoving)
+	if (!m_bAnimationInvert && isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -75,7 +75,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if(m_bAnimationInvert && isMoving)
+	else if(m_bAnimationInvert && isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -86,7 +86,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (!m_bAnimationInvert && !isMoving)
+	else if (!m_bAnimationInvert && !isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -97,7 +97,7 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (m_bAnimationInvert && !isMoving)
+	else if (m_bAnimationInvert && !isMoving && !isAttacking)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
@@ -108,23 +108,21 @@ void CAnimation::UpdateAnimationIndex(double dt)
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (!m_bAnimationInvert && isAttacking)
+	else if (!m_bAnimationInvert && isAttacking && !isMoving)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
 			m_iAnimation_Index += 1;
-			// If the player is facing right
 			if (m_iAnimation_Index > m_iRightAtt_End)
 				m_iAnimation_Index = m_iRightAtt_Start;
 			m_dElapsedTime = 0.f;
 		}
 	}
-	else if (m_bAnimationInvert && isAttacking)
+	else if (m_bAnimationInvert && isAttacking && !isMoving)
 	{
 		if (m_dElapsedTime > 0.3f)
 		{
 			m_iAnimation_Index -= 1;
-			// If the player is facing right
 			if (m_iAnimation_Index < m_iLeftAtt_Start)
 				m_iAnimation_Index = m_iLeftAtt_End;
 			m_dElapsedTime = 0.f;

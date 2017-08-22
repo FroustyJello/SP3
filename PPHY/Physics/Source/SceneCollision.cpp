@@ -87,6 +87,9 @@ void SceneCollision::Init()
 			theEnemyInfo->SetLeftIdleIndices(4, 5);
 			theEnemyInfo->SetRightIdleIndices(6, 7);
 
+			theEnemyInfo->SetLeftAttIndices(10, 11);
+			theEnemyInfo->SetRightAttIndices(8, 9);
+		
 			m_goList[i] = theEnemyInfo;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);

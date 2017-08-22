@@ -29,10 +29,12 @@ private:
 	Enemy *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 	EnemyType EnemyType;
+	bool RL;
+	bool isAttacking;
 
 	// Boss_1 Variables
 	int Boss_1_Attack = 0;
-	bool isAttacking = false;
+	//bool isAttacking = false;
 	Vector3 LastPlayerPosition;
 };
 #endif // !ENEMY_H
