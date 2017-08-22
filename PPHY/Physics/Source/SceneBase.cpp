@@ -132,7 +132,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("asteroid")->textureID = LoadTGA("Image//asteroid.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("enemy", Color(1, 1, 1), 5.f);
-	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still.tga");
+	MeshBuilder::GetInstance()->GetMesh("enemy")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still_0.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("player", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
@@ -164,31 +164,122 @@ void SceneBase::Init()
 	
 	//Fat enemy
 	MeshBuilder::GetInstance()->GenerateQuad("fat_left_still_0", Color(1, 1, 1), 5.f);
-	MeshBuilder::GetInstance()->GetMesh("fat_left_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still.tga");
+	MeshBuilder::GetInstance()->GetMesh("fat_left_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_still_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_still_1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_left_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_left_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_left_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_left_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_left_att", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_left_att")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_left_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_left_died")->textureID = LoadTGA("Image//Enemies/Fat/fat_left_died.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("fat_right_still_0", Color(1, 1, 1), 5.f);
-	MeshBuilder::GetInstance()->GetMesh("fat_right_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_still.tga");
+	MeshBuilder::GetInstance()->GetMesh("fat_right_still_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_still_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_still_1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_right_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_right_0")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_right_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_right_1")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("fat_right_att", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("fat_right_att")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("fat_right_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("fat_right_died")->textureID = LoadTGA("Image//Enemies/Fat/fat_right_died.tga");
+
+	//Female enemy
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_still_0")->textureID = LoadTGA("Image//Enemies/Female/female_left_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_still_1")->textureID = LoadTGA("Image//Enemies/Female/female_left_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_0")->textureID = LoadTGA("Image//Enemies/Female/female_left_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_1")->textureID = LoadTGA("Image//Enemies/Female/female_left_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_att")->textureID = LoadTGA("Image//Enemies/Female/female_left_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_left_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_left_died")->textureID = LoadTGA("Image//Enemies/Female/female_left_died.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_still_0")->textureID = LoadTGA("Image//Enemies/Female/female_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_still_1")->textureID = LoadTGA("Image//Enemies/Female/female_right_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_0")->textureID = LoadTGA("Image//Enemies/Female/female_right_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_1")->textureID = LoadTGA("Image//Enemies/Female/female_right_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_att")->textureID = LoadTGA("Image//Enemies/Female/female_right_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("female_right_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("female_right_died")->textureID = LoadTGA("Image//Enemies/Female/female_right_died.tga");
+
+	//Regular enemy
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_still_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_still_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_att")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_left_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_left_died")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_died.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_still_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_still_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_att")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("regular_right_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("regular_right_died")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_died.tga");
+
+	//Pistol enemy
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_still_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_still_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_att")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_left_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_left_died")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_died.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_still_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_still_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_still_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_still_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_still_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_0", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_0")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_1", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_1")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_att", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_att")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_att.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("pistol_right_died", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("pistol_right_died")->textureID = LoadTGA("Image//Enemies/Regular/regular_right_died.tga");
 
 	//Player sprite
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_still_0")->textureID = LoadTGA("Image//Player/player_right_still_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_still_1")->textureID = LoadTGA("Image//Player/player_right_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_right_still_2", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_right_still_2")->textureID = LoadTGA("Image//Player/player_right_still_2.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_0")->textureID = LoadTGA("Image//Player/player_left_still_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_1", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_left_still_1")->textureID = LoadTGA("Image//Player/player_left_still_1.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("player_left_still_2", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("player_left_still_2")->textureID = LoadTGA("Image//Player/player_left_still_2.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_0", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_right_0")->textureID = LoadTGA("Image//Player/player_right_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("player_right_1", Color(1, 1, 1), 5.f);
@@ -202,33 +293,63 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
 
-	thePlayer = new SpriteEntity*[8];
+	thePlayer = new SpriteEntity*[10];
 	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);
 	thePlayer[1] = Create::Sprite2DObject("player_right_1", true);
 	thePlayer[2] = Create::Sprite2DObject("player_left_0", true);
 	thePlayer[3] = Create::Sprite2DObject("player_left_1", true);
 	thePlayer[4] = Create::Sprite2DObject("player_right_still_0", true);
 	thePlayer[5] = Create::Sprite2DObject("player_right_still_1", true);
-	thePlayer[6] = Create::Sprite2DObject("player_left_still_0", true);
-	thePlayer[7] = Create::Sprite2DObject("player_left_still_1", true);
+	thePlayer[6] = Create::Sprite2DObject("player_right_still_2", true);
+	thePlayer[7] = Create::Sprite2DObject("player_left_still_0", true);
+	thePlayer[8] = Create::Sprite2DObject("player_left_still_1", true);
+	thePlayer[9] = Create::Sprite2DObject("player_left_still_2", true);
 
-	thePlayerInfo->SetRightIdleIndices(4, 5);
-	thePlayerInfo->SetLeftIdleIndices(6, 7);
+	thePlayerInfo->SetRightIdleIndices(4, 6);
+	thePlayerInfo->SetLeftIdleIndices(7, 9);
 
 	thePlayerInfo->SetRightIndices(0, 1);
 	thePlayerInfo->SetLeftIndices(2, 3);
 
-	fatEnemy = new SpriteEntity*[7];
+	fatEnemy = new SpriteEntity*[8];
 	fatEnemy[0] = Create::Sprite2DObject("fat_right_0", true);
 	fatEnemy[1] = Create::Sprite2DObject("fat_right_1", true);
 	fatEnemy[2] = Create::Sprite2DObject("fat_left_0", true);
 	fatEnemy[3] = Create::Sprite2DObject("fat_left_1", true);
 	fatEnemy[4] = Create::Sprite2DObject("fat_left_still_0", true);
-	fatEnemy[5] = Create::Sprite2DObject("fat_right_still_0", true);
+	fatEnemy[5] = Create::Sprite2DObject("fat_left_still_1", true);
 	fatEnemy[6] = Create::Sprite2DObject("fat_right_still_0", true);
-	//fatEnemy[7] = Create::Sprite2DObject("player_left_still_1", true);
-
+	fatEnemy[7] = Create::Sprite2DObject("fat_right_still_1", true);
 	
+	femaleEnemy = new SpriteEntity*[8];
+	femaleEnemy[0] = Create::Sprite2DObject("female_right_0", true);
+	femaleEnemy[1] = Create::Sprite2DObject("female_right_1", true);
+	femaleEnemy[2] = Create::Sprite2DObject("female_left_0", true);
+	femaleEnemy[3] = Create::Sprite2DObject("female_left_1", true);
+	femaleEnemy[4] = Create::Sprite2DObject("female_left_still_0", true);
+	femaleEnemy[5] = Create::Sprite2DObject("female_left_still_1", true);
+	femaleEnemy[6] = Create::Sprite2DObject("female_right_still_0", true);
+	femaleEnemy[7] = Create::Sprite2DObject("female_right_still_1", true);
+
+	regularEnemy = new SpriteEntity*[8];
+	regularEnemy[0] = Create::Sprite2DObject("regular_right_0", true);
+	regularEnemy[1] = Create::Sprite2DObject("regular_right_1", true);
+	regularEnemy[2] = Create::Sprite2DObject("regular_left_0", true);
+	regularEnemy[3] = Create::Sprite2DObject("regular_left_1", true);
+	regularEnemy[4] = Create::Sprite2DObject("regular_left_still_0", true);
+	regularEnemy[5] = Create::Sprite2DObject("regular_left_still_1", true);
+	regularEnemy[6] = Create::Sprite2DObject("regular_right_still_0", true);
+	regularEnemy[7] = Create::Sprite2DObject("regular_right_still_1", true);
+
+	pistolEnemy = new SpriteEntity*[8];
+	pistolEnemy[0] = Create::Sprite2DObject("pistol_right_0", true);
+	pistolEnemy[1] = Create::Sprite2DObject("pistol_right_1", true);
+	pistolEnemy[2] = Create::Sprite2DObject("pistol_left_0", true);
+	pistolEnemy[3] = Create::Sprite2DObject("pistol_left_1", true);
+	pistolEnemy[4] = Create::Sprite2DObject("pistol_left_still_0", true);
+	pistolEnemy[5] = Create::Sprite2DObject("pistol_left_still_1", true);
+	pistolEnemy[6] = Create::Sprite2DObject("pistol_right_still_0", true);
+	pistolEnemy[7] = Create::Sprite2DObject("pistol_right_still_1", true);
 
 
 	bLightEnabled = false;
