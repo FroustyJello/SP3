@@ -390,7 +390,8 @@ void SceneCollision::LoadObjects(vector<string> data)
 			}
 			data[i].erase(0, comma + 1);
 		}
-		if (go->type != GameObject::GO_ENEMY_MELEE)
+		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
+			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
