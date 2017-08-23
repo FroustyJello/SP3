@@ -51,6 +51,7 @@ void CPlayer::Init(void)
 	target.Set(0, 0, 0);
 	up.Set(0, 1, 0);
 
+
 	// Set Boundary
 	maxBoundary.Set(1, 1, 1);
 	minBoundary.Set(-1, -1, -1);

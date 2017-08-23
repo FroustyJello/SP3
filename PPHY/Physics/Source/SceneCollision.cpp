@@ -472,8 +472,8 @@ void SceneCollision::Update(double dt)
 	{
 		is9pressed = true;
 		//m_speed = Math::Max(0.f, m_speed - 0.1f);
-
-		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		Application::SetScene(1);
+		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
 			if (go->type == GameObject::GO_PLAYER)
@@ -481,7 +481,7 @@ void SceneCollision::Update(double dt)
 				go->HP--;
 				break;
 			}
-		}
+		}*/
 	}
 
 	else if (!Application::IsKeyPressed('9') && is9pressed)
@@ -490,7 +490,7 @@ void SceneCollision::Update(double dt)
 	}
 	if (Application::IsKeyPressed('0'))
 	{
-		//SaveFile(m_goList);
+		SaveFile(m_goList);
 		//Application::SetScene(1);
 	}
 
@@ -539,6 +539,7 @@ void SceneCollision::Update(double dt)
 			thePlayerInfo->pos.x += 50 * dt * m_speed;
 		}
 	}
+
 
 	else
 	{
@@ -724,15 +725,26 @@ if (thePlayerInfo->isShooting)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
-		go->pos += go->vel * m_speed * dt;
-
-		if (go->pos.x > m_worldWidth + camera.position.x + 2.5f|| go->pos.x < 0 + camera.position.x - 2.5f ||
+		if (go->pos.x > m_worldWidth + camera.position.x + 2.5f || go->pos.x < 0 + camera.position.x - 2.5f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
 		}
-		else
-			go->active = true;
+		else if (go->type != GameObject::GO_ARROW)
+		{
+			if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+			{
+				if (go->HP >= 0)
+					go->active = true;
+			}
+
+		}
+
+		if (!go->active)
+			continue;
+		go->pos += go->vel * m_speed * dt;
+
+		
 
 
 		if (go->type == GameObject::GO_PLAYER)
@@ -754,7 +766,7 @@ if (thePlayerInfo->isShooting)
 		}
 
 		//Debug code for clearing balls
-		if (go->type == GameObject::GO_BALL && Application::IsKeyPressed('P'))
+		if (go->type == GameObject::GO_ARROW && Application::IsKeyPressed('P'))
 		{
 			go->active = false;
 		}
@@ -1148,6 +1160,7 @@ void SceneCollision::Exit()
 		delete go;
 		m_goList.pop_back();
 	}
+	m_goList.clear();
 	/*if (m_ghost)
 	{
 		delete m_ghost;
