@@ -387,7 +387,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 	if (file.fail())
 		std::cout << "File failed to open" << std::endl;
 
-	file <<"TYPE  "<<"PX " << "PY " << "PZ"<< "SX " << "SY " << "DX " << "DY " << std::endl;
+	file <<"TYPE  "<<"PX " << "PY " << "PZ "<< "SX " << "SY " << "DX " << "DY " << "HP " << "DMG " << std::endl;
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;

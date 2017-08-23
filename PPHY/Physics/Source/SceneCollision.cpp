@@ -16,6 +16,7 @@ SceneCollision::~SceneCollision()
 
 void SceneCollision::Init()
 {
+
 	SceneBase::Init();
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -35,7 +36,8 @@ void SceneCollision::Init()
 	m_TrailCount = 0;
 	MAX_TRAIL_COUNT = 500;
 	
-	thePlayerInfo = CPlayer::GetInstance();
+	
+	//thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
 	thePlayerInfo->scale.Set(4, 4, 4);
@@ -59,7 +61,10 @@ void SceneCollision::Init()
 	if(!Application::continueGame)
 	data = reader.Load("level1.csv", data);
 	else
+	{
 		data = reader.Load("save.csv", data);
+		Application::continueGame = false;
+	}
 	
 	tileAABB = new CCollider();
 
@@ -411,10 +416,16 @@ void SceneCollision::SaveFile(vector<GameObject*> List)
 	{
 		GameObject *go = (GameObject *)*it;
 		temp = "";
-		if (go->active && go->type != GameObject::GO_NONE)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+		{
+			if (go->HP <= 0)
+				continue;
+		}
+
+		if (go->type != GameObject::GO_NONE)
 		{
 			temp = std::to_string((int)go->type);
-			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << "," << go->HP << "," << go->dmg << std::endl;
 		}
 		std::cout << temp << std::endl;
 	}
@@ -481,7 +492,8 @@ void SceneCollision::Update(double dt)
 	}
 	if (Application::IsKeyPressed('0'))
 	{
-		SaveFile(m_goList);
+		//SaveFile(m_goList);
+		//Application::SetScene(1);
 	}
 
 	if (Application::IsKeyPressed('3'))
@@ -715,7 +727,7 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 		go->pos += go->vel * m_speed * dt;
 
-		if (go->pos.x > m_worldWidth + camera.position.x + 3|| go->pos.x < 0 + camera.position.x - 3 ||
+		if (go->pos.x > m_worldWidth + camera.position.x + 2.5f|| go->pos.x < 0 + camera.position.x - 2.5f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
