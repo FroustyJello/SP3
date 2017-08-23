@@ -33,15 +33,11 @@ private:
 	CCollider *LeftSight = new CCollider;
 	CCollider *RightSight = new CCollider;
 
-	// Boss_1 Variables
-	int Boss_1_Attack = 0;
-	//bool isAttacking = false;
-
 	bool RL;
 	bool isAttacking;
 
-	// Boss_1 Variables
-	Vector3 LastPlayerPosition;
-
+	// Boss Variables
+	int BossAttacks; // 1 = Punch, 2 = Laser, 3 = Dash Punch
+	Vector3 LastLocation;
 };
 #endif // !ENEMY_H
