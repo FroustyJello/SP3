@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "SceneBase.h"
 #include <sstream>
+#include <fstream>
 
 SceneMenu::SceneMenu()
 {
@@ -48,8 +49,8 @@ void SceneMenu::Update(double dt)
 	//Lock
 	if (clickpos <= 0)
 		clickpos = 0;
-	if (clickpos >= 4)
-		clickpos = 4;
+	if (clickpos >= 5)
+		clickpos = 5;
 
 	//Selection
 	if (Application::IsKeyPressed(VK_RETURN) && c_bounceTime >= 10)
@@ -63,7 +64,17 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 3)
 			Application::SetScene(5);
 		if (clickpos == 4)
+		{
+			std::ifstream file;
+			file.open("save.csv");
+			file >> Application::SceneID;
+			file.close();
+			Application::continueGame = true;
+			Application::SetScene(Application::SceneID);
+		}
+		if (clickpos == 5)
 			Application::SetScene(0);
+			//Application::SetScene(0);
 	}
 
 	c_bounceTime++;
@@ -119,30 +130,39 @@ void SceneMenu::Render()
 	ss.str("");
 	ss << "Level 2";
 	if (clickpos == 1)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 21);
+	else
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 21);
+
+	ss.str("");
+	ss << "MapEditor";
+	if (clickpos == 2)
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 18);
 	else
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
 
 	ss.str("");
-	ss << "3 MapEditor";
-	if (clickpos == 2)
+	ss << "SceneTemp";
+	if (clickpos == 3)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 15);
+	else
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 15);
+
+	ss.str("");
+	ss << "Continue";
+	if (clickpos == 4)
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 12);
 	else
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 12);
 
-	ss.str("");
-	ss << "4 SceneTemp";
-	if (clickpos == 3)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 6);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 6);
+
 
 	ss.str("");
 	ss << "Exit";
-	if (clickpos == 4)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 0);
+	if (clickpos == 5)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 9);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 0);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 9);
 }
 
 void SceneMenu::Exit()

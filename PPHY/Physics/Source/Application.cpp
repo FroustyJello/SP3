@@ -27,9 +27,10 @@ GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
 int m_width, m_height;
-
+bool Application::continueGame = false;
+int Application::SceneID = 0;
 //my stuff
-static int SceneID;
+//static int SceneID;
 
 //Define an error callback
 static void error_callback(int error, const char* description)

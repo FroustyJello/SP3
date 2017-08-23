@@ -91,6 +91,7 @@ public:
 	
 	Enemy* theEnemyInfo;
 
+	int sceneNumber;
 protected:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -114,7 +115,9 @@ protected:
 
 	float fps;
 	float hpscale;
+	float chargeScale;
 	float enemyCount;
+
 };
 
 #endif
