@@ -97,7 +97,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				{
 					if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
 					{
-						//std::cout << "Undetected" << std::endl;
+						std::cout << "Undetected" << std::endl;
 						DetectedPlayer = false;
 						break;
 					}
@@ -105,7 +105,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
 				{
-					//std::cout << "Detected" << std::endl;
+					std::cout << "Detected" << std::endl;
 					DetectedPlayer = true;
 				}
 			}
