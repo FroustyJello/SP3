@@ -20,9 +20,9 @@ public:
 	static void GetCursorPos(double *xpos, double *ypos);
 	static int GetWindowWidth();
 	static int GetWindowHeight();
-
+	static int SceneID;
 	static void SetScene(int SceneNo);
-
+	static bool continueGame;
 private:
 	Application();
 	~Application();

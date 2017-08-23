@@ -165,11 +165,10 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 					}
 				}
 			}
-<<<<<<< HEAD
-			else if ((this->pos - PlayerRef->pos).Length() <= 12)
-=======
-			else if ((this->pos - PlayerRef).Length() <= 18)
->>>>>>> 0ca53695081373a90852cdee63e3fe683965425d
+
+			//else if ((this->pos - PlayerRef->pos).Length() <= 12)
+
+			else if ((this->pos - PlayerRef->pos).Length() <= 18)
 			{
 				if (attackBT <= 0)
 				{

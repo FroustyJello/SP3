@@ -19,6 +19,7 @@ SceneBase::~SceneBase()
 void SceneBase::Init()
 {
 	thePlayerInfo = CPlayer::GetInstance();
+	sceneNumber = 0;
 	enemyCount = 0;
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
