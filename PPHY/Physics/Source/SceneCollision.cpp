@@ -468,26 +468,9 @@ void SceneCollision::Update(double dt)
 	//UpdateParticles(dt);
 
 	static bool is9pressed = false;
-	if (Application::IsKeyPressed('9') && !is9pressed)
-	{
-		is9pressed = true;
-		//m_speed = Math::Max(0.f, m_speed - 0.1f);
-		Application::SetScene(1);
-		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-		{
-			GameObject *go = (GameObject *)*it;
-			if (go->type == GameObject::GO_PLAYER)
-			{
-				go->HP--;
-				break;
-			}
-		}*/
-	}
+	
 
-	else if (!Application::IsKeyPressed('9') && is9pressed)
-	{
-		is9pressed = false;
-	}
+	
 	if (Application::IsKeyPressed('0'))
 	{
 		SaveFile(m_goList);
@@ -812,6 +795,25 @@ if (thePlayerInfo->isShooting)
 	}
 
 	UpdateParticles(dt);
+	if (Application::IsKeyPressed('9') && !is9pressed)
+	{
+		is9pressed = true;
+		//m_speed = Math::Max(0.f, m_speed - 0.1f);
+		Application::SetScene(1);
+		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+		GameObject *go = (GameObject *)*it;
+		if (go->type == GameObject::GO_PLAYER)
+		{
+		go->HP--;
+		break;
+		}
+		}*/
+	}
+	else if (!Application::IsKeyPressed('9') && is9pressed)
+	{
+		is9pressed = false;
+	}
 }
 
 void SceneCollision::RenderGO(GameObject *go)
@@ -1160,6 +1162,7 @@ void SceneCollision::Exit()
 		delete go;
 		m_goList.pop_back();
 	}
+	thePlayerInfo = NULL;
 	m_goList.clear();
 	/*if (m_ghost)
 	{
