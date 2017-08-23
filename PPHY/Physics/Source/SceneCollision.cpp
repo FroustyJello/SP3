@@ -93,11 +93,8 @@ void SceneCollision::Init()
 			m_goList[i] = theEnemyInfo;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
-
-
 		}
 	}
-
 
 	RightScreenLimit = thePlayerInfo->pos.x + 10;
 	LeftScreenLimit = thePlayerInfo->pos.x - 10;
@@ -386,8 +383,11 @@ void SceneCollision::LoadObjects(vector<string> data)
 			}
 			data[i].erase(0, comma + 1);
 		}
-		Ctemp->SetPAABB(go->scale, go->pos);
-		collisionVector.push_back(Ctemp);
+		if (go->type != GameObject::GO_ENEMY_MELEE)
+		{
+			Ctemp->SetPAABB(go->scale, go->pos);
+			collisionVector.push_back(Ctemp);
+		}
 		Ctemp = nullptr;
 	}
 }
@@ -418,20 +418,9 @@ void SceneCollision::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-<<<<<<< HEAD
-=======
-
-	//std::cout << collided << std::endl;
-
->>>>>>> 0ca53695081373a90852cdee63e3fe683965425d
 	thePlayerInfo->Update(dt);
 
-	//std::cout << collided << std::endl;
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
-
-
-	thePlayerInfo->Update(dt);
-	
 
 	//UpdateParticles(dt);
 
@@ -658,7 +647,8 @@ void SceneCollision::Update(double dt)
 	//	go->mass = sc * sc * sc;
 	//}
 
-	if (thePlayerInfo->isShooting)
+	
+if (thePlayerInfo->isShooting)
 	{
 		GameObject* shoot = FetchGO();
 		if (thePlayerInfo->arrowdmg < 3)

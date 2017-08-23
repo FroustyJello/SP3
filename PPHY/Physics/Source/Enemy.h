@@ -30,21 +30,14 @@ private:
 	Enemy *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 	EnemyType EnemyType;
-<<<<<<< HEAD
 	CCollider *LeftSight = new CCollider;
 	CCollider *RightSight = new CCollider;
 
-	// Boss_1 Variables
-	int Boss_1_Attack = 0;
-	bool isAttacking = false;
-=======
 	bool RL;
 	bool isAttacking;
 
 	// Boss_1 Variables
 	int Boss_1_Attack = 0;
-	//bool isAttacking = false;
 	Vector3 LastPlayerPosition;
->>>>>>> 0ca53695081373a90852cdee63e3fe683965425d
 };
 #endif // !ENEMY_H
