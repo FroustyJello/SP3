@@ -371,6 +371,10 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		go2->pos.x += 8;
 		go2->pos.y += 3;
+		go2->HP -= go->dmg;
+
+		if (go2->HP <= 0)
+			go2->active = false;
 
 		std::cout << "ENEMY HIT" << std::endl;
 	}
@@ -745,7 +749,7 @@ if (thePlayerInfo->isShooting)
 	{
 		GameObject* shoot = FetchGO();
 		if (thePlayerInfo->arrowdmg < 3)
-			shoot->type = GameObject::GO_ENEMY_MELEE;	
+			shoot->type = GameObject::GO_ARROW;	
 		else
 			shoot->type = GameObject::GO_FIRE_ARROW;
 
@@ -774,20 +778,21 @@ if (thePlayerInfo->isShooting)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x + 2.5f || go->pos.x < 0 + camera.position.x - 2.5f ||
-			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
-		{
-			go->active = false;
-		}
-		else if (go->type != GameObject::GO_ARROW)
-		{
-			if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
-			{
-				if (go->HP >= 0)
-					go->active = true;
-			}
+		//if (go->pos.x > m_worldWidth + camera.position.x + 2.5f || go->pos.x < 0 + camera.position.x - 2.5f ||
+		//	go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+		//{
+		//	go->active = false;
+		//}
 
-		}
+		//else if (go->type != GameObject::GO_ARROW)
+		//{
+		//	if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+		//	{
+		//		if (go->HP >= 0)
+		//			go->active = true;
+		//	}
+
+		//}
 
 		if (!go->active)
 			continue;
