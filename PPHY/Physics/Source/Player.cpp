@@ -237,7 +237,8 @@ void CPlayer::Update(double dt)
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
-		pos.y += 20 * dt * m_speed;
+		pos.y += 25 * dt * m_speed;
+		//vel.y += 30  * dt;
 	}
 
 	if (Application::IsKeyPressed('S'))

@@ -55,7 +55,7 @@ void resize_callback(GLFWwindow* window, int w, int h)
 
 bool Application::IsKeyPressed(unsigned short key)
 {
-    return ((GetAsyncKeyState(key) & 0x8001) != 0);
+	return ((GetAsyncKeyState(key) & 0x8001) != 0);
 }
 bool Application::IsMousePressed(unsigned short key) //0 - Left, 1 - Right, 2 - Middle
 {
@@ -97,11 +97,11 @@ void Application::Init()
 	glfwWindowHint(GLFW_SAMPLES, 4); //Request 4x antialiasing
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Request a specific OpenGL version
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Request a specific OpenGL version
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+												   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 
-	//Create a window and create its OpenGL context
+																   //Create a window and create its OpenGL context
 	m_width = 800;
 	m_height = 600;
 	m_window = glfwCreateWindow(m_width, m_height, "Physics", NULL, NULL);
@@ -109,7 +109,7 @@ void Application::Init()
 	//If the window couldn't be created
 	if (!m_window)
 	{
-		fprintf( stderr, "Failed to open GLFW window.\n" );
+		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -122,11 +122,11 @@ void Application::Init()
 	glfwSetWindowSizeCallback(m_window, resize_callback);
 
 	glewExperimental = true; // Needed for core profile
-	//Initialize GLEW
+							 //Initialize GLEW
 	GLenum err = glewInit();
 
 	//If GLEW hasn't initialized
-	if (err != GLEW_OK) 
+	if (err != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		//return -1;
@@ -165,14 +165,14 @@ void Application::Run()
 			scene->Init();
 		}
 
-		 if (SceneID == 3 && scene != scene3)
+		if (SceneID == 3 && scene != scene3)
 		{
 			scene->Exit();
 			scene = scene3;
 			scene->Init();
 		}
 
-		 else if (SceneID == 4 && scene != scene4)
+		else if (SceneID == 4 && scene != scene4)
 		{
 			scene->Exit();
 			scene = scene4;
@@ -193,7 +193,7 @@ void Application::Run()
 			scene->Init();
 		}
 
-		 if (SceneID == 0)
+		if (SceneID == 0)
 		{
 			break;
 		}
@@ -204,7 +204,7 @@ void Application::Run()
 		glfwSwapBuffers(m_window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();
-        m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+		m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
 
 	} //Check if the ESC key had been pressed or if the window had been closed
 	scene->Exit();
