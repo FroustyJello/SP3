@@ -73,11 +73,11 @@ void MapEditor::renderText()
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 28, 32);
 
 		std::ostringstream ss3;
-		ss3 << "Level3";
+		ss3 << "empty";
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 28, 28);
 
 		std::ostringstream ss4;
-		ss4 << "Level4";
+		ss4 << "empty";
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 28, 24);
 	}
 
@@ -277,6 +277,29 @@ GameObject * MapEditor::type(int i)
 	GameObject *go = FetchGO();
 	go->type = (GameObject::GAMEOBJECT_TYPE)i;
 
+	switch (i)
+	{
+	case 10:
+		go->HP = 20;
+		go->dmg = 1;
+		break;
+	case 11:
+		go->HP = 10;
+		go->dmg = 3;
+		break;
+	case 12:
+		go->HP = 10;
+		go->dmg = 3;
+		break;
+	case 13:
+		go->HP = 5;
+		go->dmg = 5;
+		break;
+	case 14:
+		go->HP = 5;
+		go->dmg = 5;
+		break;
+	}
 	if (i >= 10 && i <= 18)
 		go->scale.Set(5, 5, 1);
 	else
@@ -294,7 +317,7 @@ void MapEditor::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		for (int k = 0; k < 8; k++)
+		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
 			int comma = data[i].find(",");
@@ -325,6 +348,12 @@ void MapEditor::LoadObjects(vector<string> data)
 				break;
 			case 7:
 				go->dir.y = stof(temp);
+				break;
+			case 8:
+				go->HP = stof(temp);
+				break;
+			case 9:
+				go->dmg = stof(temp);
 				break;
 			}
 
@@ -366,7 +395,7 @@ void MapEditor::SaveFile(vector<GameObject*> List)
 		if (go->active && go->type!= GameObject::GO_NONE)
 		{
 			temp = std::to_string((int)go->type);
-			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << ","<< go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << "," << go->HP << "," << go->dmg << std::endl;
 		}
 		std::cout << temp << std::endl;
 	}

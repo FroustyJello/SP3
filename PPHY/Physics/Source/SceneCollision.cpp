@@ -22,6 +22,7 @@ void SceneCollision::Init()
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	bounce = 0;
 	hpscale = 40;
+	chargeScale = 20;
 	gravity.Set(0, -50.0f, 0);
 	playerMoveIndex = 0;
 	elapesTime = 0;
@@ -55,7 +56,11 @@ void SceneCollision::Init()
 	m_timeEstimated1 = m_timeTaken1 = 0.f;
 	bool timeStarted = false;
 
+	if(!Application::continueGame)
 	data = reader.Load("level1.csv", data);
+	else
+		data = reader.Load("save.csv", data);
+	
 	tileAABB = new CCollider();
 
 	LoadObjects(data);
@@ -79,6 +84,8 @@ void SceneCollision::Init()
 			theEnemyInfo->type = m_goList[i]->type;
 			theEnemyInfo->pos = m_goList[i]->pos;
 			theEnemyInfo->scale = m_goList[i]->scale;
+			theEnemyInfo->HP = m_goList[i]->HP;
+			theEnemyInfo->dmg = m_goList[i]->dmg;
 			theEnemyInfo->active = true;
 
 			theEnemyInfo->SetRightIndices(0, 1);
@@ -101,11 +108,6 @@ void SceneCollision::Init()
 
 	m_ghost = new GameObject(GameObject::GO_BALL);
 
-	//m_paddle = FetchGO();
-	//m_paddle->type = GameObject::GO_BALL;
-	//m_paddle->pos.Set(10, 50, 0);
-	//m_paddle->dir.Set(1, 0, 0);
-	//m_paddle->scale.Set(5, 5, 1.f);
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/RakeHorn.mp3");
@@ -342,8 +344,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 		go = FetchGO();
 
 		CCollider* Ctemp = new CCollider();	
-		for (int k = 0; k < 8; k++)
-
+		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
 			int comma = data[i].find(",");
@@ -375,6 +376,12 @@ void SceneCollision::LoadObjects(vector<string> data)
 			case 7:
 				go->dir.y = stof(temp);
 				break;
+			case 8:
+				go->HP = stof(temp);
+				break;
+			case 9:
+				go->dmg = stof(temp);
+				break;
 			}
 
 			if (go->dir != Vector3{ 0,0,0 })
@@ -390,6 +397,30 @@ void SceneCollision::LoadObjects(vector<string> data)
 		}
 		Ctemp = nullptr;
 	}
+}
+
+void SceneCollision::SaveFile(vector<GameObject*> List)
+{
+	std::ofstream file;
+	string temp;
+	file.open("save.csv");
+
+	if (file.fail())
+		std::cout << "File failed to open" << std::endl;
+
+	file << Application::SceneID << std::endl;
+	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		temp = "";
+		if (go->active && go->type != GameObject::GO_NONE)
+		{
+			temp = std::to_string((int)go->type);
+			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << std::endl;
+		}
+		std::cout << temp << std::endl;
+	}
+	file.close();
 }
 
 bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vector3 MaxAABB)
@@ -447,7 +478,7 @@ void SceneCollision::Update(double dt)
 	}
 	if (Application::IsKeyPressed('0'))
 	{
-		m_speed += 0.1f;
+		SaveFile(m_goList);
 	}
 
 	if (Application::IsKeyPressed('3'))
@@ -1050,6 +1081,13 @@ void SceneCollision::Render()
 	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, 1);
 	modelStack.Scale(12, 4, 4);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 15, camera.target.y + 83, 1.1);
+	modelStack.Scale(chargeScale, 4, 4);
+	modelStack.Translate(0.5, 0, 0);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 	modelStack.PopMatrix();
 
 	/*for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)

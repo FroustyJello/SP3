@@ -35,9 +35,5 @@ private:
 
 	bool RL;
 	bool isAttacking;
-
-	// Boss_1 Variables
-	int Boss_1_Attack = 0;
-	Vector3 LastPlayerPosition;
 };
 #endif // !ENEMY_H

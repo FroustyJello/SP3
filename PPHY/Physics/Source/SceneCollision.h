@@ -82,6 +82,7 @@ protected:
 	Vector3 gravity;
 
 	void LoadObjects(vector<string> data);
+	void SaveFile(vector<GameObject*> List);
 
 	int m_lives;
 
