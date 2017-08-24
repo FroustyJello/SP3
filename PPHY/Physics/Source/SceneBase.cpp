@@ -339,6 +339,11 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Door", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("Door")->textureID = LoadTGA("Image//Enviorment/lift1_0.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("bgd_0", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("bgd_0")->textureID = LoadTGA("Image//Enviorment/bgd_0.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("bgd_1", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("bgd_1")->textureID = LoadTGA("Image//Enviorment/bgd_1.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
