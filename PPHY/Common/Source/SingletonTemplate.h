@@ -15,11 +15,11 @@ public:
 
 	static void Destroy()
 	{
-		if (s_mInstance)
-		{
+		/*if (s_mInstance)
+		{*/
 			delete s_mInstance;
 			s_mInstance = nullptr;
-		}
+		//}
 	}
 
 protected:

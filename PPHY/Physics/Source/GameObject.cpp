@@ -8,7 +8,8 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	mass(1.f),
 	momentOfInertia(1.f),
 	angularVelocity(0.f),
-	dmg(0.f)
+	dmg(0.f),
+	HP(1.f)
 {
 }
 

@@ -51,7 +51,6 @@ void CPlayer::Init(void)
 	target.Set(0, 0, 0);
 	up.Set(0, 1, 0);
 
-
 	// Set Boundary
 	maxBoundary.Set(1, 1, 1);
 	minBoundary.Set(-1, -1, -1);
@@ -61,7 +60,6 @@ void CPlayer::Init(void)
 	tileSize_Height = 25;
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());
-
 	/*CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("Jump", "Image//Mario-jump-sound.mp3");*/
 }
@@ -187,7 +185,7 @@ void CPlayer::Reset(void)
 }
 
 // Get position x of the player
-Vector3 CPlayer::GetPos(void) const
+Vector3 CPlayer::GetPos(void)
 {
 	return pos;
 }
@@ -238,8 +236,7 @@ void CPlayer::Update(double dt)
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
 	{
-		pos.y += 25 * dt * m_speed;
-		//vel.y += 30  * dt;
+		pos.y += 20 * dt * m_speed;
 	}
 
 	if (Application::IsKeyPressed('S'))

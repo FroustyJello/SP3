@@ -303,8 +303,12 @@ GameObject * MapEditor::type(int i)
 	if (i >= 10 && i <= 18)
 		go->scale.Set(5, 5, 1);
 	else
+	{
 		go->scale.Set(8, 8, 1);
-	go->dir.Set(0, 1, 0);
+		go->dir.Set(0, 1, 0);
+		//go->dmg = 1;
+	}
+
 	return go;
 }
 
