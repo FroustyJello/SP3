@@ -66,12 +66,8 @@ public:
 	void SetTarget(const Vector3& target);
 	// Set Up
 	void SetUp(const Vector3& up);
-	// Set m_dJumpSpeed of the player
-	void SetJumpSpeed(const double m_dJumpSpeed);
 	// Set m_dJumpAcceleration of the player
 	void SetJumpAcceleration(const double m_dJumpAcceleration);
-	// Set Fall Speed of the player
-	void SetFallSpeed(const double m_dFallSpeed);
 	// Set Fall Acceleration of the player
 	void SetFallAcceleration(const double m_dFallAcceleration);
 
@@ -81,14 +77,8 @@ public:
 	Vector3 GetTarget(void) const;
 	// Get Up
 	Vector3 GetUp(void) const;
-	// Get Jump Speed of the player
-	double GetJumpSpeed(void) const;
 	// Get Jump Acceleration of the player
 	double GetJumpAcceleration(void) const;
-	// Get Fall Speed of the player
-	double GetFallSpeed(void) const;
-	// Get Fall Acceleration of the player
-	double GetFallAcceleration(void) const;
 	// Get Tile Offset for x-axis
 	int GetTileOffset_x(void) const;
 	// Get Max Boundary
@@ -96,10 +86,6 @@ public:
 	// Get Min Boundary
 	Vector3 GetMinBoundary() const;
 
-	// Update Jump Upwards
-	void UpdateJumpUpwards(double dt = 0.0333f);
-	// Update FreeFall
-	void UpdateFreeFall(double dt = 0.0333f);
 	// Update
 	void Update(double dt = 0.0333f);
 	// Update tile offsets
@@ -111,16 +97,11 @@ public:
 	void MoveUpDown(const bool mode, const float timeDiff);
 	void MoveLeftRight(const bool mode, const float timeDiff);
 
-	// Check if the player is standing on air
-	bool isOnAir(void);
 	bool isShooting;
 
 	// Constrain the position within the borders
 	void Constrain(void);
 
-	// Get/Set mapFineOffset_x values
-	void UpdateMapFineOffset(void);
-	int  GetMapFineOffset_x(void) const;
 	int checkPosition_X, checkPosition_Y;
 	Vector3 position;
 	int mapOffset_x, mapOffset_y;
@@ -128,26 +109,7 @@ public:
 	/*
 	For Parallax Scrolling
 	*/
-	// Set the rear map pointer to this class
-	//void SetRearMap(CMap* m_cRearMap);
-	// Update the rear map
-	void UpdateRearMap(void);
-	// Get Tile Offset for x-axis
-	int GetRearTileOffset_x(void) const;
-	// Get the rear map fine offset X value
-	int  GetRearMapFineOffset_x(void) const;
 
-	// Load this class
-	bool Load(const string saveFileName = ".//Image//DM2231.sav");
-	// Save this class
-	bool Save(const string saveFileName = ".//Image//DM2231.sav");
-	// Methods to tokenize a string into a specific data type variable
-	Vector3 Token2Vector(const string token);
-	double Token2Double(const string token);
-	bool Token2Bool(const string token);
-
-	// Check for collision with CGoodies instances
-	void UpdateGoodies(const int tileIndex_Column, const int tileIndex_Row);
 	bool RL;
 	bool chargearrow;
 	float arrowSpeed;
@@ -173,7 +135,7 @@ private:
 	double m_dFallAcceleration;
 
 	double m_dElapsedTime;
-	double m_dElapsedIdleTime;
+	double m_dElapsedDieTime;
 	int playerMoveIndex;
 	
 

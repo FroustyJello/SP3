@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy() :prevX(0.f), RL(false)
+Enemy::Enemy() :prevX(0.f), RL(false),m_timer(0.f)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -45,6 +45,9 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 		// Variable Update
 		attackBT--;
+
+		m_timer += dt;
+
 		//Left Collider Update
 		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - this->scale.y, this->pos.z));
 		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + this->scale.y, this->pos.z));
@@ -206,26 +209,42 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 					std::cout << "Attack. (Melee)" << std::endl;
 				}
-				SetAnimationStatus(RL, false, true, dt);
+				SetAnimationStatus(RL, false, true, false, dt);
 			}
 		}
 	}
 
+	
 	//Animation
-	if (this->pos.x < prevX)
+	if (this->HP <= 0)
 	{
-		RL = true;
-		SetAnimationStatus(RL, true, false, dt);
+		
+		SetAnimationStatus(RL, false, false, true, dt);
+		if (m_timer >= 2.8f)
+		{
+			std::cout << "died" << std::endl;
+			this->active = false;
+			m_timer = 0.f;
+		}
 	}
-	else if (this->pos.x > prevX)
+	else
 	{
-		RL = false;
-		SetAnimationStatus(RL, true, false, dt);
+		if (this->pos.x < prevX)
+		{
+			RL = true;
+			SetAnimationStatus(RL, true, false, false, dt);
+		}
+		else if (this->pos.x > prevX)
+		{
+			RL = false;
+			SetAnimationStatus(RL, true, false, false, dt);
+		}
+		else if (!DetectedPlayer)
+		{
+			SetAnimationStatus(RL, false, false, false, dt);
+		}
 	}
-	else if (!DetectedPlayer)
-	{
-		SetAnimationStatus(RL, false, false, dt);
-	}
+
 	prevX = this->pos.x;
 
 	break;
@@ -373,19 +392,25 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		// Enemy Action
 		if (DetectedPlayer)
 		{
-			if ((this->pos - PlayerRef->pos).Length() > 30)
+			if ((this->pos - PlayerRef->pos).Length() > 20)
 			{
 				if (ClosestEnemy != NULL)
 				{
-					if (((this->pos + 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					if (((this->pos + 6.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
 						if (this->pos.x < PlayerRef->pos.x)
+						{
 							this->pos.x += 12.5f * dt;
+							RL = true;
+						}
 					}
-					if (((this->pos - 12.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					if (((this->pos - 6.5f * dt) - ClosestEnemy->pos).Length() > 12)
 					{
 						if (this->pos.x > PlayerRef->pos.x)
+						{
 							this->pos.x -= 12.5f * dt;
+							RL = false;
+						}
 					}
 				}
 				else
@@ -403,7 +428,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 					attackBT = 30.f;
 					std::cout << "Attack. (Ranged)" << std::endl;
 				}
-				SetAnimationStatus(RL, false, true, dt);
+				SetAnimationStatus(RL, false, true, false, dt);
 			}
 		}
 	}
@@ -412,17 +437,23 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	if (this->pos.x < prevX)
 	{
 		RL = true;
-		SetAnimationStatus(RL, true, false, dt);
+		SetAnimationStatus(RL, true, false,false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
 		RL = false;
-		SetAnimationStatus(RL, true, false, dt);
+		SetAnimationStatus(RL, true, false, false, dt);
 	}
 	else if (!DetectedPlayer)
 	{
-		SetAnimationStatus(RL, false, false, dt);
+		SetAnimationStatus(RL, false, false, false, dt);
 	}
+
+	if (this->HP <= 0)
+	{
+		SetAnimationStatus(RL, false, false, true, dt);
+	}
+
 	prevX = this->pos.x;
 
 	break;

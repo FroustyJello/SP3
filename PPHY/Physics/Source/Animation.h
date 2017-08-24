@@ -6,7 +6,7 @@ public:
 	virtual ~CAnimation();
 
 	// Set Animation status; left or right
-	void SetAnimationStatus(bool m_bAnimationInvert, bool isMoving,bool isAttacking, double dt);
+	void SetAnimationStatus(bool m_bAnimationInvert, bool isMoving,bool isAttacking, bool isDied, double dt);
 	// Update the Animation Index
 	void UpdateAnimationIndex(double dt);
 	// Get the Animation status
@@ -29,6 +29,11 @@ public:
 	// Set left attack indices
 	void SetLeftAttIndices(const int m_iLeftAtt_Start, const int m_iLeftAtt_End);
 
+	// Set right attack indices
+	void SetRightDiedIndices(const int m_iRightDied_Start, const int m_iRightDied_End);
+	// Set left attack indices
+	void SetLeftDiedIndices(const int m_iLeftDied_Start, const int m_iLeftDied_End);
+
 private:
 	// Flag to indicate if the Animation is inverted to the left. 
 	// true==face right, false==face left
@@ -37,6 +42,7 @@ private:
 	bool isMoving;
 
 	bool isAttacking;
+	bool isDied;
 
 	double m_dElapsedTime;
 
@@ -70,5 +76,14 @@ private:
 	int m_iLeftAtt_Start;
 	// End index of left facing Animations
 	int m_iLeftAtt_End;
+
+	// Start index of right facing Animations
+	int m_iRightDied_Start;
+	// End index of right facing Animations
+	int m_iRightDied_End;
+	// Start index of left facing Animations
+	int m_iLeftDied_Start;
+	// End index of left facing Animations
+	int m_iLeftDied_End;
 };
 

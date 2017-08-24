@@ -102,6 +102,9 @@ void SceneCollision::Init()
 
 			theEnemyInfo->SetLeftAttIndices(10, 11);
 			theEnemyInfo->SetRightAttIndices(8, 9);
+
+			theEnemyInfo->SetLeftDiedIndices(14, 15);
+			theEnemyInfo->SetRightDiedIndices(12, 13);
 		
 			m_goList[i] = theEnemyInfo;
 			enemyCount++;
@@ -373,8 +376,8 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go2->pos.y += 3;
 		go2->HP -= go->dmg;
 
-		if (go2->HP <= 0)
-			go2->active = false;
+		/*if (go2->HP <= 0)
+			go2->active = false;*/
 
 		std::cout << "ENEMY HIT" << std::endl;
 	}
@@ -740,7 +743,7 @@ if (thePlayerInfo->isShooting)
 		shoot->pos.y += 9.3;
 		shoot->pos.x += 5;
 		shoot->dir = thePlayerInfo->dir;
-		shoot->dmg = thePlayerInfo->arrowdmg;
+		shoot->dmg = 50;//thePlayerInfo->arrowdmg;
 		shoot->vel = thePlayerInfo->dir * thePlayerInfo->arrowSpeed;
 		shoot->scale.Set(3, 3, 1);
 		thePlayerInfo->isShooting = false;

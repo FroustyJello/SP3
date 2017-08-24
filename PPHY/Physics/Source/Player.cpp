@@ -233,7 +233,7 @@ void CPlayer::Update(double dt)
 {
 	float m_speed = 1.0f;
 
-	//m_dElapsedIdleTime += dt;
+	m_dElapsedDieTime += dt;
 	m_dElapsedTime += dt;
 	// Update the player position
 	if (Application::IsKeyPressed('W'))
@@ -252,7 +252,7 @@ void CPlayer::Update(double dt)
 		RL = false;
 		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
-		SetAnimationStatus(RL, true,false, dt);
+		SetAnimationStatus(RL, true,false,false, dt);
 		//
 		this->dir.x = 1;
 		std::cout << this->vel.x << std::endl;
@@ -262,13 +262,13 @@ void CPlayer::Update(double dt)
 	{
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
-		SetAnimationStatus(RL, true,false, dt);
+		SetAnimationStatus(RL, true,false,false, dt);
 		this->dir.x = -1;
 		//m_dElapsedTime += dt;
 	}
 
 	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
-		SetAnimationStatus(RL, false,false, dt);
+		SetAnimationStatus(RL, false,false,false, dt);
 
 	static bool isSpacepressed = false;
 	if (Application::IsKeyPressed(VK_SPACE) && !isSpacepressed)
@@ -277,7 +277,7 @@ void CPlayer::Update(double dt)
 		arrowdmg = 1;
 		chargearrow = true;
 		arrowSpeed = 50.f;
-		SetAnimationStatus(RL, false, true, dt);
+		SetAnimationStatus(RL, false, true,false, dt);
 	}
 	else if (!Application::IsKeyPressed(VK_SPACE) && isSpacepressed)
 	{
@@ -297,6 +297,17 @@ void CPlayer::Update(double dt)
 		arrowSpeed += 50 * dt;
 		if (arrowdmg > 5)
 			arrowdmg = 5;
+	}
+
+	if (this->HP<=0)
+	{
+		SetAnimationStatus(RL, false, false, true, dt);
+		if (m_dElapsedDieTime >= 2.8f)
+		{
+			std::cout << "died" << std::endl;
+			this->active = false;
+			m_dElapsedDieTime = 0.f;
+		}
 	}
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());

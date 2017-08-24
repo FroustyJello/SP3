@@ -27,6 +27,7 @@ private:
 	// Enemy Variables
 	float attackBT = 0.f; // Attack bounce time
 	float prevX;
+	float m_timer;
 	Enemy *ClosestEnemy = NULL;
 	bool DetectedPlayer = false;
 	EnemyType EnemyType;
