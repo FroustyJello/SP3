@@ -114,7 +114,7 @@ public:
 	bool chargearrow;
 	float arrowSpeed;
 	float arrowdmg;
-
+	bool isCharging;
 	
 
 private:

@@ -31,6 +31,7 @@ CPlayer::CPlayer(void)
 	, arrowdmg (1)
 	, chargearrow(false)
 	, arrowSpeed(50.f)
+	, isCharging(false)
 {
 }
 
@@ -285,11 +286,13 @@ void CPlayer::Update(double dt)
 		}
 		
 		chargearrow = false;
+		isCharging = false;
 		isSpacepressed = false;
 	}
 
 	if (chargearrow)
 	{
+		isCharging = true;
 		arrowdmg += 1 * dt;
 		arrowSpeed += 50 * dt;
 		if (arrowdmg > 5)
