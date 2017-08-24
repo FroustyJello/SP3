@@ -72,7 +72,7 @@ public:
 	void SetFallAcceleration(const double m_dFallAcceleration);
 
 	// Get position
-	Vector3 GetPos(void) const;
+	Vector3 GetPos(void);
 	// Get target
 	Vector3 GetTarget(void) const;
 	// Get Up

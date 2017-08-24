@@ -45,9 +45,6 @@ void SceneCollision::Init()
 	thePlayerInfo->active = true;
 	thePlayerInfo->dir.Set(1, 0, 0);
 
-	/*theFatEnemyInfo->type = GameObject::GO_ENEMY_MELEE;
-	theFatEnemyInfo->active = true;*/
-
 
 	//Physics code here
 	m_speed = 1.f;
@@ -67,8 +64,6 @@ void SceneCollision::Init()
 		Application::continueGame = false;
 	}
 	
-	tileAABB = new CCollider();
-
 	LoadObjects(data);
 
 	for (int i = 0; i < m_goList.size(); ++i)
@@ -112,10 +107,15 @@ void SceneCollision::Init()
 		}
 	}
 
+
+	//camera.position.x = thePlayerInfo->pos.x;
+	//camera.target = thePlayerInfo->pos;
+
+
 	RightScreenLimit = thePlayerInfo->pos.x + 10;
 	LeftScreenLimit = thePlayerInfo->pos.x - 10;
 
-	m_ghost = new GameObject(GameObject::GO_BALL);
+	//m_ghost = new GameObject(GameObject::GO_BALL);
 
 
 	CSoundEngine::GetInstance()->Init();
@@ -450,10 +450,14 @@ void SceneCollision::LoadObjects(vector<string> data)
 		}
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
-			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2)
+			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2 && go->type != GameObject::GO_PLAYER)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
+		}
+		if (go->type == GameObject::GO_PLAYER)
+		{
+			Ctemp->SetPAABB(go->scale, go->pos);
 		}
 		Ctemp = nullptr;
 	}
@@ -479,7 +483,7 @@ void SceneCollision::SaveFile(vector<GameObject*> List)
 				continue;
 		}
 
-		if (go->type != GameObject::GO_NONE)
+		if (go->type != GameObject::GO_NONE && go->type != GameObject::GO_BALL)
 		{
 			temp = std::to_string((int)go->type);
 			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << "," << go->HP << "," << go->dmg << std::endl;
@@ -495,10 +499,13 @@ bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vecto
 	{
 		collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[i]->GetMinAABB(), vector[i]->GetMaxAABB());
 		if (collided)
+		{
+			std::cout << i << std::endl;
 			break;
+		}
 	}
 
-//	collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[19]->GetMinAABB(), vector[19]->GetMaxAABB());
+	//collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[19]->GetMinAABB(), vector[19]->GetMaxAABB());
 
 	return collided;
 
@@ -506,7 +513,7 @@ bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vecto
 
 void SceneCollision::Update(double dt)
 {
-	thePlayerInfo = CPlayer::GetInstance();
+	//thePlayerInfo = CPlayer::GetInstance();
 
 	//std::cout << collisionVector[19]->GetMinAABB() << " " << collisionVector[20]->GetMinAABB() << std::endl;;
 
@@ -523,8 +530,6 @@ void SceneCollision::Update(double dt)
 	//UpdateParticles(dt);
 
 	static bool is9pressed = false;
-	
-
 	
 	if (Application::IsKeyPressed('0'))
 	{
@@ -764,22 +769,17 @@ if (thePlayerInfo->isShooting)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		//if (go->pos.x > m_worldWidth + camera.position.x + 2.5f || go->pos.x < 0 + camera.position.x - 2.5f ||
-		//	go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
-		//{
-		//	go->active = false;
-		//}
+		if (go->pos.x > m_worldWidth + camera.position.x + 3.f || go->pos.x < 0 + camera.position.x - 3.f ||
+			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+		{
+			go->active = false;
+		}
 
-		//else if (go->type != GameObject::GO_ARROW)
-		//{
-		//	if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
-		//	{
-		//		if (go->HP >= 0)
-		//			go->active = true;
-		//	}
-
-		//}
-
+		else if (go->type != GameObject::GO_ARROW)
+		{
+			if (go->HP > 0)
+				go->active = true;
+		}
 		if (!go->active)
 			continue;
 		go->pos += go->vel * m_speed * dt;
@@ -841,11 +841,6 @@ if (thePlayerInfo->isShooting)
 			}
 		}
 
-	}
-
-	if (m_lives <= 0)
-	{
-		Application::SetScene(3);
 	}
 
 	UpdateParticles(dt);
@@ -1209,17 +1204,39 @@ void SceneCollision::Exit()
 {
 	SceneBase::Exit();
 	//Cleanup GameObjects
-	while (m_goList.size() > 0)
+	/*while (m_goList.size() > 0)
 	{
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
-	}
-	thePlayerInfo = NULL;
-	m_goList.clear();
-	/*if (m_ghost)
-	{
-		delete m_ghost;
-		m_ghost = NULL;
 	}*/
+
+	for (int i = m_goList.size()-1; i >= 0; --i)
+	{
+		if (m_goList[i]->type != GameObject::GO_PLAYER)
+		{
+			delete m_goList[i];
+			m_goList.pop_back();
+		}
+	}
+		m_goList.clear();
+		thePlayerInfo->DropInstance();
+
+		if (thePlayerInfo->DropInstance == false)
+		{
+			std::cout << "failed to delete player" << std::endl;
+		}
+	
+		while (!collisionVector.empty())
+		{
+			delete collisionVector.back();
+			collisionVector.pop_back();
+		}
+
+		/*while (!m_enemies.empty())
+		{
+			delete m_enemies.back();
+			m_enemies.pop_back();
+		}*/
+
 }

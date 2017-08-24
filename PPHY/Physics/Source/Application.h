@@ -3,7 +3,7 @@
 #define APPLICATION_H
 
 #include "timer.h"
-
+#include <string>
 class Application
 {
 public:
@@ -23,6 +23,7 @@ public:
 	static int SceneID;
 	static void SetScene(int SceneNo);
 	static bool continueGame;
+	static std::string levelName;
 private:
 	Application();
 	~Application();
