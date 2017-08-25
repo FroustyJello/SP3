@@ -575,24 +575,33 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	}
 
 	//Animation
-	if (this->pos.x < prevX)
-	{
-		RL = true;
-		SetAnimationStatus(RL, true, false, false, dt);
-	}
-	else if (this->pos.x > prevX)
-	{
-		RL = false;
-		SetAnimationStatus(RL, true, false, false, dt);
-	}
-	else if (!DetectedPlayer)
-	{
-		SetAnimationStatus(RL, false, false, false, dt);
-	}
-
 	if (this->HP <= 0)
 	{
+
 		SetAnimationStatus(RL, false, false, true, dt);
+		if (m_timer >= 2.8f)
+		{
+			std::cout << "died" << std::endl;
+			this->active = false;
+			m_timer = 0.f;
+		}
+	}
+	else
+	{
+		if (this->pos.x < prevX)
+		{
+			RL = true;
+			SetAnimationStatus(RL, true, false, false, dt);
+		}
+		else if (this->pos.x > prevX)
+		{
+			RL = false;
+			SetAnimationStatus(RL, true, false, false, dt);
+		}
+		else if (!DetectedPlayer)
+		{
+			SetAnimationStatus(RL, false, false, false, dt);
+		}
 	}
 
 	prevX = this->pos.x;

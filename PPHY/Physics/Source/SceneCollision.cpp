@@ -28,6 +28,8 @@ void SceneCollision::Init()
 	playerMoveIndex = 0;
 	elapesTime = 0;
 	canSave = false;
+	trigger = false;
+	triggered = false;
 	CSV reader;
 
 	vector<string> data;
@@ -135,6 +137,17 @@ GameObject* SceneCollision::FetchGO()
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 		{
+			bool found = false;
+			for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
+			{
+				GameObject *go2 = (Enemy *)*it2;
+				if (go != go2)
+					continue;
+				found = true;
+				break;
+			}
+			if (found)
+				continue;
 			go->active = true;
 			++m_objectCount;
 			return go;
@@ -231,19 +244,6 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
 
-	//if (go2->type == GameObject::GO_BALL)
-	//{
-	//	Vector3 u1 = go->vel;
-	//	Vector3 u2 = go2->vel;
-	//	Vector3 N = (go2->pos - go->pos).Normalize();
-	//	Vector3 u1N = u1.Dot(N) * N;
-	//	Vector3 u2N = u2.Dot(N) * N;
-
-	//	std::cout << "COLLIDED BALL" << std::endl;
-
-	//	go->vel = u1 + 2 * m2 / (m1 + m2) * (u2N - u1N);
-	//	go2->vel = u2 + 2 * m1 / (m1 + m2) * (u1N - u2N);
-	//}
 	 if (go2->type == GameObject::GO_WALL && 
 		 (go->type == GameObject::GO_PLAYER 
 		 || go->type == GameObject::GO_ENEMY_MELEE 
@@ -638,6 +638,20 @@ void SceneCollision::Update(double dt)
 				canSave = false;
 			}
 		}
+
+		if (go->type == GameObject::GO_WALL_2)
+		{
+			if(!triggered && trigger)
+			{
+				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
+				go->vel *= 60;
+			}
+			else if(triggered && trigger)
+			{
+				Vector3 G(0, -9.8f);
+				go->vel += G * dt*10;
+			}
+		}
 		if (!go->active)
 			continue;
 		go->pos += go->vel * m_speed * dt;
@@ -705,9 +719,13 @@ void SceneCollision::Update(double dt)
 				go2->vel = 0.95 * go2->vel;
 			}
 		}
-
 	}
 
+
+	if (trigger)
+	{
+		triggered = true;
+	}
 
 	if (thePlayerInfo->isCharging)
 	{
@@ -720,8 +738,12 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
+	if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}
 
-	UpdateParticles(dt);
+	//UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;
