@@ -22,6 +22,7 @@ public:
 	~Enemy();
 	
 	void Update(double dt, CPlayer *PlayerRef, std::vector<Enemy *> m_enemies, std::vector<CCollider*> m_Collider);
+	bool IsShooting = false;
 
 private:
 	// Enemy Variables

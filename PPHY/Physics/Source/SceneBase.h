@@ -118,6 +118,7 @@ protected:
 	float chargeScale;
 	float enemyCount;
 
+
 };
 
 #endif

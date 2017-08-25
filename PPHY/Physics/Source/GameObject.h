@@ -12,17 +12,12 @@ struct GameObject :public  Singleton<GameObject>
 	enum GAMEOBJECT_TYPE
 	{
 		GO_NONE = 0,
-		GO_BALL,
-		GO_CUBE,
-		GO_BLUE,
-
 		//Walls and static objects
 		GO_WALL,
 		GO_WALL_2,
 		GO_WALL_3,
 		GO_WALL_4,
-		GO_PADDLE,
-		GO_PILLAR,
+		GO_DOOR,
 
 		//Characters
 		GO_PLAYER,
@@ -37,6 +32,8 @@ struct GameObject :public  Singleton<GameObject>
 		GO_POWERUP_HEALTH,
 		GO_PLAYER_FACE,
 
+		
+
 		//Projectiles
 		GO_ARROW,
 		GO_FIRE_ARROW,
@@ -44,6 +41,8 @@ struct GameObject :public  Singleton<GameObject>
 		GO_BOSS_LASER,
 		GO_BOSS_BULLET_1,
 		GO_BOSS_BULLET_2,
+
+		
 
 		GO_TOTAL, //must be last
 	};
@@ -59,11 +58,11 @@ struct GameObject :public  Singleton<GameObject>
 	float HP;
 	float dmg;
 	bool active;
-
+	bool hit;
 	Vector3 dir; //direction/orientation
 
 	std::vector<GameObject*> AnimList;
-	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
+	GameObject(GAMEOBJECT_TYPE typeValue = GO_WALL);
 	~GameObject();
 };
 

@@ -21,12 +21,12 @@ void MapEditor::Init()
 	start = false;
 	saveTime = 0;
 	fileName = "";
-	choice = 0;
+	choice = 1;
 	alreadyHavePlayer = false;
 	Math::InitRNG();
 
 	m_objectCount = 0;
-	m_ghost = new GameObject();
+	m_ghost = new GameObject(GameObject::GO_WALL);
 	m_ghost->scale.Set(8, 8, 8);
 	worldX = worldY = 1;
 	//m_playerFace = 
@@ -107,39 +107,50 @@ void MapEditor::renderText()
 void MapEditor::mouseControls()
 {
 	static bool bLButtonState = false;
+
+	double x, y;
+	Application::GetCursorPos(&x, &y);
+	int w = Application::GetWindowWidth();
+	int h = Application::GetWindowHeight();
+	int gridCubeWidth = 8, gridCubeHeight = 8;
+	float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
+	float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
+
+	float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
+	float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
+	Vector3 mousepos = Vector3(posX, posY, 0);
 	if (!bLButtonState && Application::IsMousePressed(0))
 	{
 		bLButtonState = true;
 		std::cout << "LBUTTON DOWN" << std::endl;
-
-		int gridCubeWidth = 8, gridCubeHeight = 8;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-
-		float posX = (static_cast<float>(x) / w * m_worldWidth) + camera.position.x;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-		float cx = floorf(posX / gridCubeWidth) * gridCubeWidth;
-		float cy = floorf(posY / gridCubeHeight) * gridCubeHeight;
-
 		m_ghost->active = false;
 		GameObject*go = type(choice);
 
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)6 && go->type <= (GameObject::GAMEOBJECT_TYPE)11)
 			go->pos.Set(posX, posY, 1);
 		else if (go->type == GameObject::GO_PLAYER && !alreadyHavePlayer)
 		{
 			go->pos.Set(posX, posY, 1);
 			alreadyHavePlayer = true;
 		}
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)4 && go->type <= (GameObject::GAMEOBJECT_TYPE)9)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)1 && go->type <= (GameObject::GAMEOBJECT_TYPE)4)
 			go->pos.Set(cx, cy, 0);
+		else if (go->type == GameObject::GO_DOOR)
+		{
+			go->pos.Set(posX, posY, 0);
+		}
+		
+
+
+
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
+		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+		{
+			GameObject *go2 = (GameObject *)*it;
+
+		}
 		m_ghost->active = true;
 		bLButtonState = false;
 		std::cout << "LBUTTON UP" << std::endl;
@@ -148,15 +159,6 @@ void MapEditor::mouseControls()
 	static bool bRButtonState = false;
 	if (!bRButtonState && Application::IsMousePressed(1))
 	{
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth + camera.position.x;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight + camera.position.y;
-
-		Vector3 mousepos = Vector3(posX, posY, 0);
-
 		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
@@ -279,28 +281,28 @@ GameObject * MapEditor::type(int i)
 
 	switch (i)
 	{
-	case 10:
+	case 5:
 		go->HP = 20;
 		go->dmg = 1;
 		break;
-	case 11:
+	case 6:
 		go->HP = 10;
 		go->dmg = 3;
 		break;
-	case 12:
+	case 7:
 		go->HP = 10;
 		go->dmg = 3;
 		break;
-	case 13:
+	case 8:
 		go->HP = 5;
 		go->dmg = 5;
 		break;
-	case 14:
+	case 9:
 		go->HP = 5;
 		go->dmg = 5;
 		break;
 	}
-	if (i >= 10 && i <= 18)
+	if (i >= 5 && i <= 11)
 		go->scale.Set(5, 5, 1);
 	else
 	{
@@ -308,6 +310,12 @@ GameObject * MapEditor::type(int i)
 		go->dir.Set(0, 1, 0);
 		//go->dmg = 1;
 	}
+
+	if (go->type == GameObject::GO_DOOR)
+	{
+		go->scale.Set(10, 10, 1);
+	}
+
 
 	return go;
 }
@@ -375,15 +383,6 @@ void MapEditor::LoadObjects(vector<string> data)
 
 void MapEditor::SaveFile(vector<GameObject*> List)
 {
-	if (!m_goList.empty())
-	{
-		for (int i = 0; i < m_goList.size() - 1; ++i)
-		{
-			if (m_goList[i]->pos == m_goList[i + 1]->pos)
-				m_goList[i]->active = false;
-		}
-	}
-
 	std::ofstream file;
 	string temp;
 	file.open(fileName);
@@ -432,8 +431,6 @@ void MapEditor::Update(double dt)
 			chooselevel(2);
 		if (Application::IsKeyPressed('3'))
 			chooselevel(3);
-		if (Application::IsKeyPressed('4'))
-			chooselevel(4);
 	}
 
 	if (start)
@@ -461,20 +458,6 @@ void MapEditor::RenderGO(GameObject *go)
 {
 	switch (go->type)
 	{
-	case GameObject::GO_BALL:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("ball"), false);
-		modelStack.PopMatrix();
-		break;
-	case GameObject::GO_BLUE:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
-		modelStack.PopMatrix();
-		break;
 	case GameObject::GO_WALL:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -505,13 +488,6 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("tile_4"), false);
-		modelStack.PopMatrix();
-		break;
-	case GameObject::GO_PILLAR:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_PLAYER:
@@ -554,6 +530,13 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("blue"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_DOOR:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door"), false);
 		modelStack.PopMatrix();
 		break;
 	}

@@ -152,7 +152,7 @@ void SceneMenu::Render()
 
 	//Selection
 	ss.str("");
-	ss << "Level 1";
+	ss << "New Game";
 	if (clickpos == 0)
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 24);
 	else
