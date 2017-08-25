@@ -131,6 +131,17 @@ GameObject* SceneCollision::FetchGO()
 		GameObject *go = (GameObject *)*it;
 		if (!go->active)
 		{
+			bool found = false;
+			for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
+			{
+				GameObject *go2 = (Enemy *)*it2;
+				if (go != go2)
+					continue;
+				found = true;
+				break;
+			}
+			if (found)
+				continue;
 			go->active = true;
 			++m_objectCount;
 			return go;
@@ -213,21 +224,7 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
-
-	//if (go2->type == GameObject::GO_BALL)
-	//{
-	//	Vector3 u1 = go->vel;
-	//	Vector3 u2 = go2->vel;
-	//	Vector3 N = (go2->pos - go->pos).Normalize();
-	//	Vector3 u1N = u1.Dot(N) * N;
-	//	Vector3 u2N = u2.Dot(N) * N;
-
-	//	std::cout << "COLLIDED BALL" << std::endl;
-
-	//	go->vel = u1 + 2 * m2 / (m1 + m2) * (u2N - u1N);
-	//	go2->vel = u2 + 2 * m1 / (m1 + m2) * (u1N - u2N);
-	//}
-	 if (go2->type == GameObject::GO_WALL && (go->type == GameObject::GO_PLAYER || go->type == GameObject::GO_ENEMY_MELEE))
+	 if (go2->type == GameObject::GO_WALL && (go->type == GameObject::GO_PLAYER || go->type == GameObject::GO_ENEMY_MELEE || go->type == GameObject::GO_ENEMY_RANGED))
 	{
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
@@ -253,36 +250,6 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 	else if (go2->type == GameObject::GO_WALL && go->type == GameObject::GO_ARROW)
 	{
-		//Vector3 u = go->vel;
-		//Vector3 N = go2->dir;
-		//go->vel = u - (2 * u.Dot(N) * N);
-
-		//Vector3 u = go->vel;
-		//Vector3 N = go2->dir;
-		//
-		//Vector3 distance =  go->pos - go2->pos;
-		//distance.x = Math::Clamp(distance.x, -go2->scale.x / 2, go2->scale.x / 2);
-		//distance.y = Math::Clamp(distance.y, -go2->scale.y / 2, go2->scale.y / 2);
-
-		//Vector3 right = N.Cross(Vector3(0, 0, 1));
-
-		//if (abs(distance.x) > abs(distance.y))
-		//{
-		//	if (distance.Dot(right) > 0)
-		//	{
-		//		std::cout << "hello" << std::endl;
-		//		N = N.Cross(Vector3(0, 0, 1));
-		//		N = -N;
-		//	}
-
-		//	if (distance.Dot(right) < 0)
-		//	{
-		//		std::cout << "asd" << std::endl;
-		//		N = N.Cross(Vector3(0, 0, 1));
-		//	}
-		//}
-
-		//go->vel = u - (2 * u.Dot(N) * N);
 
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
@@ -696,10 +663,7 @@ void SceneCollision::Update(double dt)
 				go2->vel = 0.95 * go2->vel;
 			}
 		}
-
 	}
-
-
 	if (thePlayerInfo->isCharging)
 	{
 		chargeScale += 10 * dt;
