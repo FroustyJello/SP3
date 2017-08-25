@@ -21,6 +21,10 @@ protected:
 
 	int clickpos;
 	
+	int swit;
+
+	float x1,x2;
+
 	int c_bounceTime;
 
 };
