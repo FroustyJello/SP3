@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy() :prevX(0.f), RL(false),m_timer(0.f)
+Enemy::Enemy() :prevX(0.f), RL(false), m_timer(0.f)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -41,7 +41,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	switch (this->EnemyType)
 	{
 	case(MELEE):
-	//Behaviour
+		//Behaviour
 	{
 		// Variable Update
 		attackBT--;
@@ -49,11 +49,11 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		m_timer += dt;
 
 		//Left Collider Update
-		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - this->scale.y, this->pos.z));
-		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + this->scale.y, this->pos.z));
+		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - 50, this->pos.z));
+		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + 50, this->pos.z));
 		//Right Collider Update
-		RightSight->SetMinAABB(Vector3(this->pos.x, this->pos.y - this->scale.y, this->pos.z));
-		RightSight->SetMaxAABB(Vector3(this->pos.x + 50, this->pos.y + this->scale.y, this->pos.z));
+		RightSight->SetMinAABB(Vector3(this->pos.x, this->pos.y - 50, this->pos.z));
+		RightSight->SetMaxAABB(Vector3(this->pos.x + 50, this->pos.y + 50, this->pos.z));
 
 		// Continous changing/checking of which Enemy is the closest ally
 		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
@@ -91,7 +91,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos)
+				if (colliderPos == this->pos || colliderPos.y < this->pos.y - 6)
 				{
 					continue;
 				}
@@ -100,7 +100,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				{
 					if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
 					{
-						//std::cout << "Undetected" << std::endl;
 						DetectedPlayer = false;
 						break;
 					}
@@ -116,38 +115,38 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 		if (RightSight->CheckOverlap(RightSight->GetMinAABB(), RightSight->GetMaxAABB(), PlayerRef->GetMinAABB(), PlayerRef->GetMaxAABB()))
 		{
-		for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
-		{
-			CCollider *collider = (CCollider *)*it;
-
-			Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
-			colliderPos.x *= 0.5f;
-			colliderPos.y *= 0.5f;
-			colliderPos.z *= 0.5f;
-
-			if (colliderPos == this->pos)
+			for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
 			{
-				continue;
-			}
+				CCollider *collider = (CCollider *)*it;
 
-			if (RightSight->CheckOverlap(RightSight->GetMinAABB(), RightSight->GetMaxAABB(), collider->GetMinAABB(), collider->GetMaxAABB()))
-			{
-				if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
+				Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+				colliderPos.x *= 0.5f;
+				colliderPos.y *= 0.5f;
+				colliderPos.z *= 0.5f;
+
+				if (colliderPos == this->pos || colliderPos.y > this->pos.y - 6)
 				{
-					//std::cout << "Undetected" << std::endl;
-					DetectedPlayer = false;
-					break;
+					continue;
+				}
+
+				if (RightSight->CheckOverlap(RightSight->GetMinAABB(), RightSight->GetMaxAABB(), collider->GetMinAABB(), collider->GetMaxAABB()))
+				{
+					if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
+					{
+						std::cout << (this->pos - colliderPos).Length() << (this->pos - PlayerRef->pos).Length() << std::endl;
+						DetectedPlayer = false;
+						break;
+					}
+				}
+
+				//if ((itr != Mine.end()) && (next(itr) == Mine.end()))
+
+				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+				{
+					//std::cout << "Detected" << std::endl;
+					DetectedPlayer = true;
 				}
 			}
-
-			//if ((itr != Mine.end()) && (next(itr) == Mine.end()))
-
-			if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-			{
-				//std::cout << "Detected" << std::endl;
-				DetectedPlayer = true;
-			}
-		}
 		}
 
 		// Enemy to Enemy Detection
@@ -172,35 +171,84 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		// Enemy Action
 		if (DetectedPlayer)
 		{
+			// Movement
 			if ((this->pos - PlayerRef->pos).Length() > 12)
 			{
 				if (ClosestEnemy != NULL)
 				{
-					if (((this->pos + 5.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
 					{
-						if (this->pos.x < PlayerRef->pos.x)
-							this->pos.x += 5.5f * dt;
-					}
-					if (((this->pos - 5.5f * dt) - ClosestEnemy->pos).Length() > 12)
-					{
-						if (this->pos.x > PlayerRef->pos.x)
-							this->pos.x -= 5.5f * dt;
+						CCollider *collider = (CCollider *)*it;
+
+						Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+						colliderPos.x *= 0.5f;
+						colliderPos.y *= 0.5f;
+						colliderPos.z *= 0.5f;
+
+						if (((this->pos + 5.5f * dt) - ClosestEnemy->pos).Length() > 12 || ((this->pos + 5.5f * dt) - colliderPos).Length() > 12)
+						{
+							if (this->pos.x < PlayerRef->pos.x)
+							{
+								this->pos.x += 5.5f * dt;
+								break;
+							}
+						}
+						if (((this->pos - 5.5f * dt) - ClosestEnemy->pos).Length() > 12 || ((this->pos - 5.5f * dt) - colliderPos).Length() > 12)
+						{
+							if (this->pos.x > PlayerRef->pos.x)
+							{
+								this->pos.x -= 5.5f * dt;
+								break;
+							}
+						}
 					}
 				}
 				else
 				{
-					if (this->pos.x < PlayerRef->pos.x)
+					for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
 					{
-						this->pos.x += 5.5f * dt;
+						CCollider *collider = (CCollider *)*it;
 
-					}
-					else
-					{
-						this->pos.x -= 5.5f * dt;
+						Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+						colliderPos.x *= 0.5f;
+						colliderPos.y *= 0.5f;
+						colliderPos.z *= 0.5f;
 
+						if (colliderPos.y < this->pos.y - 6)
+						{
+							continue;
+						}
+
+						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
+						{
+							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
+						{
+							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+
+						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+						{
+							if (this->pos.x < PlayerRef->pos.x)
+							{
+								this->pos.x += 5.5f * dt;
+							}
+							else
+							{
+								this->pos.x -= 5.5f * dt;
+							}
+						}
 					}
 				}
 			}
+			// Attack
 			else if ((this->pos - PlayerRef->pos).Length() <= 18)
 			{
 				if (attackBT <= 0)
@@ -208,17 +256,18 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 					attackBT = 30.f;
 
 					std::cout << "Attack. (Melee)" << std::endl;
+					PlayerRef->HP--;
 				}
 				SetAnimationStatus(RL, false, true, false, dt);
 			}
 		}
 	}
 
-	
+
 	//Animation
 	if (this->HP <= 0)
 	{
-		
+
 		SetAnimationStatus(RL, false, false, true, dt);
 		if (m_timer >= 2.8f)
 		{
@@ -250,7 +299,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	break;
 
 	case(RANGED):
-	//Behaviour
+		//Behaviour
 	{
 		// Variable Update
 		attackBT--;
@@ -392,33 +441,125 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		// Enemy Action
 		if (DetectedPlayer)
 		{
-			if ((this->pos - PlayerRef->pos).Length() > 20)
+			if ((this->pos - PlayerRef->pos).Length() > 30)
 			{
 				if (ClosestEnemy != NULL)
 				{
-					if (((this->pos + 6.5f * dt) - ClosestEnemy->pos).Length() > 12)
+					for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
 					{
-						if (this->pos.x < PlayerRef->pos.x)
+						CCollider *collider = (CCollider *)*it;
+
+						Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+						colliderPos.x *= 0.5f;
+						colliderPos.y *= 0.5f;
+						colliderPos.z *= 0.5f;
+
+						if (colliderPos.y < this->pos.y - 6)
 						{
-							this->pos.x += 12.5f * dt;
-							RL = true;
+							continue;
 						}
-					}
-					if (((this->pos - 6.5f * dt) - ClosestEnemy->pos).Length() > 12)
-					{
-						if (this->pos.x > PlayerRef->pos.x)
+
+						if (((this->pos - 5.5f * dt) - ClosestEnemy->pos).Length() < 12 || ((this->pos + 5.5f * dt) - ClosestEnemy->pos).Length() < 12)
 						{
-							this->pos.x -= 12.5f * dt;
-							RL = false;
+							break;
+						}
+
+						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
+						{
+							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+
+						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
+						{
+							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+
+						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+						{
+							if ((this->pos - PlayerRef->pos).Length() < (ClosestEnemy->pos - PlayerRef->pos).Length() + 12.f)
+							{
+								if (ClosestEnemy->EnemyType == MELEE)
+								{
+									IsShooting = false;
+
+									if (this->pos.x < PlayerRef->pos.x)
+									{
+										this->pos.x -= 5.5f * dt;
+									}
+									else
+									{
+										this->pos.x += 5.5f * dt;
+									}
+								}
+							}
+							else
+							{
+								IsShooting = false;
+
+								if (this->pos.x < PlayerRef->pos.x)
+								{
+									this->pos.x += 5.5f * dt;
+								}
+								else
+								{
+									this->pos.x -= 5.5f * dt;
+								}
+							}
 						}
 					}
 				}
 				else
 				{
-					if (this->pos.x < PlayerRef->pos.x)
-						this->pos.x += 12.5f * dt;
-					else
-						this->pos.x -= 12.5f * dt;
+					for (std::vector<CCollider *>::iterator it = m_Colliders.begin(); it != m_Colliders.end(); ++it)
+					{
+						CCollider *collider = (CCollider *)*it;
+
+						Vector3 colliderPos = collider->GetMinAABB() + collider->GetMaxAABB();
+						colliderPos.x *= 0.5f;
+						colliderPos.y *= 0.5f;
+						colliderPos.z *= 0.5f;
+
+						if (colliderPos.y < this->pos.y - 6)
+						{
+							continue;
+						}
+
+						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
+						{
+							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+
+						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
+						{
+							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
+							{
+								break;
+							}
+						}
+
+						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+						{
+							IsShooting = false;
+
+							if (this->pos.x < PlayerRef->pos.x)
+							{
+								this->pos.x += 5.5f * dt;
+							}
+							else
+							{
+								this->pos.x -= 5.5f * dt;
+							}
+						}
+					}
 				}
 			}
 			else
@@ -426,7 +567,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				if (attackBT <= 0)
 				{
 					attackBT = 30.f;
-					std::cout << "Attack. (Ranged)" << std::endl;
+					IsShooting = true;
 				}
 				SetAnimationStatus(RL, false, true, false, dt);
 			}
@@ -437,7 +578,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	if (this->pos.x < prevX)
 	{
 		RL = true;
-		SetAnimationStatus(RL, true, false,false, dt);
+		SetAnimationStatus(RL, true, false, false, dt);
 	}
 	else if (this->pos.x > prevX)
 	{
@@ -459,7 +600,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	break;
 
 	case(BOSS_1):
-	//Behaviour
+		//Behaviour
 	{
 
 	}

@@ -248,12 +248,9 @@ void CPlayer::Update(double dt)
 	if (Application::IsKeyPressed('D'))
 	{
 		RL = false;
-		//svel.x += 25 * dt * m_speed;
 		pos.x += 25 * dt * m_speed;
 		SetAnimationStatus(RL, true,false,false, dt);
-		//
 		this->dir.x = 1;
-		std::cout << this->vel.x << std::endl;
 	}
 
 	if (Application::IsKeyPressed('A'))
@@ -262,7 +259,6 @@ void CPlayer::Update(double dt)
 		pos.x -= 25 * dt * m_speed;
 		SetAnimationStatus(RL, true,false,false, dt);
 		this->dir.x = -1;
-		//m_dElapsedTime += dt;
 	}
 
 	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
