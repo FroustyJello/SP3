@@ -70,13 +70,16 @@ void SceneCollision::Init()
 
 	LoadObjects(data);
 
+
+	
 	for (int i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
 			thePlayerInfo->pos = m_goList[i]->pos;
 			thePlayerInfo->HP = 10;
-			m_goList[i] = thePlayerInfo;
+			m_goList[i] = m_goList[m_goList.size() - 1];
+			m_goList[m_goList.size() - 1] = thePlayerInfo;
 			break;
 		}
 	}
@@ -112,6 +115,7 @@ void SceneCollision::Init()
 	}
 
 
+
 	camera.position.x = thePlayerInfo->pos.x - (m_worldWidth * 0.5f);
 	camera.position.y = thePlayerInfo->pos.y - (m_worldHeight * 0.5f);
 
@@ -126,7 +130,7 @@ void SceneCollision::Init()
 
 
 	CSoundEngine::GetInstance()->Init();
-	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/RakeHorn.mp3");
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/THEBEST.mp3");
 	CSoundEngine::GetInstance()->PlayASound("BGM_1");
 }
 
@@ -176,8 +180,6 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		 && go2->type == GameObject::GO_WALL)
 	{
 
-		 if (go1->type == GameObject::GO_ENEMY_MELEE)
-			 std::cout << "chckingasd" << std::endl;
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
 		float r = go1->scale.x;
@@ -252,8 +254,6 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		 || go->type == GameObject::GO_ENEMY_RANGED_2))
 	{
 
-		if (go->type == GameObject::GO_ENEMY_MELEE)
-			std::cout << "chcking" << std::endl;
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
 		go->vel = u - (2 * u.Dot(N) * N);
@@ -295,12 +295,8 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
 
-		//go->vel = (u - 2 * u.Dot(N) * N) * 0.4 + gravity;
-		//go->dir = -go->dir;
-		//go->rotation = (90, 0, 0, 1);
-
 		go->active = false;
-
+		//go2->active = false;
 		go2->vel.x += go->vel.x * 0.25f;
 		go2->vel.y += 10;
 		go2->HP -= go->dmg;
@@ -383,11 +379,6 @@ void SceneCollision::LoadObjects(vector<string> data)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 		}
-
-		if (go->type == GameObject::GO_ENEMY_MELEE)
-		{
-			std::cout << "asdsadsad" << std::endl;
-		}
 		Ctemp = nullptr;
 	}
 }
@@ -459,12 +450,6 @@ void SceneCollision::Update(double dt)
 	//UpdateParticles(dt);
 
 	static bool is9pressed = false;
-
-	if (Application::IsKeyPressed('0'))
-	{
-		SaveFile(m_goList);
-		//Application::SetScene(1);
-	}
 
 	if (Application::IsKeyPressed('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -576,6 +561,12 @@ void SceneCollision::Update(double dt)
 		thePlayerInfo->isShooting = false;
 	}
 
+	if (thePlayerInfo->HP <= 0)
+	{
+		Application::continueGame = true;
+		Application::SetScene(3);
+	}
+
 	//Physics Simulation Section
 	dt *= m_speed;
 
@@ -599,29 +590,36 @@ void SceneCollision::Update(double dt)
 		if (enemy->IsShooting)
 		{
 			GameObject* shoot = FetchGO();
+
 			shoot->type = GameObject::GO_ENEMY_BULLET;
 			shoot->pos = enemy->pos;
 			shoot->pos.y += 5;
 			shoot->pos.x += 5;
-			shoot->dir = enemy->dir;
-			shoot->vel = enemy->dir * 10.f;
+			if (thePlayerInfo->pos.x > enemy->pos.x)
+			{
+				shoot->vel = 500.f * dt;
+			}
+			else
+			{
+				shoot->vel = -500.f * dt;
+			}
 			shoot->scale.Set(5, 5, 1);
 			enemy->IsShooting = false;
 		}
 	}
-
+	canSave = false;
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x +10.f || go->pos.x < 0 + camera.position.x - 10.f ||
+		if (go->pos.x > m_worldWidth + camera.position.x +15.f || go->pos.x < 0 + camera.position.x - 15.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
 		}
 
 
-		else if (go->type != GameObject::GO_ARROW)
+		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
 		{
 			if (go->HP > 0)
 				go->active = true;
@@ -634,10 +632,7 @@ void SceneCollision::Update(double dt)
 				canSave = true;
 				std::cout << "Can save";
 			}
-			else
-			{
-				canSave = false;
-			}
+		
 		}
 
 		if (go->type == GameObject::GO_WALL_2)
@@ -657,10 +652,13 @@ void SceneCollision::Update(double dt)
 			continue;
 		go->pos += go->vel * m_speed * dt;
 
+		if (go->type == GameObject::GO_ENEMY_BULLET)
+		{
+			go->pos += go->vel * static_cast<float>(dt);
+		}
 
 		if (go->type == GameObject::GO_PLAYER)
 			hpscale = (go->HP / 10 )* 40;
-
 
 		if ( go->type == GameObject::GO_PLAYER
 			|| go->type == GameObject::GO_ENEMY_MELEE
@@ -811,28 +809,28 @@ void SceneCollision::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_ENEMY_MELEE:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Translate(go->pos.x, go->pos.y+1, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(fatEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_MELEE_2:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Translate(go->pos.x, go->pos.y+1, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(femaleEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Translate(go->pos.x, go->pos.y+1, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(regularEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_ENEMY_RANGED_2:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Translate(go->pos.x, go->pos.y+1, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(pistolEnemy[(dynamic_cast<Enemy*> (go))->GetAnimationIndex()]->GetMesh(), false);
 		modelStack.PopMatrix();
