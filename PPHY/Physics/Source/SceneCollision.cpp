@@ -830,6 +830,14 @@ void SceneCollision::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door"), false);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_ENEMY_BULLET:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 

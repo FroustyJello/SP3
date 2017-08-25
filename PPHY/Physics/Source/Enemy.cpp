@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy() :prevX(0.f), RL(false), m_timer(0.f)
+Enemy::Enemy() :prevX(0.f), RL(false), m_timer(0.f), m_timer2(0.f)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -579,11 +579,11 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 
 		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_timer >= 2.8f)
+		if (m_timer2 >= 2.8f)
 		{
 			std::cout << "died" << std::endl;
 			this->active = false;
-			m_timer = 0.f;
+			m_timer2 = 0.f;
 		}
 	}
 	else
