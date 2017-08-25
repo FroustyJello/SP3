@@ -46,8 +46,8 @@ void SceneLose::Update(double dt)
 	//Lock
 	if (clickpos <= 0)
 		clickpos = 0;
-	if (clickpos >= 1)
-		clickpos = 1;
+	if (clickpos >= 2)
+		clickpos = 2;
 
 
 	//Selection
@@ -56,7 +56,9 @@ void SceneLose::Update(double dt)
 		if (clickpos == 0)		//Play
 			Application::SetScene(1);
 		if (clickpos == 1)
-			Application::SetScene(0);
+		{
+			Application::SetScene(2);
+		}
 	}
 
 	c_bounceTime++;
@@ -95,26 +97,35 @@ void SceneLose::Render()
 	std::ostringstream ss;
 	//Title
 	ss << "YOU ARE";
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(1, 1, 1), 5, 12, 38);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 5, 12, 38);
 
 	ss.str("");
 	ss << "LOSE";
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(1, 1, 1), 5, 21, 33);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 5, 21, 33);
 
 	//Selection
 	ss.str("");
 	ss << "Return to Menu";
 	if (clickpos == 0)
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 24);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 24);
 	else
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
+
+	ss.str("");
+	ss << "Continue";
+	if (clickpos == 1)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 18);
+	else
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
+
+
 
 	ss.str("");
 	ss << "Exit";
-	if (clickpos == 1)
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 18);
+	if (clickpos == 2)
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 12);
 	else
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 12);
 }
 
 void SceneLose::Exit()

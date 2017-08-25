@@ -64,7 +64,11 @@ void SceneMenu::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN) && c_bounceTime >= 10)
 	{
 		if (clickpos == 0)		//Play
+		{
+			Application::continueGame = false;
 			Application::SetScene(2);
+		}
+
 		if (clickpos == 1)
 			Application::SetScene(5);
 		if (clickpos == 2)
