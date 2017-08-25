@@ -39,6 +39,7 @@ void SceneCollision::Init()
 
 
 
+
 	//thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
@@ -109,8 +110,11 @@ void SceneCollision::Init()
 	}
 
 
-	//camera.position.x = thePlayerInfo->pos.x;
-	//camera.target = thePlayerInfo->pos;
+	camera.position.x = thePlayerInfo->pos.x - (m_worldWidth * 0.5f);
+	camera.position.y = thePlayerInfo->pos.y - (m_worldHeight * 0.5f);
+
+	camera.target.x = thePlayerInfo->pos.x - (m_worldWidth * 0.5f);
+	camera.target.y = thePlayerInfo->pos.y - (m_worldHeight * 0.5f);
 
 
 	RightScreenLimit = thePlayerInfo->pos.x + 10;
@@ -151,8 +155,16 @@ GameObject* SceneCollision::FetchGO()
 bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 {
 
-	 if ((go1->type == GameObject::GO_PLAYER || go1->type == GameObject::GO_ENEMY_MELEE) && go2->type == GameObject::GO_WALL)
+	 if ((go1->type == GameObject::GO_PLAYER 
+		 || go1->type == GameObject::GO_ENEMY_MELEE
+		 || go1->type == GameObject::GO_ENEMY_MELEE_2
+		 || go1->type == GameObject::GO_ENEMY_RANGED
+		 || go1->type == GameObject::GO_ENEMY_RANGED_2)
+		 && go2->type == GameObject::GO_WALL)
 	{
+
+		 if (go1->type == GameObject::GO_ENEMY_MELEE)
+			 std::cout << "chckingasd" << std::endl;
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
 		float r = go1->scale.x;
@@ -169,7 +181,11 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
 	}
 
-	else if ((go1->type == GameObject::GO_ARROW || go1->type == GameObject::GO_FIRE_ARROW) && (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_ENEMY_MELEE))
+	else if ((go1->type == GameObject::GO_ARROW || go1->type == GameObject::GO_FIRE_ARROW) && (go2->type == GameObject::GO_WALL 
+		|| go2->type == GameObject::GO_ENEMY_MELEE
+		|| go2->type == GameObject::GO_ENEMY_MELEE_2
+		|| go2->type == GameObject::GO_ENEMY_RANGED
+		|| go2->type == GameObject::GO_ENEMY_RANGED_2))
 	{
 
 		Vector3 p1 = go1->pos;
@@ -228,8 +244,16 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 	//	go->vel = u1 + 2 * m2 / (m1 + m2) * (u2N - u1N);
 	//	go2->vel = u2 + 2 * m1 / (m1 + m2) * (u1N - u2N);
 	//}
-	 if (go2->type == GameObject::GO_WALL && (go->type == GameObject::GO_PLAYER || go->type == GameObject::GO_ENEMY_MELEE))
+	 if (go2->type == GameObject::GO_WALL && 
+		 (go->type == GameObject::GO_PLAYER 
+		 || go->type == GameObject::GO_ENEMY_MELEE 
+		 || go->type == GameObject::GO_ENEMY_MELEE_2
+		 || go->type == GameObject::GO_ENEMY_RANGED
+		 || go->type == GameObject::GO_ENEMY_RANGED_2))
 	{
+
+		if (go->type == GameObject::GO_ENEMY_MELEE)
+			std::cout << "chcking" << std::endl;
 		Vector3 u = go->vel;
 		Vector3 N = go2->dir;
 		go->vel = u - (2 * u.Dot(N) * N);
@@ -263,7 +287,10 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go->rotation = (90, 0, 0, 1);
 	}
 
-	else if (go2->type == GameObject::GO_ENEMY_MELEE && (go->type == GameObject::GO_ARROW || go->type == GameObject::GO_FIRE_ARROW))
+	else if ((go2->type == GameObject::GO_ENEMY_MELEE
+		|| go2->type == GameObject::GO_ENEMY_MELEE_2
+		|| go2->type == GameObject::GO_ENEMY_RANGED
+		|| go2->type == GameObject::GO_ENEMY_RANGED_2) && (go->type == GameObject::GO_ARROW || go->type == GameObject::GO_FIRE_ARROW))
 	{
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
@@ -344,7 +371,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
-			&& go->type != GameObject::GO_PLAYER)
+			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
@@ -352,6 +379,11 @@ void SceneCollision::LoadObjects(vector<string> data)
 		if (go->type == GameObject::GO_PLAYER)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
+		}
+
+		if (go->type == GameObject::GO_ENEMY_MELEE)
+		{
+			std::cout << "asdsadsad" << std::endl;
 		}
 		Ctemp = nullptr;
 	}
@@ -579,11 +611,14 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x +3.5f || go->pos.x < 0 + camera.position.x - 3.5f ||
+		if (go->pos.x > m_worldWidth + camera.position.x +10.f || go->pos.x < 0 + camera.position.x - 10.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
 		}
+
+		if (go->type == GameObject::GO_ENEMY_MELEE)
+			std::cout << "chckingasd" << std::endl;
 
 		else if (go->type != GameObject::GO_ARROW)
 		{
@@ -647,7 +682,10 @@ void SceneCollision::Update(double dt)
 			//Practical 4, Exercise 13: improve collision detection algorithm
 			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
 			{
-				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW)
+				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW 
+					&& go2->type != GameObject::GO_ENEMY_MELEE_2
+					&& go2->type != GameObject::GO_ENEMY_RANGED
+					&& go2->type != GameObject::GO_ENEMY_RANGED_2)
 					continue;
 				goA = go2;
 				goB = go;
@@ -946,13 +984,16 @@ void SceneCollision::Render()
 			if (go->type == GameObject::GO_ENEMY_MELEE || go->type == GameObject::GO_ENEMY_MELEE_2)
 			{
 				modelStack.Scale((go->HP / 10) * 15, 2, 1);
+				RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 			}
-			else
+
+			else if (go->type == GameObject::GO_ENEMY_RANGED || go->type == GameObject::GO_ENEMY_RANGED_2)
 			{
 				modelStack.Scale((go->HP / 5) * 15, 2, 1);
+				RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 			}
 			//modelStack.Translate(0.5, 0, 0);
-			RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
+			
 			modelStack.PopMatrix();
 		}
 

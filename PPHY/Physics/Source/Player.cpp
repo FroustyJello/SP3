@@ -245,7 +245,7 @@ void CPlayer::Update(double dt)
 		pos.y -= 20 * dt * m_speed;
 	}
 
-	if (Application::IsKeyPressed('D'))
+	if (Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
 	{
 		RL = false;
 		pos.x += 25 * dt * m_speed;
@@ -253,7 +253,7 @@ void CPlayer::Update(double dt)
 		this->dir.x = 1;
 	}
 
-	if (Application::IsKeyPressed('A'))
+	if (Application::IsKeyPressed('A') && !Application::IsKeyPressed(VK_SPACE))
 	{
 		RL = true;
 		pos.x -= 25 * dt * m_speed;
