@@ -261,7 +261,18 @@ void CPlayer::Update(double dt)
 		this->dir.x = -1;
 	}
 
-	if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
+
+	if (this->HP <= 0)
+	{
+		SetAnimationStatus(RL, false, false, true, dt);
+		if (m_dElapsedDieTime >= 0.3f)
+		{
+			std::cout << "died" << std::endl;
+			//this->active = false;
+			m_dElapsedDieTime = 0.f;
+		}
+	}
+	else if (!Application::IsKeyPressed('A') && !Application::IsKeyPressed('D') && !Application::IsKeyPressed(VK_SPACE))
 		SetAnimationStatus(RL, false,false,false, dt);
 
 	static bool isSpacepressed = false;
@@ -295,16 +306,7 @@ void CPlayer::Update(double dt)
 			arrowdmg = 5;
 	}
 
-	if (this->HP<=0)
-	{
-		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_dElapsedDieTime >= 2.8f)
-		{
-			std::cout << "died" << std::endl;
-			this->active = false;
-			m_dElapsedDieTime = 0.f;
-		}
-	}
+	
 
 	this->SetPAABB(Vector3(4, 4, 4), GetPos());
 	Constrain();

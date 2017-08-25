@@ -598,11 +598,11 @@ void SceneCollision::Update(double dt)
 			GameObject* shoot = FetchGO();
 			shoot->type = GameObject::GO_ENEMY_BULLET;
 			shoot->pos = enemy->pos;
-			shoot->pos.y += 9.3;
+			shoot->pos.y += 5;
 			shoot->pos.x += 5;
 			shoot->dir = enemy->dir;
-			shoot->vel = enemy->dir * 10.f;
-			shoot->scale.Set(3, 3, 1);
+			shoot->vel = enemy->dir * 10.f*dt;
+			shoot->scale.Set(5, 5, 1);
 			enemy->IsShooting = false;
 		}
 	}
