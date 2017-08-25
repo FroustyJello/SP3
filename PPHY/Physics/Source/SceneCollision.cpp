@@ -36,8 +36,8 @@ void SceneCollision::Init()
 	m_TrailCount = 0;
 	MAX_TRAIL_COUNT = 500;
 
-	
-	
+
+
 	//thePlayerInfo = CPlayer::GetInstance();
 	thePlayerInfo->Init();
 	thePlayerInfo->type = GameObject::GO_PLAYER;
@@ -56,14 +56,14 @@ void SceneCollision::Init()
 	m_timeEstimated1 = m_timeTaken1 = 0.f;
 	bool timeStarted = false;
 
-	if(!Application::continueGame)
-	data = reader.Load("level1.csv", data);
+	if (!Application::continueGame)
+		data = reader.Load("level1.csv", data);
 	else
 	{
 		data = reader.Load("save.csv", data);
 		Application::continueGame = false;
 	}
-	
+
 	LoadObjects(data);
 
 	for (int i = 0; i < m_goList.size(); ++i)
@@ -100,7 +100,7 @@ void SceneCollision::Init()
 
 			theEnemyInfo->SetLeftDiedIndices(14, 15);
 			theEnemyInfo->SetRightDiedIndices(12, 13);
-		
+
 			m_goList[i] = theEnemyInfo;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
@@ -307,7 +307,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		if (go->vel.LengthSquared() <= limit)
 		{
-			
+
 			go->vel = 0;
 		}
 		else
@@ -400,7 +400,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		CCollider* Ctemp = new CCollider();	
+		CCollider* Ctemp = new CCollider();
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -530,7 +530,7 @@ void SceneCollision::Update(double dt)
 	//UpdateParticles(dt);
 
 	static bool is9pressed = false;
-	
+
 	if (Application::IsKeyPressed('0'))
 	{
 		SaveFile(m_goList);
@@ -630,12 +630,12 @@ void SceneCollision::Update(double dt)
 	}
 
 
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+	double x, y;
+	Application::GetCursorPos(&x, &y);
+	int w = Application::GetWindowWidth();
+	int h = Application::GetWindowHeight();
+	float posX = static_cast<float>(x) / w * m_worldWidth;
+	float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 
 	////Mouse Section
 	static bool bLButtonState = false;
@@ -667,13 +667,13 @@ void SceneCollision::Update(double dt)
 		go->scale.Set(sc, sc, sc);
 		go->mass = sc * sc * sc;
 	}
-	
-	
-if (thePlayerInfo->isShooting)
+
+
+	if (thePlayerInfo->isShooting)
 	{
 		GameObject* shoot = FetchGO();
 		if (thePlayerInfo->arrowdmg < 3)
-			shoot->type = GameObject::GO_ARROW;	
+			shoot->type = GameObject::GO_ARROW;
 		else
 			shoot->type = GameObject::GO_FIRE_ARROW;
 
@@ -696,6 +696,18 @@ if (thePlayerInfo->isShooting)
 		if (!enemy->active)
 			continue;
 		enemy->Update(dt, thePlayerInfo, m_enemies, collisionVector);
+		if (enemy->IsShooting)
+		{
+			GameObject* shoot = FetchGO();
+			shoot->type = GameObject::GO_ENEMY_BULLET;
+			shoot->pos = enemy->pos;
+			shoot->pos.y += 9.3;
+			shoot->pos.x += 5;
+			shoot->dir = enemy->dir;
+			shoot->vel = enemy->dir * 10.f;
+			shoot->scale.Set(3, 3, 1);
+			enemy->IsShooting = false;
+		}
 	}
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -719,7 +731,7 @@ if (thePlayerInfo->isShooting)
 
 
 		if (go->type == GameObject::GO_PLAYER)
-			hpscale = (go->HP / 10 )* 40;
+			hpscale = (go->HP / 10) * 40;
 
 		if (go->type == GameObject::GO_BALL
 			|| go->type == GameObject::GO_PLAYER
@@ -1123,7 +1135,7 @@ void SceneCollision::Render()
 		{
 			RenderGO(go);
 			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y+10, 1.1);
+			modelStack.Translate(go->pos.x, go->pos.y + 10, 1.1);
 			if (go->type == GameObject::GO_ENEMY_MELEE || go->type == GameObject::GO_ENEMY_MELEE_2)
 			{
 				modelStack.Scale((go->HP / 10) * 15, 2, 1);
@@ -1140,10 +1152,10 @@ void SceneCollision::Render()
 	}
 	/*if (m_ghost->active)
 		RenderGO(m_ghost);*/
-	
 
 
-	//On screen text
+
+		//On screen text
 	std::ostringstream ss;
 	ss << "Player lives: " << m_lives;
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 0, 12);
@@ -1175,7 +1187,7 @@ void SceneCollision::Exit()
 		m_goList.pop_back();
 	}*/
 
-	for (int i = m_goList.size()-1; i >= 0; --i)
+	for (int i = m_goList.size() - 1; i >= 0; --i)
 	{
 		if (m_goList[i]->type != GameObject::GO_PLAYER)
 		{
@@ -1183,24 +1195,24 @@ void SceneCollision::Exit()
 			m_goList.pop_back();
 		}
 	}
-		m_goList.clear();
-		thePlayerInfo->DropInstance();
+	m_goList.clear();
+	thePlayerInfo->DropInstance();
 
-		if (thePlayerInfo->DropInstance == false)
-		{
-			std::cout << "failed to delete player" << std::endl;
-		}
-	
-		while (!collisionVector.empty())
-		{
-			delete collisionVector.back();
-			collisionVector.pop_back();
-		}
+	if (thePlayerInfo->DropInstance == false)
+	{
+		std::cout << "failed to delete player" << std::endl;
+	}
 
-		/*while (!m_enemies.empty())
-		{
-			delete m_enemies.back();
-			m_enemies.pop_back();
-		}*/
+	while (!collisionVector.empty())
+	{
+		delete collisionVector.back();
+		collisionVector.pop_back();
+	}
+
+	/*while (!m_enemies.empty())
+	{
+		delete m_enemies.back();
+		m_enemies.pop_back();
+	}*/
 
 }
