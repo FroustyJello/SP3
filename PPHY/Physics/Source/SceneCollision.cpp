@@ -229,7 +229,6 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return (p2 - p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
 	}
 
-
 	return false;
 }
 
@@ -317,8 +316,8 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		go->active = false;
 
-		go2->pos.x += 8;
-		go2->pos.y += 3;
+		go2->vel.x += go->vel.x * 0.25f;
+		go2->vel.y += 10;
 		go2->HP -= go->dmg;
 
 		/*if (go2->HP <= 0)
@@ -395,7 +394,8 @@ void SceneCollision::LoadObjects(vector<string> data)
 		}
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
-			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2 && go->type != GameObject::GO_PLAYER)
+			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
+			&& go->type != GameObject::GO_PLAYER)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
@@ -666,7 +666,12 @@ if (thePlayerInfo->isShooting)
 		if (go->type == GameObject::GO_PLAYER)
 			hpscale = (go->HP / 10 )* 40;
 
-		if (go->type == GameObject::GO_BALL||go->type == GameObject::GO_PLAYER || go->type == GameObject::GO_ENEMY_MELEE)
+		if (go->type == GameObject::GO_BALL
+			|| go->type == GameObject::GO_PLAYER
+			|| go->type == GameObject::GO_ENEMY_MELEE
+			|| go->type == GameObject::GO_ENEMY_MELEE_2
+			|| go->type == GameObject::GO_ENEMY_RANGED
+			|| go->type == GameObject::GO_ENEMY_RANGED_2)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
 			go->vel += gravity * dt;
