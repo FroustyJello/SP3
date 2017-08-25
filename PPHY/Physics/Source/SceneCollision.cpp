@@ -28,6 +28,8 @@ void SceneCollision::Init()
 	playerMoveIndex = 0;
 	elapesTime = 0;
 	canSave = false;
+	trigger = false;
+	triggered = false;
 	CSV reader;
 
 	vector<string> data;
@@ -603,6 +605,20 @@ void SceneCollision::Update(double dt)
 				canSave = false;
 			}
 		}
+
+		if (go->type == GameObject::GO_WALL_2)
+		{
+			if(!triggered && trigger)
+			{
+				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
+				go->vel *= 60;
+			}
+			else if(triggered && trigger)
+			{
+				Vector3 G(0, -9.8f);
+				go->vel += G * dt*10;
+			}
+		}
 		if (!go->active)
 			continue;
 		go->pos += go->vel * m_speed * dt;
@@ -670,6 +686,10 @@ void SceneCollision::Update(double dt)
 
 	}
 
+	if (trigger)
+	{
+		triggered = true;
+	}
 
 	if (thePlayerInfo->isCharging)
 	{
@@ -682,8 +702,12 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
+	if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}
 
-	UpdateParticles(dt);
+	//UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;
