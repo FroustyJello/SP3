@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy() :prevX(0.f), RL(false), m_timer(0.f)
+Enemy::Enemy() :prevX(0.f), RL(false), m_timer(0.f), m_timer2(0.f)
 {
 	//this->type = typeValue;
 	this->scale = Vector3(1, 1, 1);
@@ -91,7 +91,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos || colliderPos.y < this->pos.y - 6)
+				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -124,7 +124,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos || colliderPos.y > this->pos.y - 6)
+				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -185,19 +185,19 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						colliderPos.y *= 0.5f;
 						colliderPos.z *= 0.5f;
 
-						if (((this->pos + 5.5f * dt) - ClosestEnemy->pos).Length() > 12 || ((this->pos + 5.5f * dt) - colliderPos).Length() > 12)
+						if (((this->pos + 7.5f * dt) - ClosestEnemy->pos).Length() > 12 && ((this->pos + 7.5f * dt) - colliderPos).Length() > 12)
 						{
 							if (this->pos.x < PlayerRef->pos.x)
 							{
-								this->pos.x += 5.5f * dt;
+								this->pos.x += 7.5f * dt;
 								break;
 							}
 						}
-						if (((this->pos - 5.5f * dt) - ClosestEnemy->pos).Length() > 12 || ((this->pos - 5.5f * dt) - colliderPos).Length() > 12)
+						if (((this->pos - 7.5f * dt) - ClosestEnemy->pos).Length() > 12 && ((this->pos - 7.5f * dt) - colliderPos).Length() > 12)
 						{
 							if (this->pos.x > PlayerRef->pos.x)
 							{
-								this->pos.x -= 5.5f * dt;
+								this->pos.x -= 7.5f * dt;
 								break;
 							}
 						}
@@ -221,14 +221,14 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
 						{
-							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							if (((this->pos - 7.5f * dt) - colliderPos).Length() < 12)
 							{
 								break;
 							}
 						}
 						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
 						{
-							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
+							if (((this->pos + 7.5f * dt) - colliderPos).Length() < 12)
 							{
 								break;
 							}
@@ -238,11 +238,11 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						{
 							if (this->pos.x < PlayerRef->pos.x)
 							{
-								this->pos.x += 5.5f * dt;
+								this->pos.x += 7.5f * dt;
 							}
 							else
 							{
-								this->pos.x -= 5.5f * dt;
+								this->pos.x -= 7.5f * dt;
 							}
 						}
 					}
@@ -269,7 +269,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 
 		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_timer >= 2.8f)
+		if (m_timer >= 1.0f)
 		{
 			std::cout << "died" << std::endl;
 			this->active = false;
@@ -303,12 +303,15 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 		// Variable Update
 		attackBT--;
+
+		m_timer += dt;
+
 		//Left Collider Update
-		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - this->scale.y, this->pos.z));
-		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + this->scale.y, this->pos.z));
+		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - 50, this->pos.z));
+		LeftSight->SetMaxAABB(Vector3(this->pos.x, this->pos.y + 50, this->pos.z));
 		//Right Collider Update
-		RightSight->SetMinAABB(Vector3(this->pos.x, this->pos.y - this->scale.y, this->pos.z));
-		RightSight->SetMaxAABB(Vector3(this->pos.x - 50, this->pos.y + this->scale.y, this->pos.z));
+		RightSight->SetMinAABB(Vector3(this->pos.x, this->pos.y - 50, this->pos.z));
+		RightSight->SetMaxAABB(Vector3(this->pos.x + 50, this->pos.y + 50, this->pos.z));
 
 		// Continous changing/checking of which Enemy is the closest ally
 		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
@@ -322,12 +325,12 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				{
 					if (ClosestEnemy == NULL)
 					{
-						//std::cout << "Assign" << std::endl;
+						std::cout << "Assign" << std::endl;
 						ClosestEnemy = enemy;
 					}
 					else if ((this->pos - enemy->pos).Length() < (this->pos - ClosestEnemy->pos).Length())
 					{
-						//std::cout << "Change!" << std::endl;
+						std::cout << "Change!" << std::endl;
 						ClosestEnemy = enemy;
 					}
 				}
@@ -346,7 +349,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos)
+				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -355,13 +358,10 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				{
 					if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
 					{
-						//std::cout << "Undetected" << std::endl;
 						DetectedPlayer = false;
 						break;
 					}
 				}
-
-				//if ((itr != Mine.end()) && (next(itr) == Mine.end()))
 
 				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
 				{
@@ -382,7 +382,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos)
+				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -391,7 +391,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				{
 					if ((this->pos - colliderPos).Length() < (this->pos - PlayerRef->pos).Length())
 					{
-						//std::cout << "Undetected" << std::endl;
+						std::cout << (this->pos - colliderPos).Length() << (this->pos - PlayerRef->pos).Length() << std::endl;
 						DetectedPlayer = false;
 						break;
 					}
@@ -423,25 +423,14 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						this->pos.x -= 12.5f * dt;
 					}
 				}
-
-				if ((this->pos - PlayerRef->pos).Length() < (ClosestEnemy->pos - PlayerRef->pos).Length() + 12)
-				{
-					if (this->pos.x < PlayerRef->pos.x)
-					{
-						this->pos.x -= 12.5f * dt;
-					}
-					else
-					{
-						this->pos.x += 12.5f * dt;
-					}
-				}
 			}
 		}
 
 		// Enemy Action
 		if (DetectedPlayer)
 		{
-			if ((this->pos - PlayerRef->pos).Length() > 30)
+			// Movement
+			if ((this->pos - PlayerRef->pos).Length() < 40)
 			{
 				if (ClosestEnemy != NULL)
 				{
@@ -454,61 +443,38 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						colliderPos.y *= 0.5f;
 						colliderPos.z *= 0.5f;
 
-						if (colliderPos.y < this->pos.y - 6)
+						if (ClosestEnemy->EnemyType == MELEE)
 						{
-							continue;
-						}
-
-						if (((this->pos - 5.5f * dt) - ClosestEnemy->pos).Length() < 12 || ((this->pos + 5.5f * dt) - ClosestEnemy->pos).Length() < 12)
-						{
-							break;
-						}
-
-						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
-						{
-							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							if ((this->pos - PlayerRef->pos).Length() < (ClosestEnemy->pos - PlayerRef->pos).Length() + 12)
 							{
-								break;
-							}
-						}
-
-						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
-						{
-							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
-							{
-								break;
-							}
-						}
-
-						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-						{
-							if ((this->pos - PlayerRef->pos).Length() < (ClosestEnemy->pos - PlayerRef->pos).Length() + 12.f)
-							{
-								if (ClosestEnemy->EnemyType == MELEE)
-								{
-									IsShooting = false;
-
-									if (this->pos.x < PlayerRef->pos.x)
-									{
-										this->pos.x -= 5.5f * dt;
-									}
-									else
-									{
-										this->pos.x += 5.5f * dt;
-									}
-								}
-							}
-							else
-							{
-								IsShooting = false;
-
 								if (this->pos.x < PlayerRef->pos.x)
 								{
-									this->pos.x += 5.5f * dt;
+									this->pos.x -= 7.5f * dt;
+									break;
 								}
 								else
 								{
-									this->pos.x -= 5.5f * dt;
+									this->pos.x += 7.5f * dt;
+									break;
+								}
+							}
+						}
+						else
+						{
+							if (((this->pos + 7.5f * dt) - ClosestEnemy->pos).Length() > 12 && ((this->pos + 7.5f * dt) - colliderPos).Length() > 12)
+							{
+								if (this->pos.x < PlayerRef->pos.x)
+								{
+									this->pos.x += 7.5f * dt;
+									break;
+								}
+							}
+							if (((this->pos - 7.5f * dt) - ClosestEnemy->pos).Length() > 12 && ((this->pos - 7.5f * dt) - colliderPos).Length() > 12)
+							{
+								if (this->pos.x > PlayerRef->pos.x)
+								{
+									this->pos.x -= 7.5f * dt;
+									break;
 								}
 							}
 						}
@@ -532,15 +498,14 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 						if (PlayerRef->pos.x < this->pos.x && colliderPos.x < this->pos.x)
 						{
-							if (((this->pos - 5.5f * dt) - colliderPos).Length() < 12)
+							if (((this->pos - 7.5f * dt) - colliderPos).Length() < 12)
 							{
 								break;
 							}
 						}
-
 						if (PlayerRef->pos.x > this->pos.x && colliderPos.x > this->pos.x)
 						{
-							if (((this->pos + 5.5f * dt) - colliderPos).Length() < 12)
+							if (((this->pos + 7.5f * dt) - colliderPos).Length() < 12)
 							{
 								break;
 							}
@@ -548,26 +513,26 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
 						{
-							IsShooting = false;
-
 							if (this->pos.x < PlayerRef->pos.x)
 							{
-								this->pos.x += 5.5f * dt;
+								this->pos.x += 7.5f * dt;
 							}
 							else
 							{
-								this->pos.x -= 5.5f * dt;
+								this->pos.x -= 7.5f * dt;
 							}
 						}
 					}
 				}
 			}
+			// Attack
 			else
 			{
 				if (attackBT <= 0)
 				{
 					attackBT = 30.f;
 					IsShooting = true;
+					std::cout << "Attack. (Ranged)" << std::endl;
 				}
 				SetAnimationStatus(RL, false, true, false, dt);
 			}
@@ -579,11 +544,11 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 
 		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_timer >= 2.8f)
+		if (m_timer2 >= 1.0f)
 		{
 			std::cout << "died" << std::endl;
 			this->active = false;
-			m_timer = 0.f;
+			m_timer2 = 0.f;
 		}
 	}
 	else

@@ -142,8 +142,8 @@ void CAnimation::UpdateAnimationIndex(double dt)
 		if (m_dElapsedTime > 0.5f)
 		{
 			m_iAnimation_Index += 1;
-			if (m_iAnimation_Index > m_iRightDied_End)
-				m_iAnimation_Index = m_iRightDied_Start;
+			if (m_iAnimation_Index >= m_iRightDied_End)
+				m_iAnimation_Index = m_iRightDied_End-1;
 			m_dElapsedTime = 0.f;
 		}
 	}
@@ -152,8 +152,8 @@ void CAnimation::UpdateAnimationIndex(double dt)
 		if (m_dElapsedTime > 0.5f)
 		{
 			m_iAnimation_Index -= 1;
-			if (m_iAnimation_Index < m_iLeftDied_Start)
-				m_iAnimation_Index = m_iLeftDied_End;
+			if (m_iAnimation_Index <= m_iLeftDied_Start)
+				m_iAnimation_Index = m_iLeftDied_Start+1;
 			m_dElapsedTime = 0.f;
 		}
 	}

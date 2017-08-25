@@ -339,6 +339,9 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Door", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("Door")->textureID = LoadTGA("Image//Enviorment/lift1_0.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("EnemyBullet", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("EnemyBullet")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_bullet.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("bgd_0", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("bgd_0")->textureID = LoadTGA("Image//Enviorment/bgd2_0.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("bgd_1", Color(1, 1, 1), 1.f);
@@ -348,7 +351,7 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
 
-	thePlayer = new SpriteEntity*[12];
+	thePlayer = new SpriteEntity*[18];
 	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);
 	thePlayer[1] = Create::Sprite2DObject("player_right_1", true);
 	thePlayer[2] = Create::Sprite2DObject("player_left_0", true);
@@ -363,6 +366,10 @@ void SceneBase::Init()
 	thePlayer[11] = Create::Sprite2DObject("player_left_shoot_1", true);
 	thePlayer[12] = Create::Sprite2DObject("player_right_shoot_0", true);
 	thePlayer[13] = Create::Sprite2DObject("player_right_shoot_1", true);
+	thePlayer[14] = Create::Sprite2DObject("player_left_Died_0", true);
+	thePlayer[15] = Create::Sprite2DObject("player_left_Died_1", true);
+	thePlayer[16] = Create::Sprite2DObject("player_right_Died_0", true);
+	thePlayer[17] = Create::Sprite2DObject("player_right_Died_1", true);
 
 	thePlayerInfo->SetRightIdleIndices(4, 6);
 	thePlayerInfo->SetLeftIdleIndices(7, 9);
@@ -372,6 +379,9 @@ void SceneBase::Init()
 
 	thePlayerInfo->SetRightAttIndices(12, 13);
 	thePlayerInfo->SetLeftAttIndices(10, 11);
+
+	thePlayerInfo->SetRightDiedIndices(16, 17);
+	thePlayerInfo->SetLeftDiedIndices(14, 15);
 
 	fatEnemy = new SpriteEntity*[16];
 	fatEnemy[0] = Create::Sprite2DObject("fat_right_0", true);

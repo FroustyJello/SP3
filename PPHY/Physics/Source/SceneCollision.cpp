@@ -180,8 +180,6 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		 && go2->type == GameObject::GO_WALL)
 	{
 
-		 if (go1->type == GameObject::GO_ENEMY_MELEE)
-			 std::cout << "chckingasd" << std::endl;
 		Vector3 w0 = go2->pos;
 		Vector3 b1 = go1->pos;
 		float r = go1->scale.x;
@@ -377,11 +375,6 @@ void SceneCollision::LoadObjects(vector<string> data)
 		if (go->type == GameObject::GO_PLAYER)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
-		}
-
-		if (go->type == GameObject::GO_ENEMY_MELEE)
-		{
-			std::cout << "asdsadsad" << std::endl;
 		}
 		Ctemp = nullptr;
 	}
@@ -594,12 +587,19 @@ void SceneCollision::Update(double dt)
 		if (enemy->IsShooting)
 		{
 			GameObject* shoot = FetchGO();
+
 			shoot->type = GameObject::GO_ENEMY_BULLET;
 			shoot->pos = enemy->pos;
-			shoot->pos.y += 9.3;
+			shoot->pos.y += 5;
 			shoot->pos.x += 5;
-			shoot->dir = enemy->dir;
-			shoot->vel = enemy->dir * 10.f;
+			if (thePlayerInfo->pos.x > enemy->pos.x)
+			{
+				shoot->vel = 500.f * dt;
+			}
+			else
+			{
+				shoot->vel = -500.f * dt;
+			}
 			shoot->scale.Set(3, 3, 1);
 			enemy->IsShooting = false;
 		}
@@ -614,7 +614,6 @@ void SceneCollision::Update(double dt)
 		{
 			go->active = false;
 		}
-
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
 		{
@@ -649,10 +648,13 @@ void SceneCollision::Update(double dt)
 			continue;
 		go->pos += go->vel * m_speed * dt;
 
+		if (go->type == GameObject::GO_ENEMY_BULLET)
+		{
+			go->pos += go->vel * static_cast<float>(dt);
+		}
 
 		if (go->type == GameObject::GO_PLAYER)
 			hpscale = (go->HP / 10 )* 40;
-
 
 		if ( go->type == GameObject::GO_PLAYER
 			|| go->type == GameObject::GO_ENEMY_MELEE
@@ -857,6 +859,14 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_ENEMY_BULLET:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
 		modelStack.PopMatrix();
 		break;
 	}
