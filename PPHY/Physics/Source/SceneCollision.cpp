@@ -702,7 +702,7 @@ if (thePlayerInfo->isShooting)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x + 3.f || go->pos.x < 0 + camera.position.x - 3.f ||
+		if (go->pos.x > m_worldWidth + camera.position.x + 4.f || go->pos.x < 0 + camera.position.x - 4.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
@@ -784,8 +784,8 @@ if (thePlayerInfo->isShooting)
 	if (thePlayerInfo->isCharging)
 	{
 		chargeScale += 10 * dt;
-		if (chargeScale > 20)
-			chargeScale = 20;
+		if (chargeScale > 18)
+			chargeScale = 18;
 	}
 	else
 	{
@@ -1110,8 +1110,8 @@ void SceneCollision::Render()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 15, camera.target.y + 83, 1.1);
-	modelStack.Scale(chargeScale, 4, 4);
+	modelStack.Translate(camera.target.x + 13.5f, camera.target.y + 85, 1.1);
+	modelStack.Scale(chargeScale, 2, 4);
 	modelStack.Translate(0.5, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 	modelStack.PopMatrix();
