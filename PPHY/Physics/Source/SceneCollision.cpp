@@ -61,7 +61,7 @@ void SceneCollision::Init()
 	bool timeStarted = false;
 
 	if (!Application::continueGame)
-		data = reader.Load("level1.csv", data);
+		data = reader.Load("level2.csv", data);
 	else
 	{
 		data = reader.Load("save.csv", data);
@@ -305,8 +305,11 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go2->vel.y += 10;
 		go2->HP -= go->dmg;
 
-		/*if (go2->HP <= 0)
-			go2->active = false;*/
+		if (go2->HP <= 0)
+		{
+			enemyCount-=1;
+		}
+			
 		std::cout << "ENEMY HIT" << std::endl;
 	}
 
@@ -601,7 +604,7 @@ void SceneCollision::Update(double dt)
 			shoot->pos.y += 5;
 			shoot->pos.x += 5;
 			shoot->dir = enemy->dir;
-			shoot->vel = enemy->dir * 10.f*dt;
+			shoot->vel = enemy->dir * 10.f;
 			shoot->scale.Set(5, 5, 1);
 			enemy->IsShooting = false;
 		}
@@ -617,8 +620,6 @@ void SceneCollision::Update(double dt)
 			go->active = false;
 		}
 
-		if (go->type == GameObject::GO_ENEMY_MELEE)
-			std::cout << "chckingasd" << std::endl;
 
 		else if (go->type != GameObject::GO_ARROW)
 		{
@@ -1049,7 +1050,7 @@ void SceneCollision::Render()
 	modelStack.Translate(camera.target.x + 13.5f, camera.target.y + 85, 1.1);
 	modelStack.Scale(chargeScale, 2, 4);
 	modelStack.Translate(0.5, 0, 0);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("charge"), false);
 	modelStack.PopMatrix();
 	
 
