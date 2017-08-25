@@ -77,6 +77,8 @@ protected:
 	int playerMoveIndex;
 	float elapesTime;
 	bool canSave;
+	bool trigger;
+	bool triggered;
 	vector<string>ObjData;
 
 	Vector3 gravity;

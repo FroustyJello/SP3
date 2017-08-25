@@ -70,8 +70,6 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 2)
 			Application::SetScene(8);
 		if (clickpos == 3)
-			Application::SetScene(5);
-		if (clickpos == 4)
 		{
 			std::ifstream file;
 			file.open("save.csv");
@@ -80,7 +78,7 @@ void SceneMenu::Update(double dt)
 			Application::continueGame = true;
 			Application::SetScene(Application::SceneID);
 		}
-		if (clickpos == 5)
+		if (clickpos == 4)
 			Application::SetScene(0);
 			//Application::SetScene(0);
 	}
@@ -123,13 +121,13 @@ void SceneMenu::Render()
 	//RenderMesh(meshList[GEO_AXES], false);
 
 	modelStack.PushMatrix();
-	modelStack.Translate(x1, m_worldHeight*0.2, -3);
+	modelStack.Translate(x1, m_worldHeight*0.4, -3);
 	modelStack.Scale(m_worldWidth, m_worldHeight, 1);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("bgd_0"), false);
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(x2, m_worldHeight*0.2, -3);
+	modelStack.Translate(x2+66, m_worldHeight*0.4, -3);
 	modelStack.Scale(m_worldWidth, m_worldHeight, 1);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("bgd_1"), false);
 	modelStack.PopMatrix();
@@ -140,60 +138,53 @@ void SceneMenu::Render()
 	std::ostringstream ss;
 	//Title
 	ss << "Destroy";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 12, 38);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 12, 50);
 
 	ss.str("");
 	ss << "Da Jun";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 21, 33);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 21, 45);
 
 	ss.str("");
 	ss << "Castle";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 25, 28);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 25, 40);
 
 	//Selection
 	ss.str("");
 	ss << "New Game";
 	if (clickpos == 0)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 24);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 34);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 34);
 
 	ss.str("");
-	ss << "Level 2";
+	ss << "Play Level";
 	if (clickpos == 1)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 21);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 31);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 21);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 31);
 
 	ss.str("");
 	ss << "MapEditor";
 	if (clickpos == 2)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 18);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 28);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
-
-	ss.str("");
-	ss << "SceneTemp";
-	if (clickpos == 3)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 15);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 15);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 28);
 
 	ss.str("");
 	ss << "Continue";
-	if (clickpos == 4)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 12);
+	if (clickpos == 3)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 25);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 12);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 25);
 
 
 
 	ss.str("");
 	ss << "Exit";
-	if (clickpos == 5)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 0.6, 1), 3, 33, 9);
+	if (clickpos == 4)
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 22);
 	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 9);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 22);
 }
 
 void SceneMenu::Exit()

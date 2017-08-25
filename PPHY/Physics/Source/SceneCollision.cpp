@@ -28,6 +28,8 @@ void SceneCollision::Init()
 	playerMoveIndex = 0;
 	elapesTime = 0;
 	canSave = false;
+	trigger = false;
+	triggered = false;
 	CSV reader;
 
 	vector<string> data;
@@ -180,7 +182,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return go1->vel.Dot(N) > 0 && abs((w0 - b1).Dot(N)) < r + h *0.5f && abs((w0 - b1).Dot(NP)) < r + l *0.5f;
 	}
 
-	else if (go1->type == GameObject::GO_ARROW && (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_ENEMY_MELEE))
+	else if ((go1->type == GameObject::GO_ARROW || go1->type == GameObject::GO_FIRE_ARROW) && (go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_ENEMY_MELEE))
 	{
 
 		Vector3 p1 = go1->pos;
@@ -196,6 +198,7 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 
 
 		return (p2 - p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
+
 	}
 	return false;
 }
@@ -248,7 +251,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		}
 	}
 
-	else if (go2->type == GameObject::GO_WALL && go->type == GameObject::GO_ARROW)
+	else if (go2->type == GameObject::GO_WALL && (go->type == GameObject::GO_ARROW || go->type != GameObject::GO_FIRE_ARROW))
 	{
 
 		Vector3 u = go->vel;
@@ -259,7 +262,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go->rotation = (90, 0, 0, 1);
 	}
 
-	else if (go2->type == GameObject::GO_ENEMY_MELEE && go->type == GameObject::GO_ARROW)
+	else if (go2->type == GameObject::GO_ENEMY_MELEE && (go->type == GameObject::GO_ARROW || go->type == GameObject::GO_FIRE_ARROW))
 	{
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
@@ -387,7 +390,7 @@ bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vecto
 {
 	for (int i = 0; i < vector.size(); i++)
 	{
-		collided = thePlayerInfo->CheckOverlap(MinAABB, MaxAABB, vector[i]->GetMinAABB(), vector[i]->GetMaxAABB());
+		collided = thePlayerInfo->CheckOverlap(MinAABB - Vector3(2,0,0), MaxAABB + Vector3(3,3,0), vector[i]->GetMinAABB(), vector[i]->GetMaxAABB());
 		if (collided)
 		{
 			std::cout << i << std::endl;
@@ -599,6 +602,20 @@ void SceneCollision::Update(double dt)
 				canSave = false;
 			}
 		}
+
+		if (go->type == GameObject::GO_WALL_2)
+		{
+			if(!triggered && trigger)
+			{
+				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
+				go->vel *= 60;
+			}
+			else if(triggered && trigger)
+			{
+				Vector3 G(0, -9.8f);
+				go->vel += G * dt*10;
+			}
+		}
 		if (!go->active)
 			continue;
 		go->pos += go->vel * m_speed * dt;
@@ -641,9 +658,9 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW)
+			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
 			{
-				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE)
+				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW)
 					continue;
 				goA = go2;
 				goB = go;
@@ -664,6 +681,13 @@ void SceneCollision::Update(double dt)
 			}
 		}
 	}
+
+
+	if (trigger)
+	{
+		triggered = true;
+	}
+
 	if (thePlayerInfo->isCharging)
 	{
 		chargeScale += 10 * dt;
@@ -675,8 +699,12 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
+	if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}
 
-	UpdateParticles(dt);
+	//UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;
