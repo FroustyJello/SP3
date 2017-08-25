@@ -40,6 +40,7 @@ protected:
 	float saveTime;
 	float worldX;
 	float worldY;
+	bool gotObject;
 
 	int m_objectCount;
 	int choice;

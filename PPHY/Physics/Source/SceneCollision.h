@@ -76,7 +76,7 @@ protected:
 	int num_balls;
 	int playerMoveIndex;
 	float elapesTime;
-
+	bool canSave;
 	vector<string>ObjData;
 
 	Vector3 gravity;

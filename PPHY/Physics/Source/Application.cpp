@@ -143,7 +143,7 @@ void Application::Run()
 	Scene *scene3 = new SceneLose();
 	Scene *scene4 = new SceneWin();
 	Scene *scene8 = new MapEditor();
-	Scene *scene5 = new SceneTemp();
+	//Scene *scene5 = new SceneTemp();
 
 	Scene *scene = scene1;
 
@@ -188,13 +188,13 @@ void Application::Run()
 			scene->Init();
 		}
 
-		else if (SceneID == 5 && scene != scene5)
+	/*	else if (SceneID == 5 && scene != scene5)
 		{
 			scene->Exit();
 			scene = scene5;
 			scene->Init();
 		}
-
+*/
 		if (SceneID == 0)
 		{
 			break;

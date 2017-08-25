@@ -9,7 +9,8 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	momentOfInertia(1.f),
 	angularVelocity(0.f),
 	dmg(0.f),
-	HP(1.f)
+	HP(1.f),
+	hit(true)
 {
 }
 
