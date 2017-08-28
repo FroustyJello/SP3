@@ -1073,6 +1073,21 @@ void SceneCollision::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
+	if (Application::levelName == "level1.csv")
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 15, 1);
+		modelStack.Scale(m_worldWidth, m_worldHeight+5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01_0"), false);
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(30, 15, 1);
+		modelStack.Scale(m_worldWidth, m_worldHeight + 5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01_1"), false);
+		modelStack.PopMatrix();
+	}
+
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 	RenderAllParticles();
 
@@ -1132,6 +1147,8 @@ void SceneCollision::Render()
 	modelStack.Scale(18, 4, 4);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
 	modelStack.PopMatrix();
+
+	
 
 	////On screen te
 	std::ostringstream ss;
