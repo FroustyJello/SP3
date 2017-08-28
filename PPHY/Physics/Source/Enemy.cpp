@@ -91,7 +91,13 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
+				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+				{
+					DetectedPlayer = true;
+					break;
+				}
+
+				if (colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -103,12 +109,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						DetectedPlayer = false;
 						break;
 					}
-				}
-
-				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-				{
-					//std::cout << "Detected" << std::endl;
-					DetectedPlayer = true;
 				}
 			}
 		}
@@ -123,6 +123,11 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.x *= 0.5f;
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
+
+				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+				{
+					DetectedPlayer = true;
+				}
 
 				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
@@ -140,12 +145,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				}
 
 				//if ((itr != Mine.end()) && (next(itr) == Mine.end()))
-
-				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-				{
-					//std::cout << "Detected" << std::endl;
-					DetectedPlayer = true;
-				}
 			}
 		}
 
@@ -214,7 +213,19 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						colliderPos.y *= 0.5f;
 						colliderPos.z *= 0.5f;
 
-						if (colliderPos.y < this->pos.y - 6)
+						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+						{
+							if (this->pos.x < PlayerRef->pos.x)
+							{
+								this->pos.x += 7.5f * dt;
+							}
+							else
+							{
+								this->pos.x -= 7.5f * dt;
+							}
+						}
+
+						if (colliderPos.y < this->pos.y)
 						{
 							continue;
 						}
@@ -231,18 +242,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 							if (((this->pos + 7.5f * dt) - colliderPos).Length() < 12)
 							{
 								break;
-							}
-						}
-
-						if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-						{
-							if (this->pos.x < PlayerRef->pos.x)
-							{
-								this->pos.x += 7.5f * dt;
-							}
-							else
-							{
-								this->pos.x -= 7.5f * dt;
 							}
 						}
 					}
@@ -355,7 +354,13 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
 
-				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
+				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+				{
+					//std::cout << "Detected" << std::endl;
+					DetectedPlayer = true;
+				}
+
+				if (colliderPos.y < this->pos.y)
 				{
 					continue;
 				}
@@ -367,12 +372,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 						DetectedPlayer = false;
 						break;
 					}
-				}
-
-				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-				{
-					//std::cout << "Detected" << std::endl;
-					DetectedPlayer = true;
 				}
 			}
 		}
@@ -387,6 +386,12 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				colliderPos.x *= 0.5f;
 				colliderPos.y *= 0.5f;
 				colliderPos.z *= 0.5f;
+
+				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+				{
+					//std::cout << "Detected" << std::endl;
+					DetectedPlayer = true;
+				}
 
 				if (colliderPos == this->pos || colliderPos.y < this->pos.y)
 				{
@@ -404,12 +409,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 				}
 
 				//if ((itr != Mine.end()) && (next(itr) == Mine.end()))
-
-				if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-				{
-					//std::cout << "Detected" << std::endl;
-					DetectedPlayer = true;
-				}
 			}
 		}
 
@@ -447,6 +446,19 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 					colliderPos.y *= 0.5f;
 					colliderPos.z *= 0.5f;
 
+					if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
+					{
+						if (this->pos.x < PlayerRef->pos.x)
+						{
+							this->pos.x += 7.5f * dt;
+						}
+						else
+						{
+							this->pos.x -= 7.5f * dt;
+						}
+						CanAttack = true;
+					}
+
 					if (colliderPos.y < this->pos.y - 6)
 					{
 						continue;
@@ -467,19 +479,6 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 							CanAttack = false;
 							break;
 						}
-					}
-
-					if (it != m_Colliders.end() && (next(it) == m_Colliders.end()))
-					{
-						if (this->pos.x < PlayerRef->pos.x)
-						{
-							this->pos.x += 7.5f * dt;
-						}
-						else
-						{
-							this->pos.x -= 7.5f * dt;
-						}
-						CanAttack = true;
 					}
 				}
 			}
