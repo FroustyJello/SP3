@@ -39,7 +39,7 @@ void SceneCollision::Init()
 	m_TrailCount = 0;
 	MAX_TRAIL_COUNT = 500;
 
-
+	enemyCount = 0;
 
 
 	//thePlayerInfo = CPlayer::GetInstance();
@@ -61,7 +61,7 @@ void SceneCollision::Init()
 	bool timeStarted = false;
 
 	if (!Application::continueGame)
-		data = reader.Load("level1.csv", data);
+		data = reader.Load(Application::levelName, data);
 	else
 	{
 		data = reader.Load("save.csv", data);
@@ -142,7 +142,10 @@ GameObject* SceneCollision::FetchGO()
 		if (!go->active)
 		{
 			bool found = false;
-			for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
+
+			if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW &&go->type != GameObject::GO_ENEMY_BULLET)
+				continue;
+			/*for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
 			{
 				GameObject *go2 = (Enemy *)*it2;
 				if (go != go2)
@@ -151,7 +154,7 @@ GameObject* SceneCollision::FetchGO()
 				break;
 			}
 			if (found)
-				continue;
+				continue;*/
 			go->active = true;
 			++m_objectCount;
 			return go;
@@ -159,7 +162,7 @@ GameObject* SceneCollision::FetchGO()
 	}
 	for (unsigned i = 0; i < 10; ++i)
 	{
-		GameObject *go = new GameObject(GameObject::GO_WALL);
+		GameObject *go = new GameObject(GameObject::GO_ARROW);
 		m_goList.push_back(go);
 	}
 	GameObject *go = m_goList.back();
@@ -311,7 +314,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 N = (go2->pos - go->pos).Normalize();
 
 		go->vel = (u - 2 * u.Dot(N) * N) * 0.4 + gravity;
-		go->dir = -go->dir;
+		go->dir -= go->dir;
 		go->rotation = (90, 0, 0, 1);
 	}
 
@@ -329,8 +332,11 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go2->vel.y += 10;
 		go2->HP -= go->dmg;
 
-		/*if (go2->HP <= 0)
-			go2->active = false;*/
+		if (go2->HP <= 0)
+		{
+			enemyCount-=1;
+		}
+			
 		std::cout << "ENEMY HIT" << std::endl;
 	}
 
@@ -436,13 +442,13 @@ void SceneCollision::SaveFile(vector<GameObject*> List)
 	{
 		GameObject *go = (GameObject *)*it;
 		temp = "";
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+		/*if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
 		{
 			if (go->HP <= 0)
 				continue;
-		}
+		}*/
 
-		if (go->type != GameObject::GO_NONE)
+		if (go->type != GameObject::GO_NONE && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ARROW && go->HP > 0)
 		{
 			temp = std::to_string((int)go->type);
 			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << "," << go->HP << "," << go->dmg << std::endl;
@@ -609,15 +615,16 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	/*for (int i = 0; i < m_enemies.size(); ++i)
+	for (int i = 0; i < m_enemies.size(); ++i)
 	{
 		if (m_enemies[i]->HP <= 0)
 		{
-			m_enemies[i] = m_enemies[m_enemies.size() - 1];
-			m_enemies.pop_back();
-			continue;
+			//m_enemies[i] = m_enemies[m_enemies.size() - 1];
+			//m_enemies.pop_back();
+			enemyCount--;
+			++i;
 		}
-	}*/
+	}
 
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
@@ -633,6 +640,7 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
+
 		//Exercise 2b: Unspawn if it really leave the screen
 		if (go->pos.y > m_worldHeight + go->scale.y || go->pos.y < 0 - go->scale.y)
 		{
@@ -640,7 +648,7 @@ void SceneCollision::Update(double dt)
 			enemyCount--;
 		}
 
-		if (go->pos.x > m_worldWidth + camera.position.x +15.f || go->pos.x < 0 + camera.position.x - 15.f ||
+		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
@@ -651,13 +659,14 @@ void SceneCollision::Update(double dt)
 			if (go->HP > 0)
 				go->active = true;
 		}
+		if (!go->active)
+			continue;
 
 		if (go->type == GameObject::GO_DOOR)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
 			{
 				canSave = true;
-				std::cout << "Can save";
 			}
 		
 		}
@@ -1103,7 +1112,7 @@ void SceneCollision::Render()
 	modelStack.Translate(camera.target.x + 13.5f, camera.target.y + 85, 1.1);
 	modelStack.Scale(chargeScale, 2, 4);
 	modelStack.Translate(0.5, 0, 0);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("charge"), false);
 	modelStack.PopMatrix();
 	
 

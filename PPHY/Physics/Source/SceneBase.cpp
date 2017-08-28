@@ -349,7 +349,9 @@ void SceneBase::Init()
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("player_healthbar")->textureID = LoadTGA("Image//Player/player_healthBar.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0, 0), 1.f);
+
+	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0.1, 0.1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("charge", Color(0.3, 0.5, 0.9), 1.f);
 
 	thePlayer = new SpriteEntity*[18];
 	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);

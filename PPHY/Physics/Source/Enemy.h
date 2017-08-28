@@ -38,6 +38,7 @@ private:
 
 	bool RL;
 	bool isAttacking;
+	bool CanAttack;
 
 	// Boss Variables
 	int BossAttacks; // 1 = Punch, 2 = Laser, 3 = Dash Punch
