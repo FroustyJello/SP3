@@ -39,7 +39,7 @@ void SceneCollision::Init()
 	m_TrailCount = 0;
 	MAX_TRAIL_COUNT = 500;
 
-
+	enemyCount = 0;
 
 
 	//thePlayerInfo = CPlayer::GetInstance();
@@ -570,15 +570,16 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	/*for (int i = 0; i < m_enemies.size(); ++i)
+	for (int i = 0; i < m_enemies.size(); ++i)
 	{
 		if (m_enemies[i]->HP <= 0)
 		{
-			m_enemies[i] = m_enemies[m_enemies.size() - 1];
-			m_enemies.pop_back();
-			continue;
+			//m_enemies[i] = m_enemies[m_enemies.size() - 1];
+			//m_enemies.pop_back();
+			enemyCount--;
+			++i;
 		}
-	}*/
+	}
 
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
@@ -612,7 +613,7 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x +15.f || go->pos.x < 0 + camera.position.x - 15.f ||
+		if (go->pos.x > m_worldWidth + camera.position.x +20.f || go->pos.x < 0 + camera.position.x - 20.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
