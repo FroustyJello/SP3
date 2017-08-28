@@ -286,7 +286,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 N = (go2->pos - go->pos).Normalize();
 
 		go->vel = (u - 2 * u.Dot(N) * N) * 0.4 + gravity;
-		go->dir = -go->dir;
+		go->dir -= go->dir;
 		go->rotation = (90, 0, 0, 1);
 	}
 
@@ -598,14 +598,17 @@ void SceneCollision::Update(double dt)
 			shoot->type = GameObject::GO_ENEMY_BULLET;
 			shoot->pos = enemy->pos;
 			shoot->pos.y += 5;
-			shoot->pos.x += 5;
 			if (thePlayerInfo->pos.x > enemy->pos.x)
 			{
-				shoot->vel = 500.f * dt;
+				shoot->pos.x += 6;
+				shoot->vel = 750.f * dt;
+				shoot->dir = -enemy->dir;
 			}
 			else
 			{
-				shoot->vel = -500.f * dt;
+				shoot->pos.x -= 6;
+				shoot->vel = -750.f * dt;
+				shoot->dir = enemy->dir;
 			}
 			shoot->scale.Set(5, 5, 1);
 			enemy->IsShooting = false;
