@@ -339,6 +339,9 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Door", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("Door")->textureID = LoadTGA("Image//Enviorment/lift1_0.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Door2", Color(1, 1, 1), 5.f);
+	MeshBuilder::GetInstance()->GetMesh("Door2")->textureID = LoadTGA("Image//Enviorment/lift2_0.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("EnemyBullet", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("EnemyBullet")->textureID = LoadTGA("Image//Enemies/Regular/regular_left_bullet.tga");
 
