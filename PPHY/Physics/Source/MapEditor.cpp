@@ -147,7 +147,7 @@ void MapEditor::mouseControls()
 		}
 		if (go->type >= (GameObject::GAMEOBJECT_TYPE)1 && go->type <= (GameObject::GAMEOBJECT_TYPE)4)
 			go->pos.Set(cx, cy, 0);
-		else if (go->type == GameObject::GO_DOOR)
+		else if (go->type == GameObject::GO_DOOR || go->type == GameObject::GO_DOOR2)
 		{
 			go->pos.Set(posX, posY, 0);
 		}
