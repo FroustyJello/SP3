@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	canSave = false;
 	trigger = false;
 	triggered = false;
+	enemycount2 = 0;
 	CSV reader;
 
 	vector<string> data;
@@ -109,6 +110,7 @@ void SceneCollision::Init()
 			theEnemyInfo->SetRightDiedIndices(12, 13);
 
 			m_goList[i] = theEnemyInfo;
+			enemycount2++;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
 		}
@@ -365,7 +367,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		CCollider* Ctemp = new CCollider();
+		
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -415,16 +417,17 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
-			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR)
+			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR && go->type != GameObject::GO_DOOR2)
 		{
+			CCollider* Ctemp = new CCollider();
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
+			if (go->type == GameObject::GO_PLAYER)
+			{
+				Ctemp->SetPAABB(go->scale, go->pos);
+			}
+			Ctemp = nullptr;
 		}
-		if (go->type == GameObject::GO_PLAYER)
-		{
-			Ctemp->SetPAABB(go->scale, go->pos);
-		}
-		Ctemp = nullptr;
 	}
 }
 
@@ -640,14 +643,6 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-
-		//Exercise 2b: Unspawn if it really leave the screen
-		if (go->pos.y > m_worldHeight + go->scale.y || go->pos.y < 0 - go->scale.y)
-		{
-			go->active = false;
-			enemyCount--;
-		}
-
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y <camera.position.y)
 		{
@@ -662,7 +657,7 @@ void SceneCollision::Update(double dt)
 					go->HP = 0;
 
 				if(go->HP<=0)
-					enemyCount --;
+					enemyCount--;
 
 				continue;
 			}
@@ -679,10 +674,23 @@ void SceneCollision::Update(double dt)
 		if (go->type == GameObject::GO_DOOR)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
-			{
 				canSave = true;
+		}
+
+		else if (go->type == GameObject::GO_DOOR2)
+		{
+			if ((go->pos - thePlayerInfo->pos).Length() < 10)
+			{
+				if (Application::newGame)
+				{
+					Application::levelName = "level2.csv";
+					Application::SetScene(1);
+				}
+				else
+				{
+					Application::SetScene(4);
+				}
 			}
-		
 		}
 
 		if (go->type == GameObject::GO_WALL_2)
@@ -956,6 +964,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_DOOR2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door2"), false);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 
@@ -1076,19 +1091,29 @@ void SceneCollision::Render()
 	if (Application::levelName == "level1.csv")
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(0, 15, 1);
-		modelStack.Scale(m_worldWidth, m_worldHeight+5, 0);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01_0"), false);
+		modelStack.Translate((camera.target.x) + 70, camera.target.y+50, 1);
+		modelStack.Scale(m_worldWidth+5, m_worldHeight+5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01"), false);
 		modelStack.PopMatrix();
-
+	}
+	else if (Application::levelName == "level2.csv")
+	{
 		modelStack.PushMatrix();
-		modelStack.Translate(30, 15, 1);
-		modelStack.Scale(m_worldWidth, m_worldHeight + 5, 0);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01_1"), false);
+		modelStack.Translate((camera.target.x) + 70, camera.target.y + 50, 1);
+		modelStack.Scale(m_worldWidth + 5, m_worldHeight + 5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg02"), false);
+		modelStack.PopMatrix();
+	}
+	else if (Application::levelName == "level3.csv")
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate((camera.target.x) + 70, camera.target.y + 50, 1);
+		modelStack.Scale(m_worldWidth + 5, m_worldHeight + 5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg03"), false);
 		modelStack.PopMatrix();
 	}
 
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
+	//RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 	RenderAllParticles();
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -1191,11 +1216,14 @@ void SceneCollision::Exit()
 		m_goList.pop_back();
 	}*/
 
+
+
 	for (int i = m_goList.size() - 1; i >= 0; --i)
 	{
 		if (m_goList[i]->type != GameObject::GO_PLAYER)
 		{
 			delete m_goList[i];
+			m_goList[i] = NULL;
 			m_goList.pop_back();
 		}
 	}
@@ -1207,17 +1235,28 @@ void SceneCollision::Exit()
 		std::cout << "failed to delete player" << std::endl;
 	}
 
-		while (m_enemies.size() > 0)
-		{
-			/*Enemy *go = m_enemies.back();
-			delete go;*/
-			m_enemies.pop_back();
-		}
+	m_enemies.clear();
+	CSoundEngine::Destroy();
 
+	/*while (m_enemies.size() > 0)
+	{
+		Enemy *go = m_enemies.back();
+		delete go;
+		m_enemies.pop_back();
+	}
+*/
 	while (!collisionVector.empty())
 	{
 		delete collisionVector.back();
 		collisionVector.pop_back();
 	}
+	collisionVector.clear();
 
+	for (int i = particleList.size() - 1; i >= 0; --i)
+	{
+			delete particleList[i];
+			particleList[i] = NULL;
+			particleList.pop_back();
+	}
+	particleList.clear();
 }

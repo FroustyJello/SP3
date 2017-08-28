@@ -6,6 +6,7 @@ CSV::CSV()
 
 CSV::~CSV()
 {
+	delete theFile;
 }
 
 vector<string> CSV::Load(string filepath, vector<string>data)

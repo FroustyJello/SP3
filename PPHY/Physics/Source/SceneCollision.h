@@ -79,6 +79,7 @@ protected:
 	bool canSave;
 	bool trigger;
 	bool triggered;
+	int enemycount2;
 	vector<string>ObjData;
 
 	Vector3 gravity;

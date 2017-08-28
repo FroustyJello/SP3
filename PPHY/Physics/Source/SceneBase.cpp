@@ -14,6 +14,32 @@ SceneBase::SceneBase()
 
 SceneBase::~SceneBase()
 {
+	for (size_t i = 0; i < sizeof(thePlayer)/ sizeof(thePlayer[0]); i++)
+	{
+		delete thePlayer[i];
+	}
+
+	for (size_t i = 0; i < sizeof(fatEnemy) / sizeof(fatEnemy[0]); i++)
+	{
+		delete fatEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(femaleEnemy) / sizeof(femaleEnemy[0]); i++)
+	{
+		delete femaleEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(regularEnemy) / sizeof(regularEnemy[0]); i++)
+	{
+		delete regularEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(pistolEnemy) / sizeof(pistolEnemy[0]); i++)
+	{
+		delete pistolEnemy[i];
+	}
+	delete[] thePlayer;
+	delete[] fatEnemy;
+	delete[] femaleEnemy;
+	delete[] regularEnemy;
+	delete[] pistolEnemy;
 }
 
 void SceneBase::Init()
@@ -350,12 +376,12 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("bgd_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("bgd_1")->textureID = LoadTGA("Image//Enviorment/bgd2_1.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("bg01_0", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("bg01_0")->textureID = LoadTGA("Image//Enviorment/bg01_0.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("bg01_1", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("bg01_1")->textureID = LoadTGA("Image//Enviorment/bg01_1.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("bg01_2", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("bg01_2")->textureID = LoadTGA("Image//Enviorment/bg01_2.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("bg01", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("bg01")->textureID = LoadTGA("Image//Enviorment/bg01-2.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("bg02", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("bg02")->textureID = LoadTGA("Image//Enviorment/bg02-2.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("bg03", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("bg03")->textureID = LoadTGA("Image//Enviorment/bg03-2.tga");
 
 
 	MeshBuilder::GetInstance()->GenerateQuad("player_healthbar", Color(1, 1, 1), 5.f);
@@ -612,6 +638,36 @@ void SceneBase::Render()
 void SceneBase::Exit()
 {
 	// Cleanup VBO
+	for (size_t i = 0; i < 18; i++)
+	{
+		delete thePlayer[i];
+	}
+
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete fatEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete femaleEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete regularEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete pistolEnemy[i];
+	}
+	delete[] thePlayer;
+	delete[] fatEnemy;
+	delete[] femaleEnemy;
+	delete[] regularEnemy;
+	delete[] pistolEnemy;
+	thePlayer = fatEnemy = femaleEnemy = regularEnemy = pistolEnemy = NULL;
+	thePlayerInfo->Destroy();
+	thePlayerInfo = NULL;
+	MeshBuilder::GetInstance()->cleanlist();
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }

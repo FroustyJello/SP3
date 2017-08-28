@@ -18,6 +18,7 @@ struct GameObject :public  Singleton<GameObject>
 		GO_WALL_3,
 		GO_WALL_4,
 		GO_DOOR,
+		GO_DOOR2,
 
 		//Characters
 		GO_PLAYER,

@@ -1,5 +1,6 @@
-#include "Animation.h"
 
+
+#include "Animation.h"
 
 CAnimation::CAnimation()
 	: m_bAnimationInvert(false)
