@@ -373,7 +373,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
-			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR)
+			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR && go->type != GameObject::GO_DOOR2)
 		{
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
@@ -636,10 +636,23 @@ void SceneCollision::Update(double dt)
 		if (go->type == GameObject::GO_DOOR)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
-			{
 				canSave = true;
+		}
+
+		else if (go->type == GameObject::GO_DOOR2)
+		{
+			if ((go->pos - thePlayerInfo->pos).Length() < 10)
+			{
+				if (Application::newGame)
+				{
+					Application::levelName = "level2.csv";
+					Application::SetScene(1);
+				}
+				else
+				{
+					Application::SetScene(4);
+				}
 			}
-		
 		}
 
 		if (go->type == GameObject::GO_WALL_2)
@@ -878,6 +891,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_DOOR2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door2"), false);
 		modelStack.PopMatrix();
 		break;
 	}

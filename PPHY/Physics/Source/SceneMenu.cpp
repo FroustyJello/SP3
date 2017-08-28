@@ -66,6 +66,7 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 0)		//Play
 		{
 			Application::continueGame = false;
+			Application::newGame = true;
 			Application::levelName = "level1.csv";
 			Application::SetScene(2);
 		}

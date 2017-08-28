@@ -28,6 +28,7 @@ const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
 int m_width, m_height;
 bool Application::continueGame = false;
+bool Application::newGame = false;
 int Application::SceneID = 0;
 string Application::levelName = "";
 //my stuff
