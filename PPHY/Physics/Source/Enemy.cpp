@@ -515,7 +515,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 
 				if (attackBT <= 0 && CanAttack == true)
 				{
-					attackBT = 30.f;
+					attackBT = 120.f;
 					IsShooting = true;
 					std::cout << "Attack. (Ranged)" << std::endl;
 				}
@@ -548,7 +548,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		SetAnimationStatus(RL, false, false, true, dt);
 		if (m_timer2 >= 1.0f)
 		{
-			std::cout << "died" << std::endl;
+			std::cout << m_timer << std::endl;
 			this->active = false;
 			m_timer2 = 0.f;
 		}

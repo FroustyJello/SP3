@@ -345,13 +345,13 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
 
+		go->active = false;
+		//go2->active = false;
+		go2->vel.x += go->vel.x * 0.25f;
+		go2->vel.y += 10;
 		go2->HP -= go->dmg;
 
-		go->active = false;
-
-		/*if (go2->HP <= 0)
-		go2->active = false;*/
-		std::cout << "PLAYER HIT" << std::endl;
+		std::cout << "ENEMY HIT" << std::endl;
 	}
 
 }
@@ -714,6 +714,7 @@ void SceneCollision::Update(double dt)
 				std::cout << shoot->dmg << std::endl;
 			}
 		}
+
 		go->pos += go->vel * m_speed * dt;
 
 		if (go->type == GameObject::GO_ENEMY_BULLET)
