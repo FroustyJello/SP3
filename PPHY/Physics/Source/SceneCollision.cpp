@@ -142,7 +142,10 @@ GameObject* SceneCollision::FetchGO()
 		if (!go->active)
 		{
 			bool found = false;
-			for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
+
+			if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW &&go->type != GameObject::GO_ENEMY_BULLET)
+				continue;
+			/*for (std::vector<Enemy *>::iterator it2 = m_enemies.begin(); it2 != m_enemies.end(); ++it2)
 			{
 				GameObject *go2 = (Enemy *)*it2;
 				if (go != go2)
@@ -151,7 +154,7 @@ GameObject* SceneCollision::FetchGO()
 				break;
 			}
 			if (found)
-				continue;
+				continue;*/
 			go->active = true;
 			++m_objectCount;
 			return go;
@@ -159,7 +162,7 @@ GameObject* SceneCollision::FetchGO()
 	}
 	for (unsigned i = 0; i < 10; ++i)
 	{
-		GameObject *go = new GameObject(GameObject::GO_WALL);
+		GameObject *go = new GameObject(GameObject::GO_ARROW);
 		m_goList.push_back(go);
 	}
 	GameObject *go = m_goList.back();
@@ -612,18 +615,19 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x +15.f || go->pos.x < 0 + camera.position.x - 15.f ||
-			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+		if (go->pos.x > m_worldWidth + camera.position.x +25 || go->pos.x < 0 + camera.position.x - 25 ||
+			go->pos.y > m_worldHeight + camera.position.y + 25 || go->pos.y < 0 + camera.position.y - 25)
 		{
 			go->active = false;
 		}
-
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
 		{
 			if (go->HP > 0)
 				go->active = true;
 		}
+		if (!go->active)
+			continue;
 
 		if (go->type == GameObject::GO_DOOR)
 		{
