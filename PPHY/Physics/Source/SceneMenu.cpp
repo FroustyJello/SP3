@@ -66,11 +66,16 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 0)		//Play
 		{
 			Application::continueGame = false;
+			Application::levelName = "level1.csv";
 			Application::SetScene(2);
 		}
 
 		if (clickpos == 1)
-			Application::SetScene(5);
+		{
+			Application::continueGame = false;
+			Application::levelName = "level3.csv";
+			Application::SetScene(2);
+		}
 		if (clickpos == 2)
 			Application::SetScene(8);
 		if (clickpos == 3)
@@ -161,7 +166,7 @@ void SceneMenu::Render()
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 34);
 
 	ss.str("");
-	ss << "Play Level";
+	ss << "Play your level";
 	if (clickpos == 1)
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 31);
 	else

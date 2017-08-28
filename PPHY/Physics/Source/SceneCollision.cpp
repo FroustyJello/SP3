@@ -61,7 +61,7 @@ void SceneCollision::Init()
 	bool timeStarted = false;
 
 	if (!Application::continueGame)
-		data = reader.Load("level2.csv", data);
+		data = reader.Load(Application::levelName, data);
 	else
 	{
 		data = reader.Load("save.csv", data);
@@ -397,13 +397,13 @@ void SceneCollision::SaveFile(vector<GameObject*> List)
 	{
 		GameObject *go = (GameObject *)*it;
 		temp = "";
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
+		/*if (go->type >= (GameObject::GAMEOBJECT_TYPE)11 && go->type <= (GameObject::GAMEOBJECT_TYPE)16)
 		{
 			if (go->HP <= 0)
 				continue;
-		}
+		}*/
 
-		if (go->type != GameObject::GO_NONE)
+		if (go->type != GameObject::GO_NONE && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ARROW && go->HP > 0)
 		{
 			temp = std::to_string((int)go->type);
 			file << temp << "," << go->pos.x << "," << go->pos.y << "," << go->pos.z << "," << go->scale.x << "," << go->scale.y << "," << go->dir.x << "," << go->dir.y << "," << go->HP << "," << go->dmg << std::endl;
@@ -630,7 +630,6 @@ void SceneCollision::Update(double dt)
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
 			{
 				canSave = true;
-				std::cout << "Can save";
 			}
 		
 		}
