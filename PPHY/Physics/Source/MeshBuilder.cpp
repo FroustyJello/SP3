@@ -490,3 +490,14 @@ void MeshBuilder::RemoveMesh(const std::string& _meshName)
 		meshMap.erase(_meshName);
 	}
 }
+
+void MeshBuilder::cleanlist()
+{
+	std::map<std::string, Mesh*>::iterator it, end;
+	end = meshMap.end();
+	for (it = meshMap.begin(); it != end; ++it)
+	{
+		delete it->second;
+	}
+	meshMap.clear();
+}

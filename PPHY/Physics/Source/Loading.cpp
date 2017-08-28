@@ -1,4 +1,4 @@
-#include "SceneMenu.h"
+#include "Loading.h"
 #include "GL\glew.h"
 #include "Application.h"
 #include "SceneBase.h"
@@ -6,15 +6,15 @@
 #include <sstream>
 #include <fstream>
 
-SceneMenu::SceneMenu()
+SceneLoading::SceneLoading()
 {
 }
 
-SceneMenu::~SceneMenu()
+SceneLoading::~SceneLoading()
 {
 }
 
-void SceneMenu::Init()
+void SceneLoading::Init()
 {
 	SceneBase::Init();
 	//Calculating aspect ratio
@@ -30,9 +30,11 @@ void SceneMenu::Init()
 	x1 = m_worldWidth * 0.5;
 	x2 = m_worldWidth;
 
+	loadtimer = 0;
+
 }
 
-void SceneMenu::Update(double dt)
+void SceneLoading::Update(double dt)
 {
 	SceneBase::Update(dt);
 
@@ -40,6 +42,18 @@ void SceneMenu::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
+	loadtimer += dt;
+
+	if (loadtimer >= 2)
+	{
+		if (Application::newGame)
+		{
+			Application::newGame = false;
+			Application::SetScene(2);
+		}
+		else
+		Application::SetScene(1);
+	}
 
 
 	//choose
@@ -66,7 +80,6 @@ void SceneMenu::Update(double dt)
 		if (clickpos == 0)		//Play
 		{
 			Application::continueGame = false;
-			Application::newGame = true;
 			Application::levelName = "level1.csv";
 			Application::SetScene(2);
 		}
@@ -90,7 +103,7 @@ void SceneMenu::Update(double dt)
 		}
 		if (clickpos == 4)
 			Application::SetScene(0);
-			//Application::SetScene(0);
+		//Application::SetScene(0);
 	}
 
 	x1 -= dt;
@@ -98,7 +111,7 @@ void SceneMenu::Update(double dt)
 
 	if (x1 < -m_worldWidth*0.5f)
 	{
-		x1= m_worldWidth;
+		x1 = m_worldWidth;
 	}
 
 	if (x2 < -m_worldWidth*0.5f)
@@ -109,7 +122,7 @@ void SceneMenu::Update(double dt)
 	c_bounceTime++;
 }
 
-void SceneMenu::Render()
+void SceneLoading::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -137,7 +150,7 @@ void SceneMenu::Render()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(x2+66, m_worldHeight*0.4, -3);
+	modelStack.Translate(x2 + 66, m_worldHeight*0.4, -3);
 	modelStack.Scale(m_worldWidth, m_worldHeight, 1);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("bgd_1"), false);
 	modelStack.PopMatrix();
@@ -146,58 +159,15 @@ void SceneMenu::Render()
 	//Exercise 5a: Render m_lives, m_score
 
 	std::ostringstream ss;
-	//Title
-	ss << "Destroy";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 12, 50);
-
-	ss.str("");
-	ss << "Da Jun";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 21, 45);
-
-	ss.str("");
-	ss << "Castle";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 25, 40);
 
 	//Selection
 	ss.str("");
-	ss << "New Game";
-	if (clickpos == 0)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 34);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 34);
+	ss << "Now Loading";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 25, 34);
 
-	ss.str("");
-	ss << "Play your level";
-	if (clickpos == 1)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 31);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 31);
-
-	ss.str("");
-	ss << "MapEditor";
-	if (clickpos == 2)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 28);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 28);
-
-	ss.str("");
-	ss << "Continue";
-	if (clickpos == 3)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 25);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 25);
-
-
-
-	ss.str("");
-	ss << "Exit";
-	if (clickpos == 4)
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 22);
-	else
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.6, 0.6, 0.6), 3, 33, 22);
 }
 
-void SceneMenu::Exit()
+void SceneLoading::Exit()
 {
 	SceneBase::Exit();
 }

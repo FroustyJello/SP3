@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	canSave = false;
 	trigger = false;
 	triggered = false;
+	enemycount2 = 0;
 	CSV reader;
 
 	vector<string> data;
@@ -109,6 +110,7 @@ void SceneCollision::Init()
 			theEnemyInfo->SetRightDiedIndices(12, 13);
 
 			m_goList[i] = theEnemyInfo;
+			enemycount2++;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
 		}
@@ -334,7 +336,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		if (go2->HP <= 0)
 		{
-			enemyCount-=1;
+			enemyCount--;
 		}
 			
 		std::cout << "ENEMY HIT" << std::endl;
@@ -365,7 +367,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		CCollider* Ctemp = new CCollider();
+		
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -415,16 +417,17 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
-			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR)
+			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR && go->type != GameObject::GO_DOOR2)
 		{
+			CCollider* Ctemp = new CCollider();
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
+			if (go->type == GameObject::GO_PLAYER)
+			{
+				Ctemp->SetPAABB(go->scale, go->pos);
+			}
+			Ctemp = nullptr;
 		}
-		if (go->type == GameObject::GO_PLAYER)
-		{
-			Ctemp->SetPAABB(go->scale, go->pos);
-		}
-		Ctemp = nullptr;
 	}
 }
 
@@ -615,16 +618,16 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	for (int i = 0; i < m_enemies.size(); ++i)
-	{
-		if (m_enemies[i]->HP <= 0)
-		{
-			//m_enemies[i] = m_enemies[m_enemies.size() - 1];
-			//m_enemies.pop_back();
-			enemyCount--;
-			++i;
-		}
-	}
+	//for (int i = 0; i < m_enemies.size(); ++i)
+	//{
+	//	if (m_enemies[i]->HP <= 0)
+	//	{
+	//		//m_enemies[i] = m_enemies[m_enemies.size() - 1];
+	//		//m_enemies.pop_back();
+	//		enemyCount-=1;
+	//		++i;
+	//	}
+	//}
 
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
@@ -640,18 +643,24 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-
-		//Exercise 2b: Unspawn if it really leave the screen
-		if (go->pos.y > m_worldHeight + go->scale.y || go->pos.y < 0 - go->scale.y)
-		{
-			go->active = false;
-			enemyCount--;
-		}
-
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
-			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+			go->pos.y > m_worldHeight + camera.position.y || go->pos.y <camera.position.y)
 		{
 			go->active = false;
+
+			if ((go->type == GameObject::GO_ENEMY_MELEE
+				|| go->type == GameObject::GO_ENEMY_MELEE_2
+				|| go->type == GameObject::GO_ENEMY_RANGED
+				|| go->type == GameObject::GO_ENEMY_RANGED_2)&&go->HP>0)
+			{
+				if (go->pos.y < camera.position.y)
+					go->HP = 0;
+
+				if(go->HP<=0)
+					enemyCount--;
+
+				continue;
+			}
 		}
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
@@ -665,10 +674,23 @@ void SceneCollision::Update(double dt)
 		if (go->type == GameObject::GO_DOOR)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
-			{
 				canSave = true;
+		}
+
+		else if (go->type == GameObject::GO_DOOR2)
+		{
+			if ((go->pos - thePlayerInfo->pos).Length() < 10)
+			{
+				if (Application::newGame)
+				{
+					Application::levelName = "level2.csv";
+					Application::SetScene(9);
+				}
+				else
+				{
+					Application::SetScene(4);
+				}
 			}
-		
 		}
 
 		if (go->type == GameObject::GO_WALL_2)
@@ -747,7 +769,12 @@ void SceneCollision::Update(double dt)
 		}
 
 		if (go->type == GameObject::GO_ARROW)
-			std::cout << go->active << std::endl;
+		{
+			ParticleObject* ArrowParticle = new ParticleObject();
+			ArrowParticle->pos = go->pos;
+			ArrowParticle->scale.Set(3, 3, 0);
+			ArrowParticle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
+		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{
@@ -758,7 +785,7 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
+			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject:: GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 			{
 				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW && go2->type != GameObject::GO_ENEMY_BULLET
 					&& go2->type != GameObject::GO_ENEMY_MELEE_2
@@ -802,12 +829,17 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
-	if (Application::IsKeyPressed('P'))
+	if (enemyCount <= 0)
 	{
 		trigger = true;
 	}
 
-	//UpdateParticles(dt);
+	/*if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}*/
+
+	UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;
@@ -938,6 +970,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_DOOR2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door2"), false);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 
@@ -1027,7 +1066,7 @@ void SceneCollision::RenderAllParticles()
 		if (!particle->isActive)
 			continue;
 
-		RenderParticles(particle);
+		//RenderParticles(particle);
 
 	}
 }
@@ -1055,7 +1094,32 @@ void SceneCollision::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
+	if (Application::levelName == "level1.csv")
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate((camera.target.x) + 70, camera.target.y+50, 1);
+		modelStack.Scale(m_worldWidth+5, m_worldHeight+5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg01"), false);
+		modelStack.PopMatrix();
+	}
+	else if (Application::levelName == "level2.csv")
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate((camera.target.x) + 70, camera.target.y + 50, 1);
+		modelStack.Scale(m_worldWidth + 5, m_worldHeight + 5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg02"), false);
+		modelStack.PopMatrix();
+	}
+	else if (Application::levelName == "level3.csv")
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate((camera.target.x) + 70, camera.target.y + 50, 1);
+		modelStack.Scale(m_worldWidth + 5, m_worldHeight + 5, 0);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("bg03"), false);
+		modelStack.PopMatrix();
+	}
+
+	//RenderMesh(MeshBuilder::GetInstance()->GetMesh("reference"), false);
 	RenderAllParticles();
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -1115,6 +1179,8 @@ void SceneCollision::Render()
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
 	modelStack.PopMatrix();
 
+	
+
 	////On screen te
 	std::ostringstream ss;
 	//ss << "Player lives: " << m_lives;
@@ -1156,11 +1222,14 @@ void SceneCollision::Exit()
 		m_goList.pop_back();
 	}*/
 
+
+
 	for (int i = m_goList.size() - 1; i >= 0; --i)
 	{
 		if (m_goList[i]->type != GameObject::GO_PLAYER)
 		{
 			delete m_goList[i];
+			m_goList[i] = NULL;
 			m_goList.pop_back();
 		}
 	}
@@ -1172,17 +1241,28 @@ void SceneCollision::Exit()
 		std::cout << "failed to delete player" << std::endl;
 	}
 
-		while (m_enemies.size() > 0)
-		{
-			/*Enemy *go = m_enemies.back();
-			delete go;*/
-			m_enemies.pop_back();
-		}
+	m_enemies.clear();
+	CSoundEngine::Destroy();
 
+	/*while (m_enemies.size() > 0)
+	{
+		Enemy *go = m_enemies.back();
+		delete go;
+		m_enemies.pop_back();
+	}
+*/
 	while (!collisionVector.empty())
 	{
 		delete collisionVector.back();
 		collisionVector.pop_back();
 	}
+	collisionVector.clear();
 
+	for (int i = particleList.size() - 1; i >= 0; --i)
+	{
+			delete particleList[i];
+			particleList[i] = NULL;
+			particleList.pop_back();
+	}
+	particleList.clear();
 }

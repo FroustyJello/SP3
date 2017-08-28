@@ -20,6 +20,7 @@
 #include "SceneMenu.h"
 #include "SceneWin.h"
 #include "MapEditor.h"
+#include "Loading.h"
 
 #include <iostream>
 
@@ -28,6 +29,7 @@ const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
 int m_width, m_height;
 bool Application::continueGame = false;
+bool Application::newGame = false;
 int Application::SceneID = 0;
 string Application::levelName = "";
 //my stuff
@@ -143,6 +145,7 @@ void Application::Run()
 	Scene *scene3 = new SceneLose();
 	Scene *scene4 = new SceneWin();
 	Scene *scene8 = new MapEditor();
+	Scene *scene9 = new SceneLoading();
 	//Scene *scene5 = new SceneTemp();
 
 	Scene *scene = scene1;
@@ -188,6 +191,13 @@ void Application::Run()
 			scene->Init();
 		}
 
+		else if (SceneID == 9 && scene != scene9)
+		{
+			scene->Exit();
+			scene = scene9;
+			scene->Init();
+		}
+
 	/*	else if (SceneID == 5 && scene != scene5)
 		{
 			scene->Exit();
@@ -215,6 +225,9 @@ void Application::Run()
 
 void Application::Exit()
 {
+	GameObject::Destroy();
+	CPlayer::Destroy();
+	MeshBuilder::Destroy();
 	//Close OpenGL window and terminate GLFW
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW
@@ -224,4 +237,5 @@ void Application::Exit()
 void Application::SetScene(int SceneNo)
 {
 	SceneID = SceneNo;
+
 }

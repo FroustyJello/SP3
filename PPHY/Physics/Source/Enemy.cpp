@@ -273,7 +273,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 
 		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_timer >= 1.0f)
+		if (m_timer >= 5.0f)
 		{
 			std::cout << "died" << std::endl;
 			this->active = false;
@@ -309,7 +309,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		// Variable Update
 		attackBT--;
 
-		m_timer += dt;
+		m_timer2 += dt;
 
 		//Left Collider Update
 		LeftSight->SetMinAABB(Vector3(this->pos.x - 50, this->pos.y - 50, this->pos.z));
@@ -546,7 +546,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 	{
 
 		SetAnimationStatus(RL, false, false, true, dt);
-		if (m_timer2 >= 1.0f)
+		if (m_timer2 >= 5.0f)
 		{
 			std::cout << m_timer << std::endl;
 			this->active = false;

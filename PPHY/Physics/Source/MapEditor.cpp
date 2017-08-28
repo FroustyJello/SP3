@@ -95,7 +95,23 @@ void MapEditor::renderText()
 		ss.str(std::string());
 		ss.precision(5);
 		ss <<"Press 'SPACE' to save";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 5, 50);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 3, 6, 48);
+
+
+		ss.str(std::string());
+		ss.precision(5);
+		ss << "Press E/Q to change objects";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 2.5f, 0, 55);
+
+		ss.str(std::string());
+		ss.precision(5);
+		ss << "F to return to menu";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 2.5f, 0, 53);
+
+		ss.str(std::string());
+		ss.precision(5);
+		ss << "right click to remove objects";
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0, 1, 0), 2.5f, 0, 51);
 
 	}
 }
@@ -122,7 +138,7 @@ void MapEditor::mouseControls()
 		m_ghost->active = false;
 		GameObject*go = type(choice);
 
-		if (go->type >= (GameObject::GAMEOBJECT_TYPE)6 && go->type <= (GameObject::GAMEOBJECT_TYPE)11)
+		if (go->type >= (GameObject::GAMEOBJECT_TYPE)8 && go->type <= (GameObject::GAMEOBJECT_TYPE)11)
 			go->pos.Set(posX, posY, 1);
 		else if (go->type == GameObject::GO_PLAYER && !alreadyHavePlayer)
 		{
@@ -131,7 +147,7 @@ void MapEditor::mouseControls()
 		}
 		if (go->type >= (GameObject::GAMEOBJECT_TYPE)1 && go->type <= (GameObject::GAMEOBJECT_TYPE)4)
 			go->pos.Set(cx, cy, 0);
-		else if (go->type == GameObject::GO_DOOR)
+		else if (go->type == GameObject::GO_DOOR || go->type == GameObject::GO_DOOR2)
 		{
 			go->pos.Set(posX, posY, 0);
 		}
@@ -160,8 +176,6 @@ void MapEditor::mouseControls()
 			GameObject *go = (GameObject *)*it;
 			if ((go->pos - mousepos).Length() < 5)
 			{
-				if (go->type == GameObject::GO_PLAYER)
-					alreadyHavePlayer = false;
 				go->pos.SetZero();
 				go->active = false;
 			}
@@ -304,7 +318,7 @@ GameObject * MapEditor::type(int i)
 		//go->dmg = 1;
 	}
 
-	if (go->type == GameObject::GO_DOOR)
+	if (go->type == GameObject::GO_DOOR || go->type == GameObject::GO_DOOR2)
 	{
 		go->scale.Set(10, 10, 1);
 	}
@@ -432,12 +446,17 @@ void MapEditor::Update(double dt)
 		cameraControls(dt);
 		selectObjectControl();
 		saveControls();
-
+		alreadyHavePlayer = false;
+		//alreadyHavePlayer = false;
 		for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
 			if (go->pos == Vector3(0, 0, 0))
 				go->active = false;
+			if (go->type == GameObject::GO_PLAYER && go->active)
+			{
+				alreadyHavePlayer = true;
+			}
 		}
 
 		if (Application::IsKeyPressed('F'))
@@ -530,6 +549,13 @@ void MapEditor::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_DOOR2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door2"), false);
 		modelStack.PopMatrix();
 		break;
 	}
