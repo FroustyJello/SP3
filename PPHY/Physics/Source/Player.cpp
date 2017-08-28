@@ -300,7 +300,7 @@ void CPlayer::Update(double dt)
 	if (chargearrow)
 	{
 		isCharging = true;
-		arrowdmg += 1 * dt;
+		arrowdmg += 2 * dt;
 		arrowSpeed += 50 * dt;
 		if (arrowdmg > 5)
 			arrowdmg = 5;
