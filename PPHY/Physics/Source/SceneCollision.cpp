@@ -692,7 +692,7 @@ void SceneCollision::Update(double dt)
 				if (Application::newGame)
 				{
 					Application::levelName = "level2.csv";
-					Application::SetScene(1);
+					Application::SetScene(9);
 				}
 				else
 				{

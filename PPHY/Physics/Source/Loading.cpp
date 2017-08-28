@@ -46,9 +46,14 @@ void SceneLoading::Update(double dt)
 
 	if (loadtimer >= 2)
 	{
+		if (Application::newGame)
+		{
+			Application::newGame = false;
+			Application::SetScene(2);
+		}
+		else
 		Application::SetScene(1);
 	}
-
 
 
 	//choose
