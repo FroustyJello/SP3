@@ -151,12 +151,12 @@ void SceneMenu::Render()
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 12, 50);
 
 	ss.str("");
-	ss << "Da Jun";
+	ss << "Ja Doom";
 	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 21, 45);
 
 	ss.str("");
 	ss << "Castle";
-	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 25, 40);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(1, 1, 1), 5, 36, 40);
 
 	//Selection
 	ss.str("");

@@ -656,11 +656,13 @@ void SceneCollision::Update(double dt)
 				if (go->pos.y < camera.position.y)
 					go->HP = 0;
 
-				if(go->HP<=0)
+				if (go->HP <= 0)
 					enemyCount--;
-
 				continue;
 			}
+
+			if (go->type == GameObject::GO_PLAYER)
+				Application::SetScene(3);
 		}
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
