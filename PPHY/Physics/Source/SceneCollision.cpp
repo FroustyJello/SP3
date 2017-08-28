@@ -735,7 +735,7 @@ void SceneCollision::Update(double dt)
 
 	if (thePlayerInfo->isCharging)
 	{
-		chargeScale += 10 * dt;
+		chargeScale += 20 * dt;
 		if (chargeScale > 18)
 			chargeScale = 18;
 	}
@@ -1038,27 +1038,24 @@ void SceneCollision::Render()
 		RenderGO(m_ghost);*/
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 15, camera.target.y + 88.7, 1.1);
-	modelStack.Scale(hpscale, 4, 4);
-	modelStack.Translate(0.5, 0, 0);
+	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 88.7, 1.1f);
+	modelStack.Scale(hpscale * 1.6f, 4, 4);
+	modelStack.Translate(0.5f, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 	modelStack.PopMatrix();
 
-
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, 1);
-	modelStack.Scale(12, 4, 4);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 13.5f, camera.target.y + 85, 1.1);
-	modelStack.Scale(chargeScale, 2, 4);
-	modelStack.Translate(0.5, 0, 0);
+	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 85, 1.1f);
+	modelStack.Scale(chargeScale * 1.6f, 2, 1);
+	modelStack.Translate(0.5f, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("charge"), false);
 	modelStack.PopMatrix();
-	
 
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 45, camera.target.y + 88, 1);
+	modelStack.Scale(18, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
+	modelStack.PopMatrix();
 
 	////On screen te
 	std::ostringstream ss;
