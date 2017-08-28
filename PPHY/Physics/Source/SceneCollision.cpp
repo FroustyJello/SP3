@@ -616,13 +616,13 @@ void SceneCollision::Update(double dt)
 	{
 		GameObject *go = (GameObject *)*it;
 
-		if (go->pos.x > m_worldWidth + camera.position.x +20.f || go->pos.x < 0 + camera.position.x - 20.f ||
+		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
 		{
 			go->active = false;
 		}
 
-		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
+		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 		{
 			if (go->HP > 0)
 				go->active = true;
