@@ -746,7 +746,12 @@ void SceneCollision::Update(double dt)
 		}
 
 		if (go->type == GameObject::GO_ARROW)
-			std::cout << go->active << std::endl;
+		{
+			ParticleObject* ArrowParticle = new ParticleObject();
+			ArrowParticle->pos = go->pos;
+			ArrowParticle->scale.Set(3, 3, 0);
+			ArrowParticle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
+		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
 		{
@@ -757,7 +762,7 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
+			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject:: GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 			{
 				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW && go2->type != GameObject::GO_ENEMY_BULLET
 					&& go2->type != GameObject::GO_ENEMY_MELEE_2

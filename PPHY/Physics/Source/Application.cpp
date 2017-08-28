@@ -20,6 +20,7 @@
 #include "SceneMenu.h"
 #include "SceneWin.h"
 #include "MapEditor.h"
+#include "Loading.h"
 
 #include <iostream>
 
@@ -143,11 +144,12 @@ void Application::Run()
 	Scene *scene3 = new SceneLose();
 	Scene *scene4 = new SceneWin();
 	Scene *scene8 = new MapEditor();
+	Scene *scene9 = new SceneLoading();
 	//Scene *scene5 = new SceneTemp();
 
-	Scene *scene = scene1;
+	Scene *scene = scene9;
 
-	SceneID = 1;
+	SceneID = 9;
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
@@ -185,6 +187,13 @@ void Application::Run()
 		{
 			scene->Exit();
 			scene = scene8;
+			scene->Init();
+		}
+
+		else if (SceneID == 9 && scene != scene9)
+		{
+			scene->Exit();
+			scene = scene9;
 			scene->Init();
 		}
 
