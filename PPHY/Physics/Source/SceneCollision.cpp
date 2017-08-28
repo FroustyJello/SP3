@@ -306,7 +306,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		if (go2->HP <= 0)
 		{
-			enemyCount-=1;
+			enemyCount--;
 		}
 			
 		std::cout << "ENEMY HIT" << std::endl;
@@ -573,16 +573,16 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	for (int i = 0; i < m_enemies.size(); ++i)
-	{
-		if (m_enemies[i]->HP <= 0)
-		{
-			//m_enemies[i] = m_enemies[m_enemies.size() - 1];
-			//m_enemies.pop_back();
-			enemyCount--;
-			++i;
-		}
-	}
+	//for (int i = 0; i < m_enemies.size(); ++i)
+	//{
+	//	if (m_enemies[i]->HP <= 0)
+	//	{
+	//		//m_enemies[i] = m_enemies[m_enemies.size() - 1];
+	//		//m_enemies.pop_back();
+	//		enemyCount-=1;
+	//		++i;
+	//	}
+	//}
 
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
@@ -620,9 +620,23 @@ void SceneCollision::Update(double dt)
 		GameObject *go = (GameObject *)*it;
 
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
-			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+			go->pos.y > m_worldHeight + camera.position.y || go->pos.y <camera.position.y)
 		{
 			go->active = false;
+
+			if ((go->type == GameObject::GO_ENEMY_MELEE
+				|| go->type == GameObject::GO_ENEMY_MELEE_2
+				|| go->type == GameObject::GO_ENEMY_RANGED
+				|| go->type == GameObject::GO_ENEMY_RANGED_2)&&go->HP>0)
+			{
+				if (go->pos.y < camera.position.y)
+					go->HP = 0;
+
+				if(go->HP<=0)
+					enemyCount --;
+
+				continue;
+			}
 		}
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
@@ -744,10 +758,15 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
-	if (Application::IsKeyPressed('P'))
+	if (enemyCount <= 0)
 	{
 		trigger = true;
 	}
+
+	/*if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}*/
 
 	//UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
