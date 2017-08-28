@@ -177,7 +177,10 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		 || go1->type == GameObject::GO_ENEMY_MELEE_2
 		 || go1->type == GameObject::GO_ENEMY_RANGED
 		 || go1->type == GameObject::GO_ENEMY_RANGED_2)
-		 && go2->type == GameObject::GO_WALL)
+		 && go2->type == GameObject::GO_WALL
+		 || go2->type == GameObject::GO_WALL_2
+		 || go2->type == GameObject::GO_WALL_3
+		 || go2->type == GameObject::GO_WALL_4)
 	{
 
 		Vector3 w0 = go2->pos;
@@ -200,7 +203,10 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		|| go2->type == GameObject::GO_ENEMY_MELEE
 		|| go2->type == GameObject::GO_ENEMY_MELEE_2
 		|| go2->type == GameObject::GO_ENEMY_RANGED
-		|| go2->type == GameObject::GO_ENEMY_RANGED_2))
+		|| go2->type == GameObject::GO_ENEMY_RANGED_2
+		|| go2->type == GameObject::GO_WALL_2
+		|| go2->type == GameObject::GO_WALL_3
+		|| go2->type == GameObject::GO_WALL_4))
 	{
 
 		Vector3 p1 = go1->pos;
@@ -218,6 +224,20 @@ bool SceneCollision::CheckCollision(GameObject *go1, GameObject *go2)
 		return (p2 - p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
 
 	}
+
+	else if (go2->type == GameObject::GO_PLAYER && go1->type == GameObject::GO_ENEMY_BULLET)
+	{
+		Vector3 p1 = go1->pos;
+		Vector3 p2 = go2->pos;
+		float r1 = go1->scale.x;
+		float r2;
+			r2 = go2->scale.x + 1;
+
+		Vector3 u1 = go1->vel;
+
+		return (p2 - p1).LengthSquared() < (r1 + r2) * (r1 + r2) && (go2->pos - go1->pos).Dot(u1) > 0;
+	}
+
 	return false;
 }
 
@@ -246,7 +266,10 @@ float SceneCollision::CheckCollision2(GameObject * go1, GameObject * go2)
 void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 {
 
-	 if (go2->type == GameObject::GO_WALL && 
+	 if ((go2->type == GameObject::GO_WALL
+		 || go2->type == GameObject::GO_WALL_2
+		 || go2->type == GameObject::GO_WALL_3
+		 || go2->type == GameObject::GO_WALL_4) &&
 		 (go->type == GameObject::GO_PLAYER 
 		 || go->type == GameObject::GO_ENEMY_MELEE 
 		 || go->type == GameObject::GO_ENEMY_MELEE_2
@@ -276,7 +299,12 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		}
 	}
 
-	else if (go2->type == GameObject::GO_WALL && (go->type == GameObject::GO_ARROW || go->type != GameObject::GO_FIRE_ARROW))
+	else if ((go2->type == GameObject::GO_WALL
+		|| go2->type == GameObject::GO_WALL_2
+		|| go2->type == GameObject::GO_WALL_3
+		|| go2->type == GameObject::GO_WALL_4)
+		&& (go->type == GameObject::GO_ARROW 
+		|| go->type != GameObject::GO_FIRE_ARROW))
 	{
 
 		Vector3 u = go->vel;
@@ -304,6 +332,20 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		/*if (go2->HP <= 0)
 			go2->active = false;*/
 		std::cout << "ENEMY HIT" << std::endl;
+	}
+
+	else if (go2->type == GameObject::GO_PLAYER && go->type == GameObject::GO_ENEMY_BULLET)
+	{
+		Vector3 u = go->vel;
+		Vector3 N = (go2->pos - go->pos).Normalize();
+
+		go2->HP -= go->dmg;
+
+		go->active = false;
+
+		/*if (go2->HP <= 0)
+		go2->active = false;*/
+		std::cout << "PLAYER HIT" << std::endl;
 	}
 
 }
@@ -584,30 +626,19 @@ void SceneCollision::Update(double dt)
 		if (!enemy->active)
 			continue;
 		enemy->Update(dt, thePlayerInfo, m_enemies, collisionVector);
-		if (enemy->IsShooting)
-		{
-			GameObject* shoot = FetchGO();
-
-			shoot->type = GameObject::GO_ENEMY_BULLET;
-			shoot->pos = enemy->pos;
-			shoot->pos.y += 5;
-			shoot->pos.x += 5;
-			if (thePlayerInfo->pos.x > enemy->pos.x)
-			{
-				shoot->vel = 500.f * dt;
-			}
-			else
-			{
-				shoot->vel = -500.f * dt;
-			}
-			shoot->scale.Set(3, 3, 1);
-			enemy->IsShooting = false;
-		}
 	}
 	canSave = false;
+
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
+
+		//Exercise 2b: Unspawn if it really leave the screen
+		if (go->pos.y > m_worldHeight + go->scale.y || go->pos.y < 0 - go->scale.y)
+		{
+			go->active = false;
+			enemyCount--;
+		}
 
 		if (go->pos.x > m_worldWidth + camera.position.x +15.f || go->pos.x < 0 + camera.position.x - 15.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
@@ -615,7 +646,7 @@ void SceneCollision::Update(double dt)
 			go->active = false;
 		}
 
-		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
+		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 		{
 			if (go->HP > 0)
 				go->active = true;
@@ -646,6 +677,34 @@ void SceneCollision::Update(double dt)
 		}
 		if (!go->active)
 			continue;
+
+		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
+		{
+			Enemy *enemy = (Enemy *)*it;
+
+			if (enemy->IsShooting)
+			{
+				GameObject* shoot = FetchGO();
+
+				shoot->type = GameObject::GO_ENEMY_BULLET;
+				shoot->pos = enemy->pos;
+				shoot->pos.y += 5;
+				shoot->pos.x += 5;
+				if (thePlayerInfo->pos.x > enemy->pos.x)
+				{
+					shoot->vel = 500.f * dt;
+				}
+				else
+				{
+					shoot->vel = -500.f * dt;
+				}
+				shoot->dmg = 1;
+				shoot->scale.Set(3, 3, 1);
+				enemy->IsShooting = false;
+
+				std::cout << shoot->dmg << std::endl;
+			}
+		}
 		go->pos += go->vel * m_speed * dt;
 
 		if (go->type == GameObject::GO_ENEMY_BULLET)
@@ -672,7 +731,7 @@ void SceneCollision::Update(double dt)
 		}
 
 		//Debug code for clearing balls
-		if (go->type == GameObject::GO_ARROW && Application::IsKeyPressed('P'))
+		if (go->type == GameObject::GO_ENEMY_BULLET && Application::IsKeyPressed('P'))
 		{
 			go->active = false;
 		}
@@ -689,9 +748,9 @@ void SceneCollision::Update(double dt)
 			//Exercise 1: move collision code to CheckCollision() -OK!
 			GameObject *goA = go, *goB = go2;
 			//Practical 4, Exercise 13: improve collision detection algorithm
-			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW)
+			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 			{
-				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW 
+				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW && go2->type != GameObject::GO_ENEMY_BULLET
 					&& go2->type != GameObject::GO_ENEMY_MELEE_2
 					&& go2->type != GameObject::GO_ENEMY_RANGED
 					&& go2->type != GameObject::GO_ENEMY_RANGED_2)
