@@ -846,7 +846,7 @@ void SceneCollision::Update(double dt)
 		trigger = true;
 	}*/
 
-	//UpdateParticles(dt);
+	UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;

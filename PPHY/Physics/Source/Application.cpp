@@ -24,8 +24,6 @@
 
 #include <iostream>
 
-#include "vld.h"
-
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
@@ -150,9 +148,9 @@ void Application::Run()
 	Scene *scene9 = new SceneLoading();
 	//Scene *scene5 = new SceneTemp();
 
-	Scene *scene = scene9;
+	Scene *scene = scene4;
 
-	SceneID = 9;
+	SceneID = 4;
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame

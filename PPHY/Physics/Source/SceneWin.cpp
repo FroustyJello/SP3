@@ -93,28 +93,27 @@ void SceneWin::Render()
 	//Exercise 5a: Render m_lives, m_score
 
 	std::ostringstream ss;
-	//Title
 	ss << "YOU ARE";
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(1, 1, 1), 5, 12, 38);
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 5, 12, 38);
 
 	ss.str("");
-	ss << "WON";
-	RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(1, 1, 1), 5, 21, 33);
+	ss << "WIN";
+	RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 5, 21, 33);
 
 	//Selection
 	ss.str("");
 	ss << "Return to Menu";
 	if (clickpos == 0)
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 24);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 24);
 	else
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 24);
 
 	ss.str("");
 	ss << "Exit";
 	if (clickpos == 1)
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0, 0.6, 1), 3, 33, 18);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.5, 0.7, 0.5), 3, 33, 18);
 	else
-		RenderTextOnScreen(meshList[GEO_CALIBRI], ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
+		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss.str(), Color(0.4, 0.4, 0.4), 3, 33, 18);
 }
 
 void SceneWin::Exit()
