@@ -278,6 +278,7 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 		{
 			std::cout << "died" << std::endl;
 			this->active = false;
+			
 			m_timer = 0.f;
 		}
 	}

@@ -73,12 +73,8 @@ void MapEditor::renderText()
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss2.str(), Color(0, 1, 0), 3, 28, 32);
 
 		std::ostringstream ss3;
-		ss3 << "empty";
+		ss3 << "Player Level";
 		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss3.str(), Color(0, 1, 0), 3, 28, 28);
-
-		std::ostringstream ss4;
-		ss4 << "empty";
-		RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), ss4.str(), Color(0, 1, 0), 3, 28, 24);
 	}
 
 	if (start)
@@ -263,9 +259,6 @@ void MapEditor::chooselevel(int choice)
 		break;
 	case 3:
 		fileName = "level3.csv";
-		break;
-	case 4:
-		fileName = "level4.csv";
 		break;
 	}
 	data = reader.Load(fileName, data);
