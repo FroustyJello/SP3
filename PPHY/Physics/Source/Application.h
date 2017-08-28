@@ -23,6 +23,7 @@ public:
 	static int SceneID;
 	static void SetScene(int SceneNo);
 	static bool continueGame;
+	static bool newGame;
 	static std::string levelName;
 private:
 	Application();

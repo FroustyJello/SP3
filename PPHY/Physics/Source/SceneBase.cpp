@@ -14,6 +14,32 @@ SceneBase::SceneBase()
 
 SceneBase::~SceneBase()
 {
+	for (size_t i = 0; i < sizeof(thePlayer)/ sizeof(thePlayer[0]); i++)
+	{
+		delete thePlayer[i];
+	}
+
+	for (size_t i = 0; i < sizeof(fatEnemy) / sizeof(fatEnemy[0]); i++)
+	{
+		delete fatEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(femaleEnemy) / sizeof(femaleEnemy[0]); i++)
+	{
+		delete femaleEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(regularEnemy) / sizeof(regularEnemy[0]); i++)
+	{
+		delete regularEnemy[i];
+	}
+	for (size_t i = 0; i < sizeof(pistolEnemy) / sizeof(pistolEnemy[0]); i++)
+	{
+		delete pistolEnemy[i];
+	}
+	delete[] thePlayer;
+	delete[] fatEnemy;
+	delete[] femaleEnemy;
+	delete[] regularEnemy;
+	delete[] pistolEnemy;
 }
 
 void SceneBase::Init()
@@ -607,6 +633,36 @@ void SceneBase::Render()
 void SceneBase::Exit()
 {
 	// Cleanup VBO
+	for (size_t i = 0; i < 18; i++)
+	{
+		delete thePlayer[i];
+	}
+
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete fatEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete femaleEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete regularEnemy[i];
+	}
+	for (size_t i = 0; i < 16; i++)
+	{
+		delete pistolEnemy[i];
+	}
+	delete[] thePlayer;
+	delete[] fatEnemy;
+	delete[] femaleEnemy;
+	delete[] regularEnemy;
+	delete[] pistolEnemy;
+	thePlayer = fatEnemy = femaleEnemy = regularEnemy = pistolEnemy = NULL;
+	thePlayerInfo->Destroy();
+	thePlayerInfo = NULL;
+	MeshBuilder::GetInstance()->cleanlist();
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }

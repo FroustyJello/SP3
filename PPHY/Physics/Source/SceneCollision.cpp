@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	canSave = false;
 	trigger = false;
 	triggered = false;
+	enemycount2 = 0;
 	CSV reader;
 
 	vector<string> data;
@@ -109,6 +110,7 @@ void SceneCollision::Init()
 			theEnemyInfo->SetRightDiedIndices(12, 13);
 
 			m_goList[i] = theEnemyInfo;
+			enemycount2++;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
 		}
@@ -334,7 +336,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		if (go2->HP <= 0)
 		{
-			enemyCount-=1;
+			enemyCount--;
 		}
 			
 		std::cout << "ENEMY HIT" << std::endl;
@@ -365,7 +367,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		CCollider* Ctemp = new CCollider();
+		
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -415,16 +417,17 @@ void SceneCollision::LoadObjects(vector<string> data)
 
 		if (go->type != GameObject::GO_ENEMY_MELEE && go->type != GameObject::GO_ENEMY_RANGED
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
-			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR)
+			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR && go->type != GameObject::GO_DOOR2)
 		{
+			CCollider* Ctemp = new CCollider();
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
+			if (go->type == GameObject::GO_PLAYER)
+			{
+				Ctemp->SetPAABB(go->scale, go->pos);
+			}
+			Ctemp = nullptr;
 		}
-		if (go->type == GameObject::GO_PLAYER)
-		{
-			Ctemp->SetPAABB(go->scale, go->pos);
-		}
-		Ctemp = nullptr;
 	}
 }
 
@@ -615,16 +618,16 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	for (int i = 0; i < m_enemies.size(); ++i)
-	{
-		if (m_enemies[i]->HP <= 0)
-		{
-			//m_enemies[i] = m_enemies[m_enemies.size() - 1];
-			//m_enemies.pop_back();
-			enemyCount--;
-			++i;
-		}
-	}
+	//for (int i = 0; i < m_enemies.size(); ++i)
+	//{
+	//	if (m_enemies[i]->HP <= 0)
+	//	{
+	//		//m_enemies[i] = m_enemies[m_enemies.size() - 1];
+	//		//m_enemies.pop_back();
+	//		enemyCount-=1;
+	//		++i;
+	//	}
+	//}
 
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
@@ -649,9 +652,23 @@ void SceneCollision::Update(double dt)
 		}
 
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
-			go->pos.y > m_worldHeight + camera.position.y || go->pos.y < 0 + camera.position.y)
+			go->pos.y > m_worldHeight + camera.position.y || go->pos.y <camera.position.y)
 		{
 			go->active = false;
+
+			if ((go->type == GameObject::GO_ENEMY_MELEE
+				|| go->type == GameObject::GO_ENEMY_MELEE_2
+				|| go->type == GameObject::GO_ENEMY_RANGED
+				|| go->type == GameObject::GO_ENEMY_RANGED_2)&&go->HP>0)
+			{
+				if (go->pos.y < camera.position.y)
+					go->HP = 0;
+
+				if(go->HP<=0)
+					enemyCount --;
+
+				continue;
+			}
 		}
 
 		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
@@ -665,10 +682,23 @@ void SceneCollision::Update(double dt)
 		if (go->type == GameObject::GO_DOOR)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
-			{
 				canSave = true;
+		}
+
+		else if (go->type == GameObject::GO_DOOR2)
+		{
+			if ((go->pos - thePlayerInfo->pos).Length() < 10)
+			{
+				if (Application::newGame)
+				{
+					Application::levelName = "level2.csv";
+					Application::SetScene(1);
+				}
+				else
+				{
+					Application::SetScene(4);
+				}
 			}
-		
 		}
 
 		if (go->type == GameObject::GO_WALL_2)
@@ -797,7 +827,7 @@ void SceneCollision::Update(double dt)
 
 	if (thePlayerInfo->isCharging)
 	{
-		chargeScale += 10 * dt;
+		chargeScale += 20 * dt;
 		if (chargeScale > 18)
 			chargeScale = 18;
 	}
@@ -806,10 +836,15 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
-	if (Application::IsKeyPressed('P'))
+	if (enemyCount <= 0)
 	{
 		trigger = true;
 	}
+
+	/*if (Application::IsKeyPressed('P'))
+	{
+		trigger = true;
+	}*/
 
 	//UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
@@ -940,6 +975,13 @@ void SceneCollision::RenderGO(GameObject *go)
 		modelStack.Rotate(Math::RadianToDegree(atan2(go->dir.y, go->dir.x)), 0, 0, 1);// normal
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyBullet"), false);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_DOOR2:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("Door2"), false);
 		modelStack.PopMatrix();
 		break;
 	}
@@ -1100,27 +1142,24 @@ void SceneCollision::Render()
 		RenderGO(m_ghost);*/
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 15, camera.target.y + 88.7, 1.1);
-	modelStack.Scale(hpscale, 4, 4);
-	modelStack.Translate(0.5, 0, 0);
+	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 88.7, 1.1f);
+	modelStack.Scale(hpscale * 1.6f, 4, 4);
+	modelStack.Translate(0.5f, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);
 	modelStack.PopMatrix();
 
-
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 30, camera.target.y + 88, 1);
-	modelStack.Scale(12, 4, 4);
-	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 13.5f, camera.target.y + 85, 1.1);
-	modelStack.Scale(chargeScale, 2, 4);
-	modelStack.Translate(0.5, 0, 0);
+	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 85, 1.1f);
+	modelStack.Scale(chargeScale * 1.6f, 2, 1);
+	modelStack.Translate(0.5f, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("charge"), false);
 	modelStack.PopMatrix();
-	
 
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.target.x + 45, camera.target.y + 88, 1);
+	modelStack.Scale(18, 4, 4);
+	RenderMesh(MeshBuilder::GetInstance()->GetMesh("player_healthbar"), false);
+	modelStack.PopMatrix();
 
 	////On screen te
 	std::ostringstream ss;
@@ -1163,11 +1202,14 @@ void SceneCollision::Exit()
 		m_goList.pop_back();
 	}*/
 
+
+
 	for (int i = m_goList.size() - 1; i >= 0; --i)
 	{
 		if (m_goList[i]->type != GameObject::GO_PLAYER)
 		{
 			delete m_goList[i];
+			m_goList[i] = NULL;
 			m_goList.pop_back();
 		}
 	}
@@ -1179,17 +1221,28 @@ void SceneCollision::Exit()
 		std::cout << "failed to delete player" << std::endl;
 	}
 
-		while (m_enemies.size() > 0)
-		{
-			/*Enemy *go = m_enemies.back();
-			delete go;*/
-			m_enemies.pop_back();
-		}
+	m_enemies.clear();
+	CSoundEngine::Destroy();
 
+	/*while (m_enemies.size() > 0)
+	{
+		Enemy *go = m_enemies.back();
+		delete go;
+		m_enemies.pop_back();
+	}
+*/
 	while (!collisionVector.empty())
 	{
 		delete collisionVector.back();
 		collisionVector.pop_back();
 	}
+	collisionVector.clear();
 
+	for (int i = particleList.size() - 1; i >= 0; --i)
+	{
+			delete particleList[i];
+			particleList[i] = NULL;
+			particleList.pop_back();
+	}
+	particleList.clear();
 }
