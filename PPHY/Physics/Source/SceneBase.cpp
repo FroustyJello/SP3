@@ -173,10 +173,6 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("arrow", Color(1, 1, 1), 5.f);
 	MeshBuilder::GetInstance()->GetMesh("arrow")->textureID = LoadTGA("Image//Player/player_right_arrow.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("loading", Color(1, 0, 0));
-	MeshBuilder::GetInstance()->GetMesh("loading")->textureID = LoadTGA("Image//Loading.tga");
-
-
 	MeshBuilder::GetInstance()->GenerateQuad("tile_1", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("tile_1")->textureID = LoadTGA("Image//Enviorment/tile1.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("tile_2", Color(1, 1, 1), 1.f);
