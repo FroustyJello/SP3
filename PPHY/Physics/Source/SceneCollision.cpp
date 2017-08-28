@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	canSave = false;
 	trigger = false;
 	triggered = false;
+	enemycount2 = 0;
 	CSV reader;
 
 	vector<string> data;
@@ -109,6 +110,7 @@ void SceneCollision::Init()
 			theEnemyInfo->SetRightDiedIndices(12, 13);
 
 			m_goList[i] = theEnemyInfo;
+			enemycount2++;
 			enemyCount++;
 			m_enemies.push_back(theEnemyInfo);
 		}
@@ -365,7 +367,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		CCollider* Ctemp = new CCollider();
+		
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -417,14 +419,15 @@ void SceneCollision::LoadObjects(vector<string> data)
 			&& go->type != GameObject::GO_ENEMY_MELEE_2 && go->type != GameObject::GO_ENEMY_RANGED_2
 			&& go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_DOOR && go->type != GameObject::GO_DOOR2)
 		{
+			CCollider* Ctemp = new CCollider();
 			Ctemp->SetPAABB(go->scale, go->pos);
 			collisionVector.push_back(Ctemp);
+			if (go->type == GameObject::GO_PLAYER)
+			{
+				Ctemp->SetPAABB(go->scale, go->pos);
+			}
+			Ctemp = nullptr;
 		}
-		if (go->type == GameObject::GO_PLAYER)
-		{
-			Ctemp->SetPAABB(go->scale, go->pos);
-		}
-		Ctemp = nullptr;
 	}
 }
 
@@ -1194,11 +1197,14 @@ void SceneCollision::Exit()
 		m_goList.pop_back();
 	}*/
 
+
+
 	for (int i = m_goList.size() - 1; i >= 0; --i)
 	{
 		if (m_goList[i]->type != GameObject::GO_PLAYER)
 		{
 			delete m_goList[i];
+			m_goList[i] = NULL;
 			m_goList.pop_back();
 		}
 	}
@@ -1210,17 +1216,28 @@ void SceneCollision::Exit()
 		std::cout << "failed to delete player" << std::endl;
 	}
 
-		while (m_enemies.size() > 0)
-		{
-			/*Enemy *go = m_enemies.back();
-			delete go;*/
-			m_enemies.pop_back();
-		}
+	m_enemies.clear();
+	CSoundEngine::Destroy();
 
+	/*while (m_enemies.size() > 0)
+	{
+		Enemy *go = m_enemies.back();
+		delete go;
+		m_enemies.pop_back();
+	}
+*/
 	while (!collisionVector.empty())
 	{
 		delete collisionVector.back();
 		collisionVector.pop_back();
 	}
+	collisionVector.clear();
 
+	for (int i = particleList.size() - 1; i >= 0; --i)
+	{
+			delete particleList[i];
+			particleList[i] = NULL;
+			particleList.pop_back();
+	}
+	particleList.clear();
 }

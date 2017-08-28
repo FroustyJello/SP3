@@ -32,6 +32,7 @@ public:
 	Mesh* GetMesh(const std::string& _meshName);
 	void AddMesh(const std::string& _meshName, Mesh* _newMesh);
 	void RemoveMesh(const std::string& _meshName);
+	void cleanlist();
 
 private:
 	std::map<std::string, Mesh*> meshMap;

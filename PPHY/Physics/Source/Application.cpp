@@ -23,6 +23,8 @@
 
 #include <iostream>
 
+#include "vld.h"
+
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
@@ -216,6 +218,9 @@ void Application::Run()
 
 void Application::Exit()
 {
+	GameObject::Destroy();
+	CPlayer::Destroy();
+	MeshBuilder::Destroy();
 	//Close OpenGL window and terminate GLFW
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW
@@ -225,4 +230,5 @@ void Application::Exit()
 void Application::SetScene(int SceneNo)
 {
 	SceneID = SceneNo;
+
 }
