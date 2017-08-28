@@ -148,9 +148,9 @@ void Application::Run()
 	Scene *scene9 = new SceneLoading();
 	//Scene *scene5 = new SceneTemp();
 
-	Scene *scene = scene9;
+	Scene *scene = scene1;
 
-	SceneID = 9;
+	SceneID = 1;
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
