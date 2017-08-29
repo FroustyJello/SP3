@@ -318,7 +318,7 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		go->vel = (u - 2 * u.Dot(N) * N) * 0.4f + gravity;
 		go->dir -= go->dir;
 
-		go->isCollided = true;
+		//go->isCollided = true;
 	}
 
 	else if ((go2->type == GameObject::GO_ENEMY_MELEE
@@ -729,8 +729,6 @@ void SceneCollision::Update(double dt)
 			{
 				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
 				go->vel *= 60;
-				castleVector.clear();
-				castleExplode = true;
 			}
 			else if(castleExplode && trigger)
 			{
@@ -801,6 +799,13 @@ void SceneCollision::Update(double dt)
 			}
 		}
 	}
+
+	if (trigger)
+	{
+		castleVector.clear();
+		castleExplode = true;
+	}
+
 
 	if (thePlayerInfo->isCharging)
 	{
