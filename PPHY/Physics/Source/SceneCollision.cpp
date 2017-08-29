@@ -727,8 +727,6 @@ void SceneCollision::Update(double dt)
 			{
 				go->vel.Set(cos(Math::RandFloatMinMax(-360, 360)), sin(Math::RandFloatMinMax(-360, 360)));
 				go->vel *= 60;
-				castleVector.clear();
-				castleExplode = true;
 			}
 			else if(castleExplode && trigger)
 			{
@@ -814,6 +812,13 @@ void SceneCollision::Update(double dt)
 			}
 		}
 	}
+
+	if (trigger)
+	{
+		castleVector.clear();
+		castleExplode = true;
+	}
+
 
 	if (thePlayerInfo->isCharging)
 	{
