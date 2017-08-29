@@ -79,6 +79,7 @@ protected:
 	bool canSave;
 	bool trigger;
 	bool triggered;
+	bool Falsecollider;
 	int enemycount2;
 	vector<string>ObjData;
 

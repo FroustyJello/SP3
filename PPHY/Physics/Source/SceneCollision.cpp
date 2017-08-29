@@ -30,6 +30,7 @@ void SceneCollision::Init()
 	canSave = false;
 	trigger = false;
 	triggered = false;
+	Falsecollider = false;
 	enemycount2 = 0;
 	CSV reader;
 
@@ -704,11 +705,13 @@ void SceneCollision::Update(double dt)
 			{
 				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
 				go->vel *= 60;
+				Falsecollider = true;
 			}
 			else if(triggered && trigger)
 			{
 				Vector3 G(0, -9.8f);
 				go->vel += G * dt*10;
+				Falsecollider = true;
 			}
 		}
 		if (!go->active)
