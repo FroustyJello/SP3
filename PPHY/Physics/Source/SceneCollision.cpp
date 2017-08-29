@@ -503,10 +503,10 @@ void SceneCollision::Update(double dt)
 	
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
 
-	if (!Falsecollider)
-	{
-		CheckAABB(castleVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
-	}
+	//if (!Falsecollider)
+	//{
+	//	CheckAABB(castleVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
+	//}
 
 	//UpdateParticles(dt);
 
