@@ -487,24 +487,27 @@ void Enemy::Update(double dt, CPlayer *PlayerRef, std::vector<Enemy*> m_enemies,
 			{
 				if (ClosestEnemy != NULL)
 				{
-					if (ClosestEnemy->EnemyType == MELEE)
+					if ((this->pos - ClosestEnemy->pos).Length() < 30)
 					{
-						// Distance from this enemy to Player is less than the closest enemy to the player
-						if ((this->pos - PlayerRef->pos).Length() < ((ClosestEnemy->pos - PlayerRef->pos).Length()) + 18)
+						if (ClosestEnemy->EnemyType == MELEE)
 						{
-							if (ClosestEnemy->pos.x < PlayerRef->pos.x)
+							// Distance from this enemy to Player is less than the closest enemy to the player
+							if ((this->pos - PlayerRef->pos).Length() < ((ClosestEnemy->pos - PlayerRef->pos).Length()) + 18)
 							{
-								this->pos.x -= 7.5f * dt;
+								if (ClosestEnemy->pos.x < PlayerRef->pos.x)
+								{
+									this->pos.x -= 7.5f * dt;
+								}
+								else
+								{
+									this->pos.x += 7.5f * dt;
+								}
+								CanAttack = false;
 							}
 							else
 							{
-								this->pos.x += 7.5f * dt;
+								CanAttack = true;
 							}
-							CanAttack = false;
-						}
-						else
-						{
-							CanAttack = true;
 						}
 					}
 				}

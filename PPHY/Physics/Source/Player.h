@@ -137,6 +137,8 @@ private:
 	double m_dElapsedTime;
 	double m_dElapsedDieTime;
 	int playerMoveIndex;
+
+	bool jumping;
 	
 
 	//CMap* theMapReference;

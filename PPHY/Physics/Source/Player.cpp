@@ -32,6 +32,7 @@ CPlayer::CPlayer(void)
 	, chargearrow(false)
 	, arrowSpeed(50.f)
 	, isCharging(false)
+	,jumping(false)
 {
 }
 
@@ -235,9 +236,15 @@ void CPlayer::Update(double dt)
 	m_dElapsedDieTime += dt;
 	m_dElapsedTime += dt;
 	// Update the player position
-	if (Application::IsKeyPressed('W') && vel.y <= 0)
+	if (Application::IsKeyPressed('W') && !jumping)
 	{
-		pos.y += 100 * dt * m_speed;
+		vel.y += 3000 * dt * m_speed;
+		jumping = true;
+	}
+
+	else if (!Application::IsKeyPressed('W') && jumping)
+	{
+		jumping = false;
 	}
 
 	if (Application::IsKeyPressed('S'))
