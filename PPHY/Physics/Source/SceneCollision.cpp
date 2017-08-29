@@ -28,9 +28,8 @@ void SceneCollision::Init()
 	playerMoveIndex = 0;
 	elapesTime = 0;
 	canSave = false;
+	castleExplode = false;
 	trigger = false;
-	triggered = false;
-	Falsecollider = false;
 	enemycount2 = 0;
 	CSV reader;
 
@@ -74,7 +73,7 @@ void SceneCollision::Init()
 
 
 	
-	for (int i = 0; i < m_goList.size(); ++i)
+	for (unsigned i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type == GameObject::GO_PLAYER)
 		{
@@ -86,7 +85,7 @@ void SceneCollision::Init()
 		}
 	}
 
-	for (int i = 0; i < m_goList.size(); ++i)
+	for (unsigned i = 0; i < m_goList.size(); ++i)
 	{
 		if (m_goList[i]->type >= GameObject::GO_ENEMY_MELEE && m_goList[i]->type <= GameObject::GO_BOSS_2)
 		{
@@ -310,15 +309,16 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 		|| go2->type == GameObject::GO_WALL_3
 		|| go2->type == GameObject::GO_WALL_4)
 		&& (go->type == GameObject::GO_ARROW 
-		|| go->type != GameObject::GO_FIRE_ARROW))
+		|| go->type == GameObject::GO_FIRE_ARROW))
 	{
 
 		Vector3 u = go->vel;
 		Vector3 N = (go2->pos - go->pos).Normalize();
 
-		go->vel = (u - 2 * u.Dot(N) * N) * 0.4 + gravity;
+		go->vel = (u - 2 * u.Dot(N) * N) * 0.4f + gravity;
 		go->dir -= go->dir;
-		go->rotation = (90, 0, 0, 1);
+
+		go->isCollided = true;
 	}
 
 	else if ((go2->type == GameObject::GO_ENEMY_MELEE
@@ -364,7 +364,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	string temp;
 	GameObject *go;
 
-	for (int i = 0; i < data.size(); i++)
+	for (unsigned i = 0; i < data.size(); i++)
 	{
 		go = FetchGO();
 
@@ -471,13 +471,12 @@ void SceneCollision::SaveFile(vector<GameObject*> List)
 
 bool SceneCollision::CheckAABB(vector<CCollider*> vector, Vector3 MinAABB, Vector3 MaxAABB)
 {
-	for (int i = 0; i < vector.size(); i++)
+	for (unsigned i = 0; i < vector.size(); i++)
 	{
 		collided = thePlayerInfo->CheckOverlap(MinAABB - Vector3(2,0,0), MaxAABB + Vector3(3,3,0), vector[i]->GetMinAABB(), vector[i]->GetMaxAABB());
 		if (collided)
 		{
-			std::cout << i << std::endl;
-			break;
+			return collided;
 		}
 	}
 
@@ -500,15 +499,12 @@ void SceneCollision::Update(double dt)
 
 
 	thePlayerInfo->Update(dt);
-	
+
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
-
-	//if (!Falsecollider)
-	//{
-	//	CheckAABB(castleVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
-	//}
-
-	//UpdateParticles(dt);
+	if (!collided)
+	{
+		CheckAABB(castleVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
+	}
 
 	static bool is9pressed = false;
 
@@ -537,16 +533,15 @@ void SceneCollision::Update(double dt)
 		//Application::GetWindowWidth() * 0.75f
 		if (thePlayerInfo->pos.x > RightScreenLimit)
 		{
-			camera.position.x += 25 * dt * m_speed;
-			camera.target.x += 25 * dt * m_speed;
-			RightScreenLimit += 25 * dt * m_speed;
-			LeftScreenLimit += 25 * dt * m_speed;
+			camera.position.x += 25 * (float)dt * m_speed;
+			camera.target.x += 25 * (float)dt * m_speed;
+			RightScreenLimit += 25 * (float)dt * m_speed;
+			LeftScreenLimit += 25 * (float)dt * m_speed;
 		}
 
 		if (collided)
 		{
-			std::cout << "HI" << std::endl;
-			thePlayerInfo->pos.x -= 50 * dt * m_speed;
+			thePlayerInfo->pos.x -= 50 * (float)dt * m_speed;
 		}
 	}
 
@@ -554,16 +549,15 @@ void SceneCollision::Update(double dt)
 	{
 		if (thePlayerInfo->pos.x < LeftScreenLimit)
 		{
-			camera.position.x -= 25 * dt * m_speed;
-			camera.target.x -= 25 * dt * m_speed;
-			LeftScreenLimit -= 25 * dt * m_speed;
-			RightScreenLimit -= 25 * dt * m_speed;
+			camera.position.x -= 25 * (float)dt * m_speed;
+			camera.target.x -= 25 * (float)dt * m_speed;
+			LeftScreenLimit -= 25 * (float)dt * m_speed;
+			RightScreenLimit -= 25 * (float)dt * m_speed;
 		}
 
 		else if (collided)
 		{
-			std::cout << "HI" << std::endl;
-			thePlayerInfo->pos.x += 50 * dt * m_speed;
+			thePlayerInfo->pos.x += 50 * (float)dt * m_speed;
 		}
 	}
 	else
@@ -573,31 +567,30 @@ void SceneCollision::Update(double dt)
 
 	bounce++;
 
-
-
 	if (Application::IsKeyPressed(VK_RIGHT))
 	{
-		camera.position.x += 100 * dt;
-		camera.target.x += 100 * dt;
+		camera.position.x += 100 * (float)dt;
+		camera.target.x += 100 * (float)dt;
 	}
 
 	if (Application::IsKeyPressed(VK_LEFT))
 	{
-		camera.position.x -= 100 * dt;
-		camera.target.x -= 100 * dt;
+		camera.position.x -= 100 * (float)dt;
+		camera.target.x -= 100 * (float)dt;
 	}
 
 	if (Application::IsKeyPressed(VK_UP))
 	{
-		camera.position.y += 100 * dt;
-		camera.target.y += 100 * dt;
+		camera.position.y += 100 * (float)dt;
+		camera.target.y += 100 * (float)dt;
 	}
 
 	if (Application::IsKeyPressed(VK_DOWN))
 	{
-		camera.position.y -= 100 * dt;
-		camera.target.y -= 100 * dt;
+		camera.position.y -= 100 * (float)dt;
+		camera.target.y -= 100 * (float)dt;
 	}
+
 	double x, y;
 	Application::GetCursorPos(&x, &y);
 	int w = Application::GetWindowWidth();
@@ -615,7 +608,7 @@ void SceneCollision::Update(double dt)
 			shoot->type = GameObject::GO_FIRE_ARROW;
 
 		shoot->pos = thePlayerInfo->pos;
-		shoot->pos.y += 9.3;
+		shoot->pos.y += 9.3f;
 		shoot->pos.x += 5;
 		shoot->dir = thePlayerInfo->dir;
 		shoot->dmg = thePlayerInfo->arrowdmg;
@@ -633,17 +626,6 @@ void SceneCollision::Update(double dt)
 	//Physics Simulation Section
 	dt *= m_speed;
 
-	//for (int i = 0; i < m_enemies.size(); ++i)
-	//{
-	//	if (m_enemies[i]->HP <= 0)
-	//	{
-	//		//m_enemies[i] = m_enemies[m_enemies.size() - 1];
-	//		//m_enemies.pop_back();
-	//		enemyCount-=1;
-	//		++i;
-	//	}
-	//}
-
 	for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
 	{
 		Enemy *enemy = (Enemy *)*it;
@@ -651,12 +633,36 @@ void SceneCollision::Update(double dt)
 		if (!enemy->active)
 			continue;
 		enemy->Update(dt, thePlayerInfo, m_enemies, collisionVector);
+		if (enemy->IsShooting)
+		{
+			GameObject* shoot = FetchGO();
+
+			shoot->type = GameObject::GO_ENEMY_BULLET;
+			shoot->pos = enemy->pos;
+			shoot->pos.y += 5;
+			shoot->pos.x += 5;
+			if (thePlayerInfo->pos.x > enemy->pos.x)
+			{
+				shoot->vel = 500.f * (float)dt;
+			}
+			else
+			{
+				shoot->vel = -500.f * (float)dt;
+			}
+			shoot->dmg = 1;
+			shoot->scale.Set(3, 3, 1);
+			enemy->IsShooting = false;
+		}
 	}
+
 	canSave = false;
 
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
+		
+		go->Update(dt);
+		go->pos += go->vel * m_speed * (float)dt;
 
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
 			go->pos.y > m_worldHeight + camera.position.y || go->pos.y <camera.position.y)
@@ -683,11 +689,14 @@ void SceneCollision::Update(double dt)
 			}
 		}
 
-		else if (go->type != GameObject::GO_ARROW && go->type != GameObject::GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
+		else if (go->type != GameObject::GO_ARROW
+			  && go->type != GameObject::GO_FIRE_ARROW
+			  && go->type != GameObject::GO_ENEMY_BULLET)
 		{
 			if (go->HP > 0)
 				go->active = true;
 		}
+
 		if (!go->active)
 			continue;
 
@@ -697,7 +706,7 @@ void SceneCollision::Update(double dt)
 				canSave = true;
 		}
 
-		else if (go->type == GameObject::GO_DOOR2)
+		if (go->type == GameObject::GO_DOOR2)
 		{
 			if ((go->pos - thePlayerInfo->pos).Length() < 10)
 			{
@@ -716,51 +725,19 @@ void SceneCollision::Update(double dt)
 
 		if (go->type == GameObject::GO_WALL_2)
 		{
-			if(!triggered && trigger)
+			if(!castleExplode && trigger)
 			{
 				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
 				go->vel *= 60;
+				castleVector.clear();
+				castleExplode = true;
 			}
-			else if(triggered && trigger)
+			else if(castleExplode && trigger)
 			{
 				Vector3 G(0, -9.8f);
-				go->vel += G * dt*10;
-				
-			}
-			Falsecollider = false;
-		}
-		if (!go->active)
-			continue;
-
-		for (std::vector<Enemy *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
-		{
-			Enemy *enemy = (Enemy *)*it;
-
-			if (enemy->IsShooting)
-			{
-				GameObject* shoot = FetchGO();
-
-				shoot->type = GameObject::GO_ENEMY_BULLET;
-				shoot->pos = enemy->pos;
-				shoot->pos.y += 5;
-				shoot->pos.x += 5;
-				if (thePlayerInfo->pos.x > enemy->pos.x)
-				{
-					shoot->vel = 500.f * dt;
-				}
-				else
-				{
-					shoot->vel = -500.f * dt;
-				}
-				shoot->dmg = 1;
-				shoot->scale.Set(3, 3, 1);
-				enemy->IsShooting = false;
-
-				std::cout << shoot->dmg << std::endl;
+				go->vel += G * (float)dt * 10;
 			}
 		}
-
-		go->pos += go->vel * m_speed * dt;
 
 		if (go->type == GameObject::GO_ENEMY_BULLET)
 		{
@@ -777,26 +754,12 @@ void SceneCollision::Update(double dt)
 			|| go->type == GameObject::GO_ENEMY_RANGED_2)
 		{
 			go->pos += go->vel * static_cast<float>(dt);
-			go->vel += gravity * dt;
+			go->vel += gravity * (float)dt;
 			if (go->vel.Length() > 40)
 			{
 				go->vel.Normalize();
 				go->vel *= 40;
 			}
-		}
-
-		//Debug code for clearing balls
-		if (go->type == GameObject::GO_ENEMY_BULLET && Application::IsKeyPressed('P'))
-		{
-			go->active = false;
-		}
-
-		if (go->type == GameObject::GO_ARROW)
-		{
-			ParticleObject* ArrowParticle = new ParticleObject();
-			ArrowParticle->pos = go->pos;
-			ArrowParticle->scale.Set(3, 3, 0);
-			ArrowParticle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
 		}
 
 		for (std::vector<GameObject *>::iterator it2 = it + 1; it2 != m_goList.end(); ++it2)
@@ -810,7 +773,11 @@ void SceneCollision::Update(double dt)
 			//Practical 4, Exercise 13: improve collision detection algorithm
 			if (go->type != GameObject::GO_PLAYER && go->type != GameObject::GO_ARROW && go->type != GameObject:: GO_FIRE_ARROW && go->type != GameObject::GO_ENEMY_BULLET)
 			{
-				if (go2->type != GameObject::GO_PLAYER && go2->type != GameObject::GO_ARROW &&  go2->type != GameObject::GO_ENEMY_MELEE && go2->type != GameObject::GO_FIRE_ARROW && go2->type != GameObject::GO_ENEMY_BULLET
+				if (go2->type != GameObject::GO_PLAYER
+					&& go2->type != GameObject::GO_ARROW
+					&& go2->type != GameObject::GO_ENEMY_MELEE
+					&& go2->type != GameObject::GO_FIRE_ARROW
+					&& go2->type != GameObject::GO_ENEMY_BULLET
 					&& go2->type != GameObject::GO_ENEMY_MELEE_2
 					&& go2->type != GameObject::GO_ENEMY_RANGED
 					&& go2->type != GameObject::GO_ENEMY_RANGED_2)
@@ -829,22 +796,15 @@ void SceneCollision::Update(double dt)
 				CollisionResponse(goA, goB);
 				v1 = go->vel;
 				v2 = go2->vel;
-				go->vel = 0.95 * go->vel;
-				go2->vel = 0.95 * go2->vel;
+				go->vel = 0.95f * go->vel;
+				go2->vel = 0.95f * go2->vel;
 			}
 		}
 	}
 
-
-	if (trigger)
-	{
-		triggered = true;
-		Falsecollider = true;
-	}
-
 	if (thePlayerInfo->isCharging)
 	{
-		chargeScale += 20 * dt;
+		chargeScale += 20 * (float)dt;
 		if (chargeScale > 18)
 			chargeScale = 18;
 	}
@@ -853,31 +813,16 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
-	if (enemyCount <= 0 /*&& Application::levelName=="level2.csv"*/)
+	if (enemyCount <= 0)
 	{
 		trigger = true;
 	}
-
-	/*if (Application::IsKeyPressed('P'))
-	{
-		trigger = true;
-	}*/
 
 	UpdateParticles(dt);
 	if (Application::IsKeyPressed('9') && !is9pressed)
 	{
 		is9pressed = true;
-		//m_speed = Math::Max(0.f, m_speed - 0.1f);
 		Application::SetScene(1);
-		/*for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-		{
-		GameObject *go = (GameObject *)*it;
-		if (go->type == GameObject::GO_PLAYER)
-		{
-		go->HP--;
-		break;
-		}
-		}*/
 	}
 	else if (!Application::IsKeyPressed('9') && is9pressed)
 	{
@@ -1162,7 +1107,7 @@ void SceneCollision::Render()
 		{
 			//RenderGO(go);
 			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y + 10, 1.1);
+			modelStack.Translate(go->pos.x, go->pos.y + 10, 1.1f);
 			if (go->type == GameObject::GO_ENEMY_MELEE || go->type == GameObject::GO_ENEMY_MELEE_2)
 			{
 				modelStack.Scale((go->HP / 10) * 15, 2, 1);
@@ -1184,7 +1129,7 @@ void SceneCollision::Render()
 		RenderGO(m_ghost);*/
 
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 88.7, 1.1f);
+	modelStack.Translate(camera.target.x + 19.5f, camera.target.y + 88.7f, 1.1f);
 	modelStack.Scale(hpscale * 1.6f, 4, 4);
 	modelStack.Translate(0.5f, 0, 0);
 	RenderMesh(MeshBuilder::GetInstance()->GetMesh("health"), false);

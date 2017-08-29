@@ -17,3 +17,20 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 GameObject::~GameObject()
 {
 }
+
+void GameObject::Update(double dt)
+{
+	if (!this->active)
+	{
+		switch (type)
+		{
+		case(GO_ARROW):
+
+			break;
+		case(GO_FIRE_ARROW):
+			break;
+		case(GO_ENEMY_BULLET):
+			break;
+		}
+	}
+}

@@ -77,9 +77,8 @@ protected:
 	int playerMoveIndex;
 	float elapesTime;
 	bool canSave;
+	bool castleExplode;
 	bool trigger;
-	bool triggered;
-	bool Falsecollider;
 	int enemycount2;
 	vector<string>ObjData;
 

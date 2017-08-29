@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "SingletonTemplate.h"
 #include "MeshBuilder.h"
+#include "Particle.h"
 #include <string>
 #include <vector>
 
@@ -65,6 +66,10 @@ struct GameObject :public  Singleton<GameObject>
 	std::vector<GameObject*> AnimList;
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_WALL);
 	~GameObject();
+
+	void Update(double dt);
+
+	ParticleObject *ParticleTrail;
 };
 
 #endif
