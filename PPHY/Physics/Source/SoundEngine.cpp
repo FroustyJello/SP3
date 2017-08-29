@@ -119,3 +119,13 @@ void CSoundEngine::PlayASound(const std::string& _soundIndex)
 		theSoundEngine->play2D(aSound.c_str(), false, false);
 	}
 }
+
+void CSoundEngine::StopSounds(const std::string& _soundIndex)
+{
+	std::string aSound = GetSound(_soundIndex);
+	if (!theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
+	{
+		// Play a sound
+		theSoundEngine->stopAllSounds();
+	}
+}

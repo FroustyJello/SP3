@@ -35,6 +35,8 @@ public:
 	bool RemoveSound(const std::string& _soundIndex);
 	// Play a sound from this map
 	void PlayASound(const std::string& _soundIndex);
+	//Stops all Sounds
+	void StopSounds(const std::string& _soundIndex);
 };
 
 #endif // !SOUND_ENGINE_H

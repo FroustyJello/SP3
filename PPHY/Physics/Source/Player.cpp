@@ -235,7 +235,7 @@ void CPlayer::Update(double dt)
 	m_dElapsedDieTime += dt;
 	m_dElapsedTime += dt;
 	// Update the player position
-	if (Application::IsKeyPressed('W'))
+	if (Application::IsKeyPressed('W') && vel.y <= 0)
 	{
 		pos.y += 100 * dt * m_speed;
 	}

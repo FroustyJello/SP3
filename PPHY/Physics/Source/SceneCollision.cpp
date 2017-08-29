@@ -133,7 +133,7 @@ void SceneCollision::Init()
 	SaveFile(m_goList);
 
 	CSoundEngine::GetInstance()->Init();
-	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/THEBEST.mp3");
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/1bgm.mp3");
 	CSoundEngine::GetInstance()->PlayASound("BGM_1");
 }
 
@@ -422,7 +422,14 @@ void SceneCollision::LoadObjects(vector<string> data)
 		{
 			CCollider* Ctemp = new CCollider();
 			Ctemp->SetPAABB(go->scale, go->pos);
-			collisionVector.push_back(Ctemp);
+			if (go->type == GameObject::GO_WALL_2)
+			{
+				castleVector.push_back(Ctemp);
+			}
+			else
+			{
+				collisionVector.push_back(Ctemp);
+			}
 			if (go->type == GameObject::GO_PLAYER)
 			{
 				Ctemp->SetPAABB(go->scale, go->pos);
@@ -495,6 +502,11 @@ void SceneCollision::Update(double dt)
 	thePlayerInfo->Update(dt);
 
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
+
+	if (!Falsecollider)
+	{
+		CheckAABB(castleVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
+	}
 
 	//UpdateParticles(dt);
 

@@ -2,6 +2,7 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include "SceneBase.h"
+#include "SoundEngine.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -29,6 +30,10 @@ void SceneMenu::Init()
 
 	x1 = m_worldWidth * 0.5;
 	x2 = m_worldWidth;
+
+	CSoundEngine::GetInstance()->Init();
+	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/Menubgm.mp3");
+	CSoundEngine::GetInstance()->PlayASound("BGM_1");
 
 }
 

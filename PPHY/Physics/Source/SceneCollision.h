@@ -95,6 +95,7 @@ protected:
 
 	CCollider* tileAABB;
 	vector<CCollider*> collisionVector;
+	vector<CCollider*>castleVector;
 
 	bool collided;
 
