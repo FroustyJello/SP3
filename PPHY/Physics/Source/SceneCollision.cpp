@@ -129,7 +129,7 @@ void SceneCollision::Init()
 	LeftScreenLimit = thePlayerInfo->pos.x - 10;
 
 	//m_ghost = new GameObject(GameObject::GO_BALL);
-
+	SaveFile(m_goList);
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/THEBEST.mp3");
