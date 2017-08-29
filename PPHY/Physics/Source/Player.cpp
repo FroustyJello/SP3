@@ -238,7 +238,7 @@ void CPlayer::Update(double dt)
 	// Update the player position
 	if (Application::IsKeyPressed('W') && !jumping)
 	{
-		vel.y += 3000 * dt * m_speed;
+		vel.y += 2000 * dt * m_speed;
 		jumping = true;
 	}
 

@@ -389,6 +389,13 @@ void SceneBase::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("health", Color(1, 0.1, 0.1), 1.f);
 	MeshBuilder::GetInstance()->GenerateQuad("charge", Color(0.3, 0.5, 0.9), 1.f);
 
+	// Particles
+	MeshBuilder::GetInstance()->GenerateQuad("ArrowTrail", Color(1, 1, 1), 1.f);
+
+	MeshBuilder::GetInstance()->GenerateQuad("FireArrowTrail", Color(1, 0.49f, 0.31f), 1.f);
+
+	MeshBuilder::GetInstance()->GenerateQuad("EnemyTrail", Color(1, 0, 0), 1.f);
+
 	thePlayer = new SpriteEntity*[18];
 	thePlayer[0] = Create::Sprite2DObject("player_right_0", true);
 	thePlayer[1] = Create::Sprite2DObject("player_right_1", true);

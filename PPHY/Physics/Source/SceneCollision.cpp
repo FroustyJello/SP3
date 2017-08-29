@@ -317,8 +317,6 @@ void SceneCollision::CollisionResponse(GameObject * go, GameObject * go2)
 
 		go->vel = (u - 2 * u.Dot(N) * N) * 0.4f + gravity;
 		go->dir -= go->dir;
-
-		go->isCollided = true;
 	}
 
 	else if ((go2->type == GameObject::GO_ENEMY_MELEE
@@ -640,14 +638,15 @@ void SceneCollision::Update(double dt)
 			shoot->type = GameObject::GO_ENEMY_BULLET;
 			shoot->pos = enemy->pos;
 			shoot->pos.y += 5;
-			shoot->pos.x += 5;
 			if (thePlayerInfo->pos.x > enemy->pos.x)
 			{
-				shoot->vel = 500.f * (float)dt;
+				shoot->pos.x += 5;
+				shoot->vel = 1000.f * (float)dt;
 			}
 			else
 			{
-				shoot->vel = -500.f * (float)dt;
+				shoot->pos.x -= 5;
+				shoot->vel = -1000.f * (float)dt;
 			}
 			shoot->dmg = 1;
 			shoot->scale.Set(3, 3, 1);
@@ -660,8 +659,7 @@ void SceneCollision::Update(double dt)
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
-		
-		go->Update(dt);
+
 		go->pos += go->vel * m_speed * (float)dt;
 
 		if (go->pos.x > m_worldWidth + camera.position.x +15 || go->pos.x < 0 + camera.position.x - 20.f ||
@@ -727,7 +725,7 @@ void SceneCollision::Update(double dt)
 		{
 			if(!castleExplode && trigger)
 			{
-				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
+				go->vel.Set(cos(Math::RandFloatMinMax(-360, 360)), sin(Math::RandFloatMinMax(-360, 360)));
 				go->vel *= 60;
 				castleVector.clear();
 				castleExplode = true;
@@ -746,6 +744,21 @@ void SceneCollision::Update(double dt)
 
 		if (go->type == GameObject::GO_PLAYER)
 			hpscale = (go->HP / 10 )* 40;
+
+		if (go->type == GameObject::GO_ARROW || go->type == GameObject::GO_FIRE_ARROW || go->type == GameObject::GO_ENEMY_BULLET)
+		{
+			m_TrailCount++;
+			ParticleObject* particle = GetParticle();
+			if (go->type == GameObject::GO_ARROW)
+				particle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
+			else if (go->type == GameObject::GO_FIRE_ARROW)
+				particle->type = ParticleObject_TYPE::P_FIRE_ARROW_TRAIL;
+			else
+				particle->type = ParticleObject_TYPE::P_ENEMY_BULLET_TRAIL;
+			particle->vel.Set(Math::RandFloatMinMax(-2, 2), Math::RandFloatMinMax(-2, 2), 0);
+			particle->scale.Set(1.f, 1.f, 1.f);
+			particle->pos = go->pos;
+		}
 
 		if ( go->type == GameObject::GO_PLAYER
 			|| go->type == GameObject::GO_ENEMY_MELEE
@@ -960,6 +973,7 @@ ParticleObject* SceneCollision::GetParticle(void)
 		if (!particle->isActive)
 		{
 			particle->isActive = true;
+			particle->ElapsedTime = 0.f;
 			return particle;
 		}
 	}
@@ -976,16 +990,6 @@ ParticleObject* SceneCollision::GetParticle(void)
 
 void SceneCollision::UpdateParticles(double dt)
 {
-	if (m_TrailCount < MAX_TRAIL_COUNT)
-	{
-		m_TrailCount++;
-		ParticleObject* particle = GetParticle();
-		particle->type = ParticleObject_TYPE::P_ARROW_TRAIL;
-		particle->scale.Set(1.f, 1.f, 1.f);
-		particle->vel.Set(0.0f, 0.0f, 0.0f);
-		particle->pos.Set(Math::RandFloatMinMax(0, 100), 0, 0);
-	}
-
 	std::vector<ParticleObject*>::iterator it, end;
 	end = particleList.end();
 
@@ -995,16 +999,37 @@ void SceneCollision::UpdateParticles(double dt)
 		if (!particle->isActive)
 			continue;
 
+		particle->ElapsedTime += dt;
+
 		if (particle->type == ParticleObject_TYPE::P_ARROW_TRAIL)
 		{
-			particle->vel -= gravity * (float)dt * 0.5f;
 			particle->pos += particle->vel * (float)dt * 10.f;
 			particle->rotation += particle->rotationSpeed *(float)dt;
 
-			if (particle->pos.y > 20.f)
+			if (particle->ElapsedTime > 0.5f)
 			{
 				particle->isActive = false;
-				m_TrailCount--;
+			}
+		}
+		if (particle->type == ParticleObject_TYPE::P_FIRE_ARROW_TRAIL)
+		{
+			particle->pos += particle->vel * (float)dt * 10.f;
+			particle->rotation += particle->rotationSpeed *(float)dt;
+
+			if (particle->ElapsedTime > 0.5f)
+			{
+				particle->isActive = false;
+			}
+		}
+
+		if (particle->type == ParticleObject_TYPE::P_ENEMY_BULLET_TRAIL)
+		{
+			particle->pos += particle->vel * (float)dt * 10.f;
+			particle->rotation += particle->rotationSpeed *(float)dt;
+
+			if (particle->ElapsedTime > 0.5f)
+			{
+				particle->isActive = false;
 			}
 		}
 	}
@@ -1018,7 +1043,21 @@ void SceneCollision::RenderParticles(ParticleObject* particle)
 		modelStack.PushMatrix();
 		modelStack.Translate(particle->pos.x, particle->pos.y, particle->pos.z);
 		modelStack.Scale(particle->scale.x, particle->scale.y, particle->scale.z);
-		RenderMesh(MeshBuilder::GetInstance()->GetMesh("missile"), false);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("ArrowTrail"), false);
+		modelStack.PopMatrix();
+		break;
+	case ParticleObject_TYPE::P_FIRE_ARROW_TRAIL:
+		modelStack.PushMatrix();
+		modelStack.Translate(particle->pos.x, particle->pos.y, particle->pos.z);
+		modelStack.Scale(particle->scale.x, particle->scale.y, particle->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("FireArrowTrail"), false);
+		modelStack.PopMatrix();
+		break;
+	case ParticleObject_TYPE::P_ENEMY_BULLET_TRAIL:
+		modelStack.PushMatrix();
+		modelStack.Translate(particle->pos.x, particle->pos.y, particle->pos.z);
+		modelStack.Scale(particle->scale.x, particle->scale.y, particle->scale.z);
+		RenderMesh(MeshBuilder::GetInstance()->GetMesh("EnemyTrail"), false);
 		modelStack.PopMatrix();
 		break;
 	}
@@ -1035,7 +1074,7 @@ void SceneCollision::RenderAllParticles()
 		if (!particle->isActive)
 			continue;
 
-		//RenderParticles(particle);
+		RenderParticles(particle);
 
 	}
 }

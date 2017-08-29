@@ -5,6 +5,8 @@
 enum  ParticleObject_TYPE
 {
 	P_ARROW_TRAIL = 0,
+	P_FIRE_ARROW_TRAIL,
+	P_ENEMY_BULLET_TRAIL,
 	P_TOTAL
 };
 
@@ -23,7 +25,7 @@ public:
 	float rotationSpeed;
 
 	bool isActive;
-
+	float ElapsedTime;
 };
 
 #endif // !PARTICLE_H

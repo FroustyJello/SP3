@@ -66,10 +66,6 @@ struct GameObject :public  Singleton<GameObject>
 	std::vector<GameObject*> AnimList;
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_WALL);
 	~GameObject();
-
-	void Update(double dt);
-
-	ParticleObject *ParticleTrail;
 };
 
 #endif
