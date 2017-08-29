@@ -1276,6 +1276,13 @@ void SceneCollision::Exit()
 		delete collisionVector.back();
 		collisionVector.pop_back();
 	}
+
+	while (!castleVector.empty())
+	{
+		delete castleVector.back();
+		castleVector.pop_back();
+	}
+
 	collisionVector.clear();
 
 	for (int i = particleList.size() - 1; i >= 0; --i)
