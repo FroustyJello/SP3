@@ -31,6 +31,7 @@ void SceneMenu::Init()
 	x1 = m_worldWidth * 0.5;
 	x2 = m_worldWidth;
 
+	CSoundEngine::GetInstance()->Destroy();
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("BGM_1", "Music/Menubgm.mp3");
 	CSoundEngine::GetInstance()->PlayASound("BGM_1");
@@ -70,6 +71,7 @@ void SceneMenu::Update(double dt)
 	{
 		if (clickpos == 0)		//Play
 		{
+			CSoundEngine::GetInstance()->Destroy();
 			Application::continueGame = false;
 			Application::newGame = true;
 			Application::levelName = "level1.csv";
@@ -78,6 +80,7 @@ void SceneMenu::Update(double dt)
 
 		if (clickpos == 1)
 		{
+			CSoundEngine::GetInstance()->Destroy();
 			Application::continueGame = false;
 			Application::levelName = "level3.csv";
 			Application::SetScene(2);
@@ -86,6 +89,7 @@ void SceneMenu::Update(double dt)
 			Application::SetScene(8);
 		if (clickpos == 3)
 		{
+			CSoundEngine::GetInstance()->Destroy();
 			std::ifstream file;
 			file.open("save.csv");
 			file >> Application::SceneID;

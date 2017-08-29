@@ -368,7 +368,7 @@ void SceneCollision::LoadObjects(vector<string> data)
 	{
 		go = FetchGO();
 
-		
+
 		for (int k = 0; k < 10; k++)
 		{
 			temp = "";
@@ -500,7 +500,7 @@ void SceneCollision::Update(double dt)
 
 
 	thePlayerInfo->Update(dt);
-
+	
 	CheckAABB(collisionVector, thePlayerInfo->GetMinAABB(), thePlayerInfo->GetMaxAABB());
 
 	if (!Falsecollider)
@@ -545,6 +545,7 @@ void SceneCollision::Update(double dt)
 
 		if (collided)
 		{
+			std::cout << "HI" << std::endl;
 			thePlayerInfo->pos.x -= 50 * dt * m_speed;
 		}
 	}
@@ -561,6 +562,7 @@ void SceneCollision::Update(double dt)
 
 		else if (collided)
 		{
+			std::cout << "HI" << std::endl;
 			thePlayerInfo->pos.x += 50 * dt * m_speed;
 		}
 	}
@@ -703,6 +705,7 @@ void SceneCollision::Update(double dt)
 				{
 					Application::levelName = "level2.csv";
 					Application::SetScene(9);
+
 				}
 				else
 				{
@@ -717,14 +720,14 @@ void SceneCollision::Update(double dt)
 			{
 				go->vel.Set(cos(Math::RandFloatMinMax(0, 360)), sin(Math::RandFloatMinMax(0, 360)));
 				go->vel *= 60;
-				Falsecollider = true;
 			}
 			else if(triggered && trigger)
 			{
 				Vector3 G(0, -9.8f);
 				go->vel += G * dt*10;
-				Falsecollider = true;
+				
 			}
+			Falsecollider = false;
 		}
 		if (!go->active)
 			continue;
@@ -836,6 +839,7 @@ void SceneCollision::Update(double dt)
 	if (trigger)
 	{
 		triggered = true;
+		Falsecollider = true;
 	}
 
 	if (thePlayerInfo->isCharging)
@@ -849,7 +853,7 @@ void SceneCollision::Update(double dt)
 		chargeScale = 0;
 	}
 
-	if (enemyCount <= 0)
+	if (enemyCount <= 0 /*&& Application::levelName=="level2.csv"*/)
 	{
 		trigger = true;
 	}
